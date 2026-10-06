@@ -10,8 +10,9 @@ import { S02Logo } from "../scenes/S02Logo";
 import { DashboardPage } from "../scenes/S03Dashboard";
 import { FieldChips, MatchesPage, MATCH_CAPTION_OUT, S04Overlay } from "../scenes/S04Matches";
 import { S05Overlay, TablesPage, TB } from "../scenes/S05Tables";
+import { DerogationThreadPage, DerogationsInboxPage, DG, S05bOverlay, S05bPhone } from "../scenes/S05bDerogations";
 import { PlayerPage, S06Overlay } from "../scenes/S06Player";
-import { S07Caption, S07Links, S07Modules } from "../scenes/S07Connected";
+import { S07Caption, S07Links, S07Modules, S07Phone } from "../scenes/S07Connected";
 import { S08End } from "../scenes/S08End";
 import { tween } from "../lib/motion";
 import { matchCutBlur, pageSwap } from "../transitions";
@@ -33,6 +34,8 @@ const PAGES: PageDef[] = [
     render: (f) => <MatchesPage frame={f} start={T.matches.start} />,
   },
   { key: "tables", from: T.tables.start, to: T.tables.end, path: "/tables", render: (f) => <TablesPage frame={f} start={T.tables.start} /> },
+  { key: "derog-inbox", from: DG.handoff, to: DG.thread + 6, path: "/derogations", render: (f) => <DerogationsInboxPage frame={f} /> },
+  { key: "derog-thread", from: DG.thread, to: T.player.start + 4, path: "/derogations/demande", render: (f) => <DerogationThreadPage frame={f} /> },
   { key: "player", from: T.player.start, to: T.player.end, path: "/joueurs/hugo-bernard", render: (f) => <PlayerPage frame={f} start={T.player.start} /> },
   { key: "dashboard-2", from: T.player.end, to: T.total + 20, path: "/dashboard", fadeIn: 10, render: (f) => <DashboardPage frame={f} start={-1000} /> },
 ];
@@ -40,6 +43,8 @@ const PAGES: PageDef[] = [
 function pathAt(frame: number): string {
   if (frame >= T.player.end) return "/dashboard";
   if (frame >= T.player.start) return "/joueurs/hugo-bernard";
+  if (frame >= DG.thread) return "/derogations/demande";
+  if (frame >= T.derog.start) return "/derogations";
   if (frame >= T.tables.start) return "/tables";
   if (frame >= T.matches.navClick) return "/matchs";
   return "/dashboard";
@@ -57,13 +62,18 @@ const CURSORS: Array<{ show: [number, number]; clicks: number[]; path: CursorKey
   { show: [T.tables.start - 36, T.tables.start - 4], clicks: [T.tables.start - 16], path: [{ f: T.tables.start - 36, x: A.u15Tile.x + 160, y: A.u15Tile.y + 140 }, { f: T.tables.start - 19, x: A.u15Tile.x + 20, y: A.u15Tile.y + 10 }] },
   { show: [TB.firstClick - 26, TB.firstClick + 12], clicks: [TB.firstClick], path: [{ f: TB.firstClick - 26, x: A.choose.x + 220, y: A.choose.y + 160 }, { f: TB.firstClick - 3, x: A.choose.x, y: A.choose.y }] },
   { show: [TB.secondClick - 28, TB.secondClick + 10], clicks: [TB.secondClick], path: [{ f: TB.secondClick - 28, x: A.hugoChoose.x - 160, y: A.hugoChoose.y + 260 }, { f: TB.secondClick - 3, x: A.hugoChoose.x, y: A.hugoChoose.y }] },
+  { show: [DG.openTap - 24, DG.openTap + 8], clicks: [DG.openTap], path: [{ f: DG.openTap - 24, x: A.inboxCard.x + 300, y: A.inboxCard.y + 260 }, { f: DG.openTap - 3, x: A.inboxCard.x, y: A.inboxCard.y }] },
+  { show: [DG.takeTap - 26, DG.takeTap + 12], clicks: [DG.takeTap], path: [{ f: DG.takeTap - 26, x: A.takeButton.x + 280, y: A.takeButton.y + 220 }, { f: DG.takeTap - 3, x: A.takeButton.x, y: A.takeButton.y }] },
 ];
 
 export function BallManagerFilm() {
   const frame = useCurrentFrame();
   const cam = camera(frame);
   const productVisible = frame >= T.product.in;
-  const productOpacity = tween(frame, [T.product.in, T.product.in + 26], [0, 1], theme.ease.out);
+  // L'app desktop s'efface pendant la demande sur mobile (05b), puis revient côté coordinateur.
+  const productOpacity =
+    tween(frame, [T.product.in, T.product.in + 26], [0, 1], theme.ease.out) *
+    (1 - tween(frame, [T.derog.start - 4, T.derog.start + 12], [0, 1], theme.ease.in) + tween(frame, [DG.handoff + 4, DG.handoff + 24], [0, 1], theme.ease.out));
   const blur = productBlur(frame);
   const hub = frame >= T.connected.start && frame < T.connected.end;
 
@@ -102,9 +112,12 @@ export function BallManagerFilm() {
       <FieldChips frame={frame} at={MATCH_CAPTION_OUT + 22} out={T.tables.start - 22} />
       <Scrim frame={frame} at={TB.sheetOpen} out={TB.captionOut} width={1060} />
       <S05Overlay frame={frame} />
+      <S05bOverlay frame={frame} />
+      <S05bPhone frame={frame} />
       <Scrim frame={frame} at={T.player.start + 18} out={T.player.end - 30} width={960} />
       <S06Overlay frame={frame} />
       {hub ? <S07Modules frame={frame} /> : null}
+      {hub ? <S07Phone frame={frame} /> : null}
       {hub ? <S07Caption frame={frame} /> : null}
 
       {CURSORS.map((c, i) =>

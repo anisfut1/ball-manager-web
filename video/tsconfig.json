@@ -16,6 +16,7 @@
     "paths": {
       "@/lib/api/client": ["./src/shims/api-client.ts"],
       "@/server/actions/auth": ["./src/shims/server-actions-auth.ts"],
+      "@/config/env.public": ["./src/shims/env-public.ts"],
       "@/*": ["../src/*"],
       "next/link": ["./src/shims/next-link.tsx"],
       "next/image": ["./src/shims/next-image.tsx"],

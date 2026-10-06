@@ -34,6 +34,7 @@ Config.overrideWebpackConfig((current) => {
         // Le client HTTP réel lit l'env Supabase/API au chargement : seul `ApiError` est utile aux composants.
         "@/server/actions/auth$": path.join(here, "src/shims/server-actions-auth.ts"),
         "@/lib/api/client$": path.join(here, "src/shims/api-client.ts"),
+        "@/config/env.public$": path.join(here, "src/shims/env-public.ts"),
         "@": path.join(here, "../src"),
         react: nm("react"),
         "react-dom": nm("react-dom"),

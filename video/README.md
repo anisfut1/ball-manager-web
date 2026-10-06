@@ -1,6 +1,6 @@
 # Ball Manager — film produit (Remotion)
 
-Film de 55 s (1920×1080, 30 i/s) pour le site, LinkedIn, les présentations aux clubs et les démos commerciales.
+Film de 67 s (1920×1080, 30 i/s) pour le site, LinkedIn, les présentations aux clubs et les démos commerciales.
 
 **Le film n'a pas de fausse interface.** Tout ce qui apparaît « dans l'app » est rendu par les
 composants de `../src`, importés tels quels :
@@ -12,6 +12,8 @@ composants de `../src`, importés tels quels :
 | Dashboard | `StatCard`, `MatchCard`, `DashboardRequestsCard`, `QuickLink`, `PageContainer`, `SectionHeader` |
 | Matchs | `PageHeader`, `MatchFilters`, `JourneePicker`, `HomeMatchesAgenda` (colonnes Clavel / Lido), `MatchCard` |
 | Tables de marque | `DaySummary`, `TableMatchCard`, `TableAssignmentSlot`, `Sheet`, `CandidateRow`, `UnavailableRow`, `SectionTitle`, `Toast`, `Skeleton` |
+| Dérogations — coach sur mobile | `AppShell` en viewport mobile (`MobileChrome` : topbar + barre du bas), `Stepper`, `MatchHeadline`, `VenuePlanning`, `SummaryItem`, `Footer`, `Field`/`Textarea`, `Notice`, `RequestThread` |
+| Dérogations — coordinateur sur desktop | `RequestSections` / `RequestCard`, `RequestThread` (« Je m'en occupe », demande officielle FBI), `Toast` |
 | Fiche joueur | `BackButton`, `PersonAvatar`, `StatusBadge`, `Table` / `Th` / `Td`, `formatSecondsPlayed` |
 | Tout est connecté | `IconMedallion`, icônes de `NAV_ICONS`, classe `.surface-card`, `.court-pattern` |
 
@@ -50,12 +52,23 @@ video/
     theme.ts               easings, ressorts, polices (aucune easing linéaire)
 ```
 
+### Le mobile, pour de vrai
+
+`components/MobileViewport.tsx` rend les composants réels dans une iframe de 390 px : la largeur du
+viewport y est celle d'un téléphone, donc les breakpoints Tailwind de l'app s'appliquent réellement
+(barre de navigation du bas, topbar mobile, planning des gymnases empilé). Le document de l'iframe
+défile pour de vrai (les éléments `sticky` de l'app — pied du wizard, compositeur — se comportent
+comme sur l'appareil). Le boîtier (`PhoneFrame`) n'est qu'un habillage neutre.
+
 ### Transitions par les composants
 
 - **02 → 03** : la tuile du logo s'envole et atterrit au pixel près sur la marque de la Sidebar réelle.
 - **03 → 04** : le curseur clique « Matchs » dans la vraie Sidebar (l'état actif change pour de vrai).
 - **04 → 05** : plongée dans la tuile U15 M – Agde → raccord flou sur sa carte Tables de marque.
-- **05 → 06** : plongée sur le poste attribué à Hugo Bernard → raccord sur son avatar dans sa fiche.
+- **05 → 05b** : l'app desktop s'efface, le téléphone du coach monte dans le cadre.
+- **05b** : la demande quitte le téléphone et arrive dans la boîte du coordinateur ; quand il clique
+  « Je m'en occupe », le téléphone du coach se met à jour au même instant.
+- **05b → 06** : raccord flou vers la fiche joueur.
 - **06 → 07** : l'app recule et devient un objet ; les modules s'y branchent puis y rentrent.
 
 ## Caler la caméra
@@ -67,7 +80,8 @@ npx remotion still src/index.ts Probe out/probe.png --props='{"page":"tables"}'
 ```
 
 L'image montre chaque élément ciblé encadré, avec ses coordonnées. Pages : `dashboard`,
-`matches`, `tables`, `sheet`, `player`.
+`matches`, `tables`, `sheet`, `player`. Les « taps » du téléphone (`S05bDerogations.tsx`) sont en
+coordonnées du viewport mobile.
 
 ## Ce qui n'est volontairement PAS montré
 

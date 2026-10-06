@@ -1,6 +1,10 @@
-import { BarChart3, CalendarDays, ClipboardList, FileText, RefreshCw, Shirt, Users } from "lucide-react";
+import { BarChart3, CalendarClock, CalendarDays, ClipboardList, FileText, RefreshCw, Shirt, Users } from "lucide-react";
 import { IconMedallion } from "@/components/ui/Card";
 import { MaskLine } from "../components/Caption";
+import { MobileViewport } from "../components/MobileViewport";
+import { PHONE, PhoneFrame } from "../components/PhoneFrame";
+import { ProductShell } from "../components/ProductShell";
+import { DashboardPage } from "./S03Dashboard";
 import { springAt, tween } from "../lib/motion";
 import { T } from "../compositions/timeline";
 import { theme } from "../theme";
@@ -23,7 +27,8 @@ const MODULES = [
   { key: "joueurs", title: "Joueurs", meta: "Fiches et historique", icon: <Users />, x: 1220, y: 292, tone: "accent" as const },
   { key: "stats", title: "Statistiques", meta: "Par joueur, par match", icon: <BarChart3 />, x: 1620, y: 470, tone: "accent" as const },
   { key: "tables", title: "Tables de marque", meta: "Suggestions expliquées", icon: <ClipboardList />, x: 1620, y: 730, tone: "accent" as const },
-  { key: "equipes", title: "Équipes", meta: "Effectifs et coachs", icon: <Shirt />, x: 960, y: 912, tone: "accent" as const },
+  { key: "equipes", title: "Équipes", meta: "Effectifs et coachs", icon: <Shirt />, x: 600, y: 915, tone: "accent" as const },
+  { key: "derogations", title: "Dérogations", meta: "Du coach au coordinateur", icon: <CalendarClock />, x: 960, y: 915, tone: "accent" as const },
 ];
 
 const appear = (i: number) => C.start + 34 + i * 4;
@@ -118,6 +123,34 @@ export function S07Caption({ frame }: { frame: number }) {
       <MaskLine frame={frame} at={C.start + 80} out={C.end - 68} size={84} color={theme.colors.accent}>
         Plus de basket.
       </MaskLine>
+    </div>
+  );
+}
+
+/**
+ * Le même produit, sur téléphone : le VRAI dashboard rendu dans un viewport
+ * mobile (barre du bas, cartes empilées), posé contre l'app desktop.
+ */
+export function S07Phone({ frame }: { frame: number }) {
+  if (frame < C.start + 36 || frame > COLLAPSE + 24) return null;
+  const p = springAt(frame, C.start + 44, theme.spring.smooth);
+  const k = tween(frame, [COLLAPSE + 4, COLLAPSE + 20], [0, 1], theme.ease.in);
+  const scale = 0.5 * (1 - k * 0.6);
+  const x = 1300 + (HUB.x - 1300) * k;
+  const y = 700 + (1 - p) * 80 + (HUB.y - 700) * k;
+  const w = (PHONE.screenW + PHONE.bezel * 2) * scale;
+  const h = (PHONE.screenH + PHONE.bezel * 2) * scale;
+  return (
+    <div style={{ position: "absolute", left: x - w / 2, top: y - h / 2, width: w, height: h, opacity: Math.min(1, p * 1.5) * (1 - k), filter: k > 0 ? `blur(${k * 8}px)` : undefined }}>
+      <div style={{ transform: `scale(${scale})`, transformOrigin: "0 0" }}>
+        <PhoneFrame>
+          <MobileViewport width={PHONE.screenW} height={PHONE.screenH - PHONE.status}>
+            <ProductShell flow pathname="/dashboard">
+              <DashboardPage frame={frame} start={-1000} />
+            </ProductShell>
+          </MobileViewport>
+        </PhoneFrame>
+      </div>
     </div>
   );
 }

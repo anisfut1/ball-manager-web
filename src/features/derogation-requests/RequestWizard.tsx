@@ -21,7 +21,7 @@ import type { SlotSelection } from "./VenuePlanning";
 export const NO_COORDINATOR_MESSAGE = "Aucun coordinateur n'est actuellement configuré pour recevoir les demandes de dérogation.";
 
 const STEPS = ["Match", "Date", "Créneau", "Résumé"] as const;
-type StepIndex = 0 | 1 | 2 | 3;
+export type StepIndex = 0 | 1 | 2 | 3;
 
 /**
  * Demande de dérogation interne (coach → coordinateur) : Match → Date →
@@ -245,7 +245,7 @@ export function RequestWizard({ source, basePath, context, initialMatchId }: { s
   );
 }
 
-function SummaryItem({ label, children, strong }: { label: string; children: React.ReactNode; strong?: boolean }) {
+export function SummaryItem({ label, children, strong }: { label: string; children: React.ReactNode; strong?: boolean }) {
   return (
     <div className="flex min-w-0 flex-col gap-1">
       <dt className="type-eyebrow">{label}</dt>
@@ -254,7 +254,7 @@ function SummaryItem({ label, children, strong }: { label: string; children: Rea
   );
 }
 
-function Footer({ onBack, backLabel, children }: { onBack: () => void; backLabel: string; children: React.ReactNode }) {
+export function Footer({ onBack, backLabel, children }: { onBack: () => void; backLabel: string; children: React.ReactNode }) {
   return (
     <div className="sticky bottom-[calc(var(--bottom-nav-height)+env(safe-area-inset-bottom))] z-30 -mx-4 mt-2 flex items-center justify-between gap-2 border-t border-border bg-[color-mix(in_oklab,var(--background)_92%,transparent)] px-4 py-2.5 backdrop-blur sm:mx-0 sm:rounded-[var(--radius-md)] sm:border sm:py-3 lg:bottom-4">
       <Button variant="ghost" icon={<ArrowLeft />} onClick={onBack} aria-label={backLabel} className="px-2.5 sm:px-4">
@@ -266,7 +266,7 @@ function Footer({ onBack, backLabel, children }: { onBack: () => void; backLabel
   );
 }
 
-function Stepper({ step, onStep }: { step: StepIndex; onStep: (i: StepIndex) => void }) {
+export function Stepper({ step, onStep }: { step: StepIndex; onStep: (i: StepIndex) => void }) {
   return (
     <nav aria-label="Étapes de la demande">
       <p className="type-meta mb-2 sm:hidden">

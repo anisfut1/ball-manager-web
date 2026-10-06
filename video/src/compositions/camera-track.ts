@@ -1,6 +1,7 @@
 import { makeCamera } from "./camera";
 import { T } from "./timeline";
 import { TB } from "../scenes/S05Tables";
+import { DG } from "../scenes/S05bDerogations";
 import { HUB } from "../scenes/S07Connected";
 
 /**
@@ -19,6 +20,9 @@ export const ANCHORS = {
   hugoChoose: { x: 1844, y: 351 },
   avatar: { x: 612, y: 215 },
   playerTable: { x: 1092, y: 565 },
+  inboxCard: { x: 780, y: 420 },
+  thread: { x: 1092, y: 420 },
+  takeButton: { x: 673, y: 405 },
 };
 const A = ANCHORS;
 
@@ -49,10 +53,14 @@ export const camera = makeCamera([
   { f: TB.sheetClose - 2 },
   { f: TB.sheetClose + 22, s: 1.3, cx: A.scorerSlot.x, cy: A.scorerSlot.y, ax: 1320, ay: 540 },
   { f: TB.captionOut + 4 },
-  { f: T.player.start - 14, s: 1.7, ax: 960 },
-  { f: T.player.start - 1, s: 2.6 },
+  // 05b : l'app desktop s'efface pendant la demande mobile, puis revient côté coordinateur.
+  { f: DG.handoff - 1, s: 0.64, cx: 960, cy: 540, ax: 1180, ay: 600, radius: 34, lift: 0.7 },
+  { f: DG.thread - 2 },
+  { f: DG.thread + 20, s: 0.78, cx: A.thread.x, cy: A.thread.y, ax: 1200, ay: 560 },
+  { f: DG.taken + 24 },
+  { f: T.player.start - 1, s: 0.92 },
   // 06 : raccord sur l'avatar → la fiche joueur.
-  { f: T.player.start, s: 2.2, cx: A.avatar.x, cy: A.avatar.y, ax: 960, ay: 540 },
+  { f: T.player.start, s: 2.2, cx: A.avatar.x, cy: A.avatar.y, ax: 960, ay: 540, radius: 0, lift: 0 },
   { f: T.player.start + 30, s: 1.06, cx: A.playerTable.x, cy: A.playerTable.y, ax: 1330, ay: 560 },
   { f: T.player.end - 34, s: 1.1 },
   { f: T.player.end - 4, s: 1, cx: 960, cy: 540, ax: 960, ay: 540 },

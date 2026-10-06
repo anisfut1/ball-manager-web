@@ -10,7 +10,7 @@
 import type { MatchListItemDto } from "@/lib/api/matches";
 import type { TableAssignmentsForMatchDto, TableAssignmentSlotDto, TableSuggestionCandidateDto, TableUnavailableCandidateDto } from "@/lib/api/tables";
 import type { LicencieMatchDto } from "@/lib/api/licencies";
-import type { DerogationRequestSummaryDto } from "@/lib/api/derogationRequests";
+import type { CandidateSlotDto, DerogationAvailabilityDto, DerogationContextDto, DerogationMatchRefDto, DerogationMessageDto, DerogationRequestDetailDto, DerogationRequestSummaryDto } from "@/lib/api/derogationRequests";
 import type { ShellUser, ShellWorkspace } from "@/components/shell/types";
 import type { MatchCardClub } from "@/features/matches/MatchCard";
 
@@ -215,4 +215,153 @@ export const PLAYER_MATCHES: LicencieMatchDto[] = [
   pm("2026-06-07T12:00:00Z", "Béziers", true, 66, 49, "7", [1402, 12, 1, 3, 0, 3, 4]),
   pm("2026-05-31T14:00:00Z", "Mèze", false, 52, 57, "7", [1655, 15, 1, 4, 1, 1, 2]),
   pm("2026-05-24T14:00:00Z", "Lunel", true, 63, 50, "7", [1510, 9, 0, 3, 0, 3, 3]),
+];
+
+/* ── Dérogations internes : le coach U17 M demande, le coordinateur traite ── */
+
+
+export const TZ = "Europe/Paris";
+export const COACH: ShellUser = { displayName: "Karim Benali", email: "karim.benali@scsete-basket.fr" };
+export const VENUES = [
+  { id: uuid(), name: "Gymnase Maurice Clavel", address: "Sète" },
+  { id: uuid(), name: "Complexe sportif du Lido", address: "Sète" },
+];
+
+const U17 = WEEKEND_HOME[2];
+export const DEROG_MATCH: DerogationMatchRefDto = {
+  id: U17.id,
+  numero: U17.numero,
+  teamId: uuid(),
+  teamName: "U17 M",
+  categoryLabel: "U17 M",
+  opponentName: "Castelnau Basket - 2",
+  isHome: true,
+  matchDatetime: U17.matchDatetime,
+  venueName: VENUES[0].name,
+  status: "scheduled",
+};
+
+export const DEROG_CONTEXT: DerogationContextDto = {
+  requesterDisplayName: COACH.displayName,
+  requesterNameSource: "LICENCIE",
+  coordinatorsConfigured: true,
+  canCreate: true,
+  canManage: false,
+  timezone: TZ,
+  venues: VENUES,
+  eligibleMatches: [{ ...DEROG_MATCH, activeRequestId: null }],
+};
+
+/** Heure murale (Paris, UTC+2 le 11/10/2026) → ISO UTC. */
+const sunday = (hhmm: string) => {
+  const [h, m] = hhmm.split(":").map(Number) as [number, number];
+  return new Date(Date.UTC(2026, 9, 11, h - 2, m)).toISOString();
+};
+const pad = (n: number) => String(n).padStart(2, "0");
+
+function lane(venueIndex: number, busy: Array<{ team: string; opp: string; start: string; end: string }>, pending: Array<{ team: string; opp: string; start: string }>) {
+  const toMin = (s: string) => Number(s.slice(0, 2)) * 60 + Number(s.slice(3));
+  const candidateStartTimes: CandidateSlotDto[] = Array.from({ length: 10 }, (_, i) => {
+    const localStart = `${pad(9 + i)}:00`;
+    const localEnd = `${pad(11 + i)}:00`;
+    const clash = busy.find((b) => toMin(localStart) < toMin(b.end) && toMin(b.start) < toMin(localEnd));
+    const warn = pending.find((p) => p.start === localStart);
+    return {
+      startAt: sunday(localStart),
+      endAt: sunday(localEnd),
+      localStart,
+      localEnd,
+      available: !clash,
+      conflicts: clash ? [{ type: "VENUE_MATCH" as const, matchId: uuid(), teamName: clash.team, opponentName: clash.opp, startAt: sunday(clash.start), endAt: sunday(clash.end), venueName: VENUES[venueIndex].name }] : [],
+      warnings: warn ? [{ type: "PENDING_REQUEST" as const, requestId: uuid(), teamName: warn.team, opponentName: warn.opp, startAt: sunday(warn.start), endAt: sunday(`${pad(Number(warn.start.slice(0, 2)) + 2)}:00`) }] : [],
+    };
+  });
+  return {
+    venue: VENUES[venueIndex],
+    existingMatches: busy.map((b) => ({ matchId: uuid(), teamName: b.team, opponentName: b.opp, startAt: sunday(b.start), endAt: sunday(b.end), localStart: b.start, localEnd: b.end })),
+    pendingRequests: pending.map((p) => ({ requestId: uuid(), teamName: p.team, opponentName: p.opp, startAt: sunday(p.start), endAt: sunday(`${pad(Number(p.start.slice(0, 2)) + 2)}:00`), localStart: p.start, localEnd: `${pad(Number(p.start.slice(0, 2)) + 2)}:00` })),
+    candidateStartTimes,
+  };
+}
+
+/** Disponibilités du dimanche 11 octobre : planning réel des 2 gymnases. */
+export const AVAILABILITY: DerogationAvailabilityDto = {
+  matchType: "HOME",
+  date: "2026-10-11",
+  timezone: TZ,
+  rules: { durationMinutes: 120, slotStepMinutes: 60, earliestStart: "09:00", latestStart: "18:00", gridStart: "09:00", gridEnd: "18:00" },
+  venues: [
+    lane(0, [{ team: "U13 M", opp: "Frontignan", start: "09:00", end: "11:00" }], [{ team: "U11 M", opp: "Mèze", start: "15:00" }]),
+    lane(1, [{ team: "Seniors F", opp: "Pézenas", start: "15:30", end: "17:30" }], []),
+  ],
+  awayCandidateStartTimes: [],
+};
+
+export const CHOSEN_SLOT = (() => {
+  const s = AVAILABILITY.venues[0].candidateStartTimes[2]; // Clavel, 11:00 → 13:00
+  return { venueId: VENUES[0].id, venueName: VENUES[0].name, startAt: s.startAt, endAt: s.endAt, localStart: s.localStart, localEnd: s.localEnd, warnings: s.warnings };
+})();
+
+const msg = (m: Partial<DerogationMessageDto> & Pick<DerogationMessageDto, "type" | "body" | "createdAt">): DerogationMessageDto => ({
+  id: uuid(),
+  event: null,
+  authorDisplayName: COACH.displayName,
+  authorRoleLabel: "Coach U17 M",
+  isMine: false,
+  ...m,
+});
+
+/** La demande, vue par le coordinateur (Julien) — avant puis après « Je m'en occupe ». */
+export function derogationRequest(viewer: "coach" | "coordinator", status: "REQUESTED" | "IN_PROGRESS"): DerogationRequestDetailDto {
+  const coach = viewer === "coach";
+  const messages: DerogationMessageDto[] = [
+    msg({ type: "SYSTEM", event: "CREATED", body: "Demande envoyée au coordinateur : dimanche 11 octobre, 11:00, Gymnase Maurice Clavel.", createdAt: "2026-10-06T08:12:00Z" }),
+    msg({ type: "USER", body: "Castelnau est d'accord pour dimanche matin, le gymnase est libre. Merci !", isMine: coach, createdAt: "2026-10-06T08:12:30Z" }),
+  ];
+  if (status === "IN_PROGRESS") {
+    messages.push(msg({ type: "SYSTEM", event: "TAKEN_IN_CHARGE", body: "Julien Navarro s'occupe de la demande.", createdAt: "2026-10-06T08:31:00Z" }));
+  }
+  return {
+    id: uuid(),
+    status,
+    match: DEROG_MATCH,
+    requesterDisplayName: COACH.displayName,
+    createdByMe: coach,
+    originalScheduledAt: DEROG_MATCH.matchDatetime,
+    requestedStartAt: CHOSEN_SLOT.startAt,
+    requestedEndAt: CHOSEN_SLOT.endAt,
+    requestedVenue: VENUES[0],
+    isCustomWeekday: false,
+    needsCoordinatorAttention: !coach && status === "REQUESTED",
+    lastMessage: { type: "USER", authorDisplayName: COACH.displayName, excerpt: "Castelnau est d'accord pour dimanche matin, le gymnase est libre.", createdAt: "2026-10-06T08:12:30Z" },
+    lastMessageAt: "2026-10-06T08:12:30Z",
+    createdAt: "2026-10-06T08:12:00Z",
+    proposals: [],
+    messages,
+    permissions: coach
+      ? { canMessage: true, canPropose: true, actions: ["CANCEL"], canSubmitOfficial: false }
+      : status === "REQUESTED"
+        ? { canMessage: true, canPropose: false, actions: ["TAKE_IN_CHARGE", "REQUEST_CHANGE"], canSubmitOfficial: false }
+        : { canMessage: true, canPropose: false, actions: ["COMPLETE", "REQUEST_CHANGE"], canSubmitOfficial: true },
+    officialSchedule: { currentScheduledAt: DEROG_MATCH.matchDatetime, changedSinceRequest: false, matchesCurrentProposal: false },
+  };
+}
+
+/** Boîte du coordinateur : la nouvelle demande + l'historique du club. */
+export const INBOX = [
+  derogationRequest("coordinator", "REQUESTED"),
+  {
+    ...derogationRequest("coordinator", "REQUESTED"),
+    id: uuid(),
+    status: "IN_PROGRESS" as const,
+    needsCoordinatorAttention: false,
+    requesterDisplayName: "Sophie Marchand",
+    match: { ...DEROG_MATCH, id: uuid(), teamName: "U13 F", categoryLabel: "U13 F", opponentName: "Mèze", matchDatetime: WEEKEND_HOME[4].matchDatetime, venueName: VENUES[1].name },
+    originalScheduledAt: WEEKEND_HOME[4].matchDatetime,
+    requestedStartAt: "2026-10-17T12:00:00Z",
+    requestedEndAt: "2026-10-17T14:00:00Z",
+    requestedVenue: VENUES[1],
+    lastMessage: { type: "USER" as const, authorDisplayName: "Julien Navarro", excerpt: "Je relance le comité demain matin.", createdAt: "2026-10-05T17:40:00Z" },
+    lastMessageAt: "2026-10-05T17:40:00Z",
+  },
 ];
