@@ -13,6 +13,7 @@ import { RequestSections } from "@/features/derogation-requests/RequestList";
 import { formatDayLongCapitalized, formatShortDateTime, formatTime } from "@/features/derogation-requests/labels";
 import { AVAILABILITY, BASE, CHOSEN_SLOT, CLUB, COACH, DEROG_CONTEXT, DEROG_MATCH, INBOX, TZ, VENUES, derogationRequest } from "../data/demo";
 import { ProductShell } from "../components/ProductShell";
+import { TablesPage } from "./S05Tables";
 import { MobileViewport } from "../components/MobileViewport";
 import { PHONE, PhoneFrame, Tap } from "../components/PhoneFrame";
 import { Eyebrow, MaskLine } from "../components/Caption";
@@ -24,20 +25,24 @@ const D = T.derog.start;
 
 /** Minutage interne (frames globales). */
 export const DG = {
-  phoneIn: D,
-  slotTap: D + 74,
-  continueTap: D + 100,
-  summary: D + 106,
-  typeFrom: D + 116,
-  typeTo: D + 150,
-  sendTap: D + 166,
-  sent: D + 172,
-  handoff: D + 206,
-  inboxArrive: D + 236,
-  openTap: D + 268,
-  thread: D + 274,
-  takeTap: D + 316,
-  taken: D + 320,
+  /** L'app desktop (scène) est remplacée, au pixel près, par le même écran dans le viewport qui va se transformer. */
+  swap: D + 6,
+  morphFrom: D + 8,
+  morphTo: D + 52,
+  coachIn: D + 56,
+  slotTap: D + 116,
+  continueTap: D + 142,
+  summary: D + 148,
+  typeFrom: D + 158,
+  typeTo: D + 192,
+  sendTap: D + 208,
+  sent: D + 214,
+  handoff: D + 248,
+  inboxArrive: D + 278,
+  openTap: D + 310,
+  thread: D + 316,
+  takeTap: D + 358,
+  taken: D + 362,
   captionOut: T.derog.end - 32,
 } as const;
 
@@ -132,18 +137,30 @@ function CoachThread({ frame }: { frame: number }) {
 
 /** Défilement réel du document mobile, par écran. */
 function phoneScroll(frame: number): number {
-  if (frame < DG.summary) return tween(frame, [D + 24, D + 62], [0, 470], theme.ease.inOut);
+  if (frame < DG.coachIn) return 0;
+  if (frame < DG.summary) return tween(frame, [DG.coachIn + 14, DG.coachIn + 50], [0, 470], theme.ease.inOut);
   if (frame < DG.sent) return tween(frame, [DG.summary + 4, DG.typeFrom + 8], [0, 250], theme.ease.inOut);
   return tween(frame, [DG.taken + 8, DG.taken + 30], [0, 160], theme.ease.inOut);
 }
 
-function CoachScreen({ frame }: { frame: number }) {
-  const screen = frame < DG.summary ? "slot" : frame < DG.sent ? "summary" : "thread";
+function DeviceScreen({ frame, width, height }: { frame: number; width: number; height: number }) {
+  const screen = frame < DG.coachIn ? "desktop" : frame < DG.summary ? "slot" : frame < DG.sent ? "summary" : "thread";
   const swapIn = (at: number) => (frame >= at ? enter(frame, at, { y: 14, blur: 4, scale: 1 }).style : undefined);
+  // Un seul viewport (même iframe) du début à la fin : seul son contenu change.
   return (
-    <MobileViewport width={PHONE.screenW} height={PHONE.screenH - PHONE.status} scrollY={phoneScroll(frame)}>
+    <MobileViewport width={width} height={height} scrollY={phoneScroll(frame)}>
+      {screen === "desktop" ? (
+        // Le MÊME écran que la scène 05 (club_admin, Tables de marque) : en rétrécissant, l'app se réorganise d'elle-même.
+        <ProductShell flow pathname="/tables">
+          <TablesPage frame={frame} start={T.tables.start} />
+        </ProductShell>
+      ) : (
       <ProductShell flow roles={["coach"]} user={COACH} pathname={screen === "thread" ? "/derogations/demande" : "/derogations/nouvelle"}>
-        {screen === "slot" ? <WizardSlot frame={frame} /> : null}
+        {screen === "slot" ? (
+          <div style={swapIn(DG.coachIn)}>
+            <WizardSlot frame={frame} />
+          </div>
+        ) : null}
         {screen === "summary" ? (
           <div style={swapIn(DG.summary)}>
             <WizardSummary frame={frame} />
@@ -155,32 +172,44 @@ function CoachScreen({ frame }: { frame: number }) {
           </div>
         ) : null}
       </ProductShell>
+      )}
     </MobileViewport>
   );
 }
 
-/** Le téléphone du coach : entre au centre, puis se range à gauche quand le coordinateur prend le relais. */
+/**
+ * L'app desktop DEVIENT le téléphone : la fenêtre rétrécit réellement de
+ * 1920 à 390 px de large — l'app traverse ses breakpoints (la Sidebar
+ * disparaît, la topbar et la barre du bas mobiles apparaissent, les cartes
+ * s'empilent) — puis le boîtier se referme autour. C'est le responsive réel
+ * du produit, pas un effet. Le téléphone se range ensuite à gauche quand
+ * le coordinateur prend le relais.
+ */
 export function S05bPhone({ frame }: { frame: number }) {
-  if (frame < DG.phoneIn - 2 || frame > T.derog.end + 2) return null;
-  const rise = springAt(frame, DG.phoneIn, theme.spring.smooth);
+  if (frame < DG.swap || frame > T.derog.end + 2) return null;
+  const m = tween(frame, [DG.morphFrom, DG.morphTo], [0, 1], theme.ease.inOut);
+  const shell = tween(frame, [DG.morphFrom + 24, DG.morphTo + 4], [0, 1], theme.ease.out);
   const aside = tween(frame, [DG.handoff, DG.handoff + 26], [0, 1], theme.ease.inOut);
   const leave = tween(frame, [T.derog.end - 12, T.derog.end], [0, 1], theme.ease.in);
-  const scale = 1.08 - 0.2 * aside;
-  const x = 1180 + (210 - 1180) * aside;
-  const y = 540 + (1 - rise) * 700;
-  const w = (PHONE.screenW + PHONE.bezel * 2) * scale;
-  const h = (PHONE.screenH + PHONE.bezel * 2) * scale;
+  const vpW = 1920 + (PHONE.screenW - 1920) * m;
+  const vpH = 1080 + (PHONE.screenH - PHONE.status - 1080) * m;
+  const scale = (0.86 + (1.08 - 0.86) * m) - 0.2 * aside;
+  const cx = 960 + (1180 - 960) * m + (210 - 1180) * aside;
+  const cy = 540;
   // Taps dans le viewport mobile (repères mesurés sur le rendu réel, voir README).
   const taps = [
     { at: DG.slotTap, x: 190, y: 326 },
     { at: DG.continueTap, x: 292, y: 706 },
     { at: DG.sendTap, x: 284, y: 706 },
   ];
+  const geo = { screenW: vpW, screenH: vpH + PHONE.status * shell, bezel: PHONE.bezel * shell, status: PHONE.status * shell, radius: 35 + (50 - 35) * m, chrome: shell };
+  const w = (geo.screenW + geo.bezel * 2) * scale;
+  const h = (geo.screenH + geo.bezel * 2) * scale;
   return (
-    <div style={{ position: "absolute", left: x - w / 2, top: y - h / 2, width: w, height: h, opacity: 1 - leave }}>
+    <div style={{ position: "absolute", left: cx - w / 2, top: cy - h / 2, width: w, height: h, opacity: 1 - leave }}>
       <div style={{ transform: `scale(${scale})`, transformOrigin: "0 0" }}>
-        <PhoneFrame overlay={taps.map((t) => <Tap key={t.at} frame={frame} {...t} />)}>
-          <CoachScreen frame={frame} />
+        <PhoneFrame geometry={geo} overlay={taps.map((t) => <Tap key={t.at} frame={frame} {...t} />)}>
+          <DeviceScreen frame={frame} width={vpW} height={vpH} />
         </PhoneFrame>
       </div>
     </div>
@@ -237,21 +266,36 @@ export function DerogationThreadPage({ frame }: { frame: number }) {
 export function S05bOverlay({ frame }: { frame: number }) {
   if (frame < D || frame > T.derog.end + 4) return null;
   const firstOut = DG.handoff - 6;
+  const mobileOut = DG.coachIn + 10;
+  const c = DG.coachIn + 24;
   return (
     <>
+      <div style={{ position: "absolute", left: 120, top: 360 }}>
+        <Eyebrow frame={frame} at={D + 30} out={mobileOut}>
+          100 % mobile
+        </Eyebrow>
+        <div style={{ marginTop: 26, display: "flex", flexDirection: "column", gap: 6 }}>
+          <MaskLine frame={frame} at={D + 34} out={mobileOut} size={96}>
+            Le même outil,
+          </MaskLine>
+          <MaskLine frame={frame} at={D + 40} out={mobileOut + 2} size={96} color={theme.colors.accent}>
+            dans la poche.
+          </MaskLine>
+        </div>
+      </div>
       <div style={{ position: "absolute", left: 120, top: 330 }}>
-        <Eyebrow frame={frame} at={D + 8} out={firstOut}>
+        <Eyebrow frame={frame} at={c} out={firstOut}>
           Dérogations · sur mobile
         </Eyebrow>
         <div style={{ marginTop: 26, display: "flex", flexDirection: "column", gap: 6 }}>
-          <MaskLine frame={frame} at={D + 12} out={firstOut} size={100}>
+          <MaskLine frame={frame} at={c + 4} out={firstOut} size={100}>
             Le coach demande,
           </MaskLine>
-          <MaskLine frame={frame} at={D + 20} out={firstOut + 2} size={100} color={theme.colors.muted}>
+          <MaskLine frame={frame} at={c + 12} out={firstOut + 2} size={100} color={theme.colors.muted}>
             où qu&apos;il soit.
           </MaskLine>
         </div>
-        <div style={{ marginTop: 34, maxWidth: 560, fontFamily: theme.fonts.sans, fontSize: 24, lineHeight: 1.45, color: theme.colors.muted, ...enter(frame, D + 30, { y: 12 }).style, opacity: (enter(frame, D + 30).style.opacity as number) * (1 - tween(frame, [firstOut, firstOut + 8], [0, 1])) }}>
+        <div style={{ marginTop: 34, maxWidth: 560, fontFamily: theme.fonts.sans, fontSize: 24, lineHeight: 1.45, color: theme.colors.muted, ...enter(frame, c + 22, { y: 12 }).style, opacity: (enter(frame, c + 22).style.opacity as number) * (1 - tween(frame, [firstOut, firstOut + 8], [0, 1])) }}>
           Le planning des gymnases en direct : les créneaux libres, les matchs déjà programmés, les demandes en cours.
         </div>
       </div>

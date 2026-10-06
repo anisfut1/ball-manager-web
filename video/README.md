@@ -1,6 +1,6 @@
 # Ball Manager — film produit (Remotion)
 
-Film de 67 s (1920×1080, 30 i/s) pour le site, LinkedIn, les présentations aux clubs et les démos commerciales.
+Film de 68 s (1920×1080, 30 i/s) pour le site, LinkedIn, les présentations aux clubs et les démos commerciales.
 
 **Le film n'a pas de fausse interface.** Tout ce qui apparaît « dans l'app » est rendu par les
 composants de `../src`, importés tels quels :
@@ -65,7 +65,10 @@ comme sur l'appareil). Le boîtier (`PhoneFrame`) n'est qu'un habillage neutre.
 - **02 → 03** : la tuile du logo s'envole et atterrit au pixel près sur la marque de la Sidebar réelle.
 - **03 → 04** : le curseur clique « Matchs » dans la vraie Sidebar (l'état actif change pour de vrai).
 - **04 → 05** : plongée dans la tuile U15 M – Agde → raccord flou sur sa carte Tables de marque.
-- **05 → 05b** : l'app desktop s'efface, le téléphone du coach monte dans le cadre.
+- **05 → 05b — le desktop DEVIENT téléphone** : l'app se pose en fenêtre, puis la fenêtre rétrécit
+  réellement de 1920 à 390 px de large. L'app traverse ses vrais breakpoints (la Sidebar disparaît,
+  topbar et barre du bas mobiles apparaissent, cartes empilées) et le boîtier se referme autour :
+  « 100 % mobile », démontré par le responsive du produit, pas par un effet.
 - **05b** : la demande quitte le téléphone et arrive dans la boîte du coordinateur ; quand il clique
   « Je m'en occupe », le téléphone du coach se met à jour au même instant.
 - **05b → 06** : raccord flou vers la fiche joueur.

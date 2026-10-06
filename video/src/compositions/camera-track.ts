@@ -53,6 +53,8 @@ export const camera = makeCamera([
   { f: TB.sheetClose - 2 },
   { f: TB.sheetClose + 22, s: 1.3, cx: A.scorerSlot.x, cy: A.scorerSlot.y, ax: 1320, ay: 540 },
   { f: TB.captionOut + 4 },
+  // 05 → 05b : l'app se pose en « fenêtre », exactement comme le viewport qui va devenir téléphone.
+  { f: DG.swap - 2, s: 0.86, cx: 960, cy: 540, ax: 960, ay: 540, radius: 35, lift: 0.7 },
   // 05b : l'app desktop s'efface pendant la demande mobile, puis revient côté coordinateur.
   { f: DG.handoff - 1, s: 0.64, cx: 960, cy: 540, ax: 1180, ay: 600, radius: 34, lift: 0.7 },
   { f: DG.thread - 2 },

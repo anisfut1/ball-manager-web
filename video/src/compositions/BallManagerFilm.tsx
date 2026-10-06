@@ -44,7 +44,7 @@ function pathAt(frame: number): string {
   if (frame >= T.player.end) return "/dashboard";
   if (frame >= T.player.start) return "/joueurs/hugo-bernard";
   if (frame >= DG.thread) return "/derogations/demande";
-  if (frame >= T.derog.start) return "/derogations";
+  if (frame >= DG.handoff) return "/derogations";
   if (frame >= T.tables.start) return "/tables";
   if (frame >= T.matches.navClick) return "/matchs";
   return "/dashboard";
@@ -73,7 +73,8 @@ export function BallManagerFilm() {
   // L'app desktop s'efface pendant la demande sur mobile (05b), puis revient côté coordinateur.
   const productOpacity =
     tween(frame, [T.product.in, T.product.in + 26], [0, 1], theme.ease.out) *
-    (1 - tween(frame, [T.derog.start - 4, T.derog.start + 12], [0, 1], theme.ease.in) + tween(frame, [DG.handoff + 4, DG.handoff + 24], [0, 1], theme.ease.out));
+    (frame >= DG.swap && frame < DG.handoff + 4 ? 0 : 1) *
+    (frame >= DG.handoff + 4 && frame < DG.handoff + 30 ? tween(frame, [DG.handoff + 4, DG.handoff + 24], [0, 1], theme.ease.out) : 1);
   const blur = productBlur(frame);
   const hub = frame >= T.connected.start && frame < T.connected.end;
 

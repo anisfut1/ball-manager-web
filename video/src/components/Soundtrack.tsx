@@ -22,7 +22,7 @@ function Sfx({ at, src, volume = 1, rate = 1 }: { at: number; src: string; volum
 
 export function Soundtrack() {
   const clicks = [T.matches.navClick, T.tables.start - 16, TB.firstClick, TB.secondClick, DG.slotTap, DG.continueTap, DG.sendTap, DG.openTap, DG.takeTap];
-  const whooshes = [CHAOS.suckStart + 6, T.logo.flyStart, T.tables.start - 10, T.derog.start - 4, DG.handoff, T.player.start - 10, T.connected.start + 6, T.connected.end - 40];
+  const whooshes = [CHAOS.suckStart + 6, T.logo.flyStart, T.tables.start - 10, DG.morphFrom + 6, DG.handoff, T.player.start - 10, T.connected.start + 6, T.connected.end - 40];
   return (
     <>
       {CHAOS_BEATS.filter((f) => f < CHAOS.freeze).map((f, i) => (
