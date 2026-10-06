@@ -30,7 +30,7 @@ export function MobileViewport({ width = 390, height = 800, scrollY = 0, childre
     root.style.cssText = "display:flex;flex-direction:column;flex:1;min-height:100%;";
     doc.body.appendChild(root);
     setMount(root);
-    const families = ['400 15px "Geist Variable"', '600 15px "Geist Variable"', '500 15px "Space Grotesk Variable"', '400 30px "Instrument Serif"'];
+    const families = ['400 15px "Geist Variable"', '600 15px "Geist Variable"', '500 15px "Space Grotesk Variable"', '400 30px "Instrument Serif"', '700 30px "Archivo Variable"'];
     Promise.all(families.map((f) => doc.fonts.load(f)))
       .then(() => doc.fonts.ready)
       .finally(() => continueRender(handle));

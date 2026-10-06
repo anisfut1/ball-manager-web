@@ -19,7 +19,10 @@ export const theme = {
     night: "#0B0B0D",
   },
   fonts: {
-    display: "'Instrument Serif', ui-serif, Georgia, serif",
+    /** Titres marketing du film : sans-serif sportive, semi-condensée (V2 — retour « trop éditorial »). */
+    display: "'Archivo Variable', 'Geist Variable', ui-sans-serif, sans-serif",
+    /** Serif éditoriale de l'app (titres de page réels) — plus utilisée pour les messages du film. */
+    serif: "'Instrument Serif', ui-serif, Georgia, serif",
     sans: "'Geist Variable', ui-sans-serif, system-ui, sans-serif",
     data: "'Space Grotesk Variable', 'Geist Variable', ui-sans-serif, sans-serif",
   },
@@ -29,6 +32,8 @@ export const theme = {
     soft: Easing.bezier(0.45, 0, 0.2, 1),
     in: Easing.bezier(0.7, 0, 0.84, 0),
   },
+  /** Réglages typographiques des titres (Archivo : largeur 86 %, graisse 680). */
+  headline: { stretch: "86%", weight: 680, tracking: "-0.028em", lineHeight: 1.02 },
   spring: {
     ui: { damping: 18, stiffness: 170, mass: 0.7 },
     smooth: { damping: 22, stiffness: 90, mass: 1 },

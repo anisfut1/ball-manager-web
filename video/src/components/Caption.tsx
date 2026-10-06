@@ -15,8 +15,10 @@ export function MaskLine({ frame, at, out, children, size = 112, color = theme.c
         style={{
           fontFamily: font,
           fontSize: size,
-          lineHeight: 1.02,
-          letterSpacing: "-0.02em",
+          fontWeight: theme.headline.weight,
+          fontStretch: theme.headline.stretch,
+          lineHeight: theme.headline.lineHeight,
+          letterSpacing: theme.headline.tracking,
           color,
           whiteSpace: "nowrap",
           transform: `translate3d(0, ${(1 - p) * 105 - o * 30}%, 0)`,

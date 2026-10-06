@@ -1,6 +1,6 @@
 # Ball Manager — film produit (Remotion)
 
-Film de 68 s (1920×1080, 30 i/s) pour le site, LinkedIn, les présentations aux clubs et les démos commerciales.
+Film de 70 s (1920×1080, 30 i/s) pour le site, LinkedIn, les présentations aux clubs et les démos commerciales.
 
 **Le film n'a pas de fausse interface.** Tout ce qui apparaît « dans l'app » est rendu par les
 composants de `../src`, importés tels quels :
@@ -21,6 +21,23 @@ Les tokens (couleurs, ombres, rayons, typo) viennent de `src/app/globals.css`, s
 automatiquement (`scripts/sync-globals.mjs`) : changer le design system de l'app change le film.
 Les données de démo (`src/data/demo.ts`) sont typées avec les vrais DTO de l'API : si le contrat
 change, `npm run typecheck` casse.
+
+## V2 — « une scène = une idée = un point focal »
+
+Retouche après test auprès d'une personne qui ne connaissait pas le produit (trop de texte, trop
+d'informations simultanées, pas assez « basket »). Structure, transitions et DA conservées.
+
+- **Focus** (`src/presentation/focus.ts`) : les zones secondaires restent visibles mais reculent
+  (opacité, flou léger, désaturation, Sidebar/Topbar atténuées) ; l'élément focal est mis en relief.
+- **Composants « présentation »** (`src/presentation/`) : versions VIDÉO de MatchCard, des cartes
+  Tables de marque et de l'en-tête de dérogation — mêmes primitives (`surface-card`, `StatusBadge`,
+  `TeamLogo`, `PersonAvatar`, `Button`, `MatchHeadline`…), seulement l'essentiel. Aucun composant de
+  production n'est modifié pour la vidéo.
+- **Typographie** : titres en Archivo semi-condensé (sport + tech), plus de serif pour les messages.
+- **Textes** (un seul message à la fois) : Ball Manager · Gestion de club de basket → Un club. Un outil.
+  → Vos matchs. Automatiquement. → Ball Manager suggère. Vous décidez. → Le même outil. Dans la poche.
+  → Le coach demande. → Le coordinateur valide. → Chaque match compte. → Tout votre club. Au même
+  endroit. → Ball Manager · Pilotez votre club.
 
 ## Commandes
 

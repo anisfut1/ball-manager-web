@@ -1,6 +1,6 @@
 import type { CSSProperties, ReactNode } from "react";
 import { AbsoluteFill } from "remotion";
-import { BellRing, FileSpreadsheet, FileText, Mail, MessageCircle, PhoneMissed, Globe, CalendarRange } from "lucide-react";
+import { FileSpreadsheet, FileText, Mail, MessageCircle, PhoneMissed, Globe } from "lucide-react";
 import { springAt, tween } from "../lib/motion";
 import { theme } from "../theme";
 
@@ -13,8 +13,6 @@ import { theme } from "../theme";
  * aspirées vers le centre, d'où naît le logo (scène 02).
  */
 export const CHAOS = { freeze: 138, suckStart: 146, suckEnd: 178 } as const;
-/** Fenêtres agrandies : à l'écran, le chaos doit remplir le cadre et rester lisible. */
-const WINDOW_SCALE = 1.3;
 
 /* ── Chrome de fenêtre générique ─────────────────────────────────────── */
 
@@ -96,95 +94,21 @@ function Row({ r, row }: { r: number; row: string[] }) {
 
 function Federation() {
   const rows = [
-    ["J4", "10/10", "10:00", "SC Sète – Frontignan"],
-    ["J4", "10/10", "14:00", "SC Sète – Agde"],
-    ["J4", "10/10", "16:00", "SC Sète – Castelnau 2"],
-    ["J4", "10/10", "17:00", "Béziers – SC Sète"],
-    ["J4", "11/10", "15:30", "SC Sète – Pézenas"],
+    ["Sam 10/10", "14:00", "SC Sète", "Agde"],
+    ["Sam 10/10", "16:00", "SC Sète", "Castelnau 2"],
+    ["Sam 10/10", "17:00", "Béziers", "SC Sète"],
   ];
   return (
-    <Win title="Site fédéral — Calendrier des rencontres" icon={<Globe size={15} />} tint="#2563A8" width={520}>
-      <div style={{ padding: "10px 14px 14px" }}>
-        <div style={{ fontSize: 12, color: "#807E76", marginBottom: 8 }}>Compétition › Départementale › Poule B › Journée 4</div>
+    <Win title="Calendrier FFBB — Journée 4" icon={<Globe size={15} />} tint="#2563A8" width={480}>
+      <div style={{ padding: "6px 16px 12px" }}>
         {rows.map((r, i) => (
-          <div key={i} style={{ display: "grid", gridTemplateColumns: "40px 56px 56px 1fr", gap: 8, fontSize: 13.5, padding: "7px 0", borderTop: "1px solid #EEECE7", fontFamily: i === -1 ? undefined : theme.fonts.sans }}>
-            <span style={{ color: "#807E76" }}>{r[0]}</span>
-            <span>{r[1]}</span>
-            <span style={{ fontWeight: 600 }}>{r[2]}</span>
-            <span>{r[3]}</span>
-          </div>
-        ))}
-      </div>
-    </Win>
-  );
-}
-
-function ScoreSheet() {
-  return (
-    <Win title="feuille_de_match_21042.pdf — e-Marque" icon={<FileText size={15} />} tint="#C2331F" width={430}>
-      <div style={{ padding: 14, display: "flex", flexDirection: "column", gap: 8 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", fontSize: 12, fontWeight: 600 }}>
-          <span>ÉQUIPE A</span>
-          <span style={{ fontFamily: theme.fonts.data }}>58 – 64</span>
-          <span>ÉQUIPE B</span>
-        </div>
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(12, 1fr)", gap: 2 }}>
-          {Array.from({ length: 96 }, (_, i) => (
-            <span key={i} style={{ height: 13, border: "1px solid #E6E4DE", fontSize: 8.5, fontFamily: theme.fonts.data, display: "flex", alignItems: "center", justifyContent: "center", color: "#5E5D57" }}>
-              {(i * 7) % 5 === 0 ? (i % 40) + 2 : ""}
+          <div key={i} style={{ display: "grid", gridTemplateColumns: "84px 56px 1fr", alignItems: "center", gap: 10, fontSize: 16, padding: "10px 0", borderTop: i ? "1px solid #EEECE7" : undefined }}>
+            <span style={{ color: "#807E76", fontSize: 14 }}>{r[0]}</span>
+            <span style={{ fontFamily: theme.fonts.data, fontWeight: 600 }}>{r[1]}</span>
+            <span>
+              <b style={{ fontWeight: 650 }}>{r[2]}</b> <span style={{ color: "#807E76" }}>vs</span> <b style={{ fontWeight: 650 }}>{r[3]}</b>
             </span>
-          ))}
-        </div>
-        <div style={{ fontSize: 11.5, color: "#807E76" }}>Marqueur : ____________ · Chrono : ____________</div>
-      </div>
-    </Win>
-  );
-}
-
-function MailWin() {
-  return (
-    <Win title="Boîte de réception — 14 non lus" icon={<Mail size={15} />} tint="#5E5D57" width={470}>
-      {[
-        ["Comité départemental", "Dérogation U18 F : réponse avant vendredi", true],
-        ["Mairie — service des sports", "Créneaux gymnase du Lido modifiés", true],
-        ["Coach U13 F", "RE: RE: RE: horaire samedi ??", false],
-      ].map(([from, subject, unread], i) => (
-        <div key={i} style={{ display: "flex", gap: 10, padding: "10px 14px", borderBottom: "1px solid #EEECE7", fontSize: 13.5 }}>
-          <span style={{ width: 8, height: 8, marginTop: 6, borderRadius: 8, background: unread ? theme.colors.accent : "transparent" }} />
-          <span style={{ display: "flex", flexDirection: "column" }}>
-            <span style={{ fontWeight: unread ? 650 : 450 }}>{from}</span>
-            <span style={{ color: "#5E5D57" }}>{subject}</span>
-          </span>
-        </div>
-      ))}
-    </Win>
-  );
-}
-
-function Planning() {
-  const blocks = [
-    [0, 1, "U11"],
-    [0, 3, "U15"],
-    [1, 2, "U17"],
-    [1, 4, "SF"],
-    [2, 0, "U13"],
-    [2, 3, "S1"],
-    [3, 1, "U18"],
-    [3, 2, "?"],
-    [4, 4, "S2"],
-  ] as const;
-  return (
-    <Win title="Planning gymnases — semaine 41" icon={<CalendarRange size={15} />} tint="#A15C07" width={500}>
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(5, 1fr)", gridTemplateRows: "22px repeat(5, 30px)", gap: 4, padding: 12, fontSize: 11.5 }}>
-        {["Lun", "Mar", "Mer", "Ven", "Sam"].map((d) => (
-          <span key={d} style={{ color: "#807E76", textAlign: "center" }}>
-            {d}
-          </span>
-        ))}
-        {blocks.map(([c, r, label], i) => (
-          <span key={i} style={{ gridColumn: c + 1, gridRow: r + 2, borderRadius: 6, background: label === "?" ? "#FCE7E3" : ["#E8EEFF", "#FFF1DE", "#E3F4EA"][i % 3], color: label === "?" ? "#C2331F" : "#17171A", fontWeight: 600, display: "flex", alignItems: "center", justifyContent: "center" }}>
-            {label}
-          </span>
+          </div>
         ))}
       </div>
     </Win>
@@ -203,36 +127,98 @@ function Toast({ icon, title, text, tint }: { icon: ReactNode; title: string; te
   );
 }
 
-function Sticky({ text }: { text: string }) {
+/* ── Éléments « basket » lisibles en une seconde (V2) ─────────────────── */
+
+/** Feuille de match papier : score, quart-temps, cases de la table de marque. */
+function MatchSheet() {
+  const quarters = [
+    ["Q1", "14", "18"],
+    ["Q2", "16", "12"],
+    ["Q3", "11", "19"],
+    ["Q4", "17", "15"],
+  ];
   return (
-    <div style={{ width: 210, padding: "18px 16px", background: "#FBE7A1", boxShadow: "0 14px 30px -14px rgb(23 23 26 / 0.4)", fontFamily: theme.fonts.sans, fontSize: 19, fontWeight: 600, color: "#3A3320", lineHeight: 1.25 }}>{text}</div>
+    <Win title="Feuille de match — U17 M · J3" icon={<FileText size={15} />} tint="#C2331F" width={560}>
+      <div style={{ padding: "16px 20px 18px", display: "flex", flexDirection: "column", gap: 14 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "1fr auto 1fr", alignItems: "center", gap: 12 }}>
+          <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: "0.04em" }}>SC SÈTE</span>
+          <span style={{ fontFamily: theme.fonts.data, fontSize: 54, fontWeight: 600, letterSpacing: "-0.04em", lineHeight: 1 }}>58 – 64</span>
+          <span style={{ fontSize: 15, fontWeight: 700, letterSpacing: "0.04em", textAlign: "right" }}>AGDE</span>
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", border: "1px solid #E6E4DE", borderRadius: 8, overflow: "hidden", fontFamily: theme.fonts.data }}>
+          {quarters.map(([q, a, b]) => (
+            <div key={q} style={{ display: "flex", flexDirection: "column", alignItems: "center", padding: "6px 0", borderRight: "1px solid #EEECE7", fontSize: 15 }}>
+              <span style={{ fontSize: 11, color: "#807E76", letterSpacing: "0.1em" }}>{q}</span>
+              <span>
+                {a} – {b}
+              </span>
+            </div>
+          ))}
+        </div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 10, fontSize: 13 }}>
+          {["Marqueur", "Chronométreur", "Arbitre"].map((r) => (
+            <div key={r} style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+              <span style={{ color: "#807E76" }}>{r}</span>
+              <span style={{ height: 22, borderBottom: "1.5px dashed #C9C6BE", color: "#C2331F", fontWeight: 600 }}>{r === "Marqueur" ? "???" : ""}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+    </Win>
   );
 }
 
-/* ── Programme d'apparition : de plus en plus serré ─────────────────── */
+/** Fiche stats d'un joueur (tableur exporté à la main). */
+function PlayerStats() {
+  return (
+    <Win title="stats_joueurs_2026.xlsx" icon={<FileSpreadsheet size={15} />} tint="#1F7A45" width={430}>
+      <div style={{ padding: "16px 18px", display: "flex", alignItems: "center", gap: 16 }}>
+        <span style={{ width: 64, height: 64, borderRadius: 64, background: "#F1F0EC", display: "flex", alignItems: "center", justifyContent: "center", fontFamily: theme.fonts.data, fontSize: 26, fontWeight: 600 }}>#7</span>
+        <span style={{ display: "flex", flexDirection: "column", gap: 2, flex: 1 }}>
+          <span style={{ fontSize: 18, fontWeight: 650 }}>Hugo Bernard · U17 M</span>
+          <span style={{ fontSize: 14, color: "#807E76" }}>vs Agde — à recopier depuis la feuille</span>
+        </span>
+        <span style={{ display: "flex", flexDirection: "column", alignItems: "flex-end" }}>
+          <span style={{ fontFamily: theme.fonts.data, fontSize: 40, fontWeight: 600, lineHeight: 1 }}>21</span>
+          <span style={{ fontSize: 12, color: "#807E76", letterSpacing: "0.1em" }}>PTS</span>
+        </span>
+      </div>
+    </Win>
+  );
+}
 
-type Item = { at: number; x: number; y: number; tilt: number; node: ReactNode };
+/** Tracé de terrain en fond : le basket se lit avant le moindre mot. */
+function FullCourt() {
+  return (
+    <svg width="1920" height="1080" viewBox="0 0 1920 1080" style={{ position: "absolute", inset: 0 }} aria-hidden>
+      <g fill="none" stroke="rgb(23 23 26 / 0.09)" strokeWidth="3">
+        <rect x="90" y="110" width="1740" height="860" rx="6" />
+        <line x1="960" y1="110" x2="960" y2="970" />
+        <circle cx="960" cy="540" r="120" />
+        <rect x="90" y="400" width="300" height="280" />
+        <rect x="1530" y="400" width="300" height="280" />
+        <path d="M90 170 H230 A420 420 0 0 1 230 910 H90" />
+        <path d="M1830 170 H1690 A420 420 0 0 0 1690 910 H1830" />
+        <circle cx="390" cy="540" r="90" />
+        <circle cx="1530" cy="540" r="90" />
+      </g>
+    </svg>
+  );
+}
+
+/* ── Programme d'apparition : 5 éléments lisibles, puis l'emballement ── */
+
+type Item = { at: number; x: number; y: number; tilt: number; scale: number; node: ReactNode };
 
 const ITEMS: Item[] = [
-  { at: 4, x: 230, y: 150, tilt: -1.2, node: <Chat title="Parents U15 M · 38 participants" lines={[["Sophie", "Qui tient la table samedi à 14h ?"], ["Karim", "Pas moi, je bosse"], ["Moi", "Je regarde le planning…", true]]} /> },
-  { at: 22, x: 1180, y: 120, tilt: 1, node: <Sheet title="planning_tables_v7_FINAL (2).xlsx" rows={[["Date", "Match", "Marqueur", "Chrono"], ["10/10", "U11 M", "Inès", "Théo"], ["10/10", "U15 M", "???", "Camille"], ["10/10", "U17 M", "Hugo", "???"], ["11/10", "SF", "???", "???"]]} /> },
-  { at: 38, x: 640, y: 560, tilt: 0.8, node: <Federation /> },
-  { at: 52, x: 140, y: 600, tilt: -0.6, node: <ScoreSheet /> },
-  { at: 63, x: 1340, y: 600, tilt: -1, node: <MailWin /> },
-  { at: 72, x: 1500, y: 90, tilt: 0, node: <Toast icon={<MessageCircle size={17} />} tint="#1E9E5A" title="Coach U17 M" text="On joue à quelle heure finalement ?" /> },
-  { at: 80, x: 880, y: 80, tilt: 1.4, node: <Planning /> },
-  { at: 87, x: 80, y: 80, tilt: 0, node: <Toast icon={<BellRing size={17} />} tint="#A15C07" title="Rappel" text="Convocations U13 F à envoyer" /> },
-  { at: 93, x: 1460, y: 420, tilt: 0, node: <Toast icon={<PhoneMissed size={17} />} tint="#C2331F" title="Appel manqué" text="Président — 3 appels" /> },
-  { at: 98, x: 470, y: 330, tilt: -2, node: <Sticky text={"TABLE U15\n→ ???"} /> },
-  { at: 103, x: 980, y: 380, tilt: 0.6, node: <Chat title="Bureau du club" lines={[["Marc", "Dérogation U18 refusée ?"], ["Julie", "Faut relancer le comité"]]} /> },
-  { at: 107, x: 60, y: 420, tilt: 0, node: <Toast icon={<MessageCircle size={17} />} tint="#1E9E5A" title="Parents U11 M" text="12 nouveaux messages" /> },
-  { at: 111, x: 1250, y: 880, tilt: 0, node: <Toast icon={<FileText size={17} />} tint="#C2331F" title="e-Marque" text="Feuille de match à récupérer" /> },
-  { at: 114, x: 300, y: 860, tilt: 0, node: <Toast icon={<Mail size={17} />} tint="#2563A8" title="Comité départemental" text="Arbitre manquant — U11 M" /> },
-  { at: 117, x: 760, y: 200, tilt: 1, node: <Sheet title="stats_saison_2026.csv" width={420} rows={[["Joueur", "Pts", "3pts", "LF"], ["Bernard", "98", "11", "13"], ["?", "?", "?", "?"]]} /> },
-  { at: 120, x: 1560, y: 260, tilt: 0, node: <Toast icon={<MessageCircle size={17} />} tint="#1E9E5A" title="Sophie" text="Du coup quelqu'un pour la table ??" /> },
-  { at: 122, x: 820, y: 860, tilt: 0, node: <Toast icon={<BellRing size={17} />} tint="#A15C07" title="Planning" text="Conflit de créneau — Lido, samedi" /> },
-  { at: 124, x: 40, y: 260, tilt: 0, node: <Toast icon={<PhoneMissed size={17} />} tint="#C2331F" title="Appel manqué" text="Coach Seniors F" /> },
-  { at: 126, x: 1100, y: 700, tilt: 0, node: <Toast icon={<MessageCircle size={17} />} tint="#1E9E5A" title="Parents U15 M" text="27 nouveaux messages" /> },
+  { at: 6, x: 610, y: 380, tilt: -1, scale: 1.4, node: <MatchSheet /> },
+  { at: 30, x: 1420, y: 330, tilt: 1.2, scale: 1.35, node: <Chat title="Parents U15 M" lines={[["Sophie", "Qui tient la table samedi à 14h ?"], ["Karim", "Pas moi, je joue à 16h"], ["Moi", "Je regarde le planning…", true]]} /> },
+  { at: 52, x: 1270, y: 790, tilt: -0.8, scale: 1.3, node: <Sheet title="planning_tables_v7_FINAL.xlsx" rows={[["Match", "Marqueur", "Chrono"], ["U15 M – Agde", "???", "Camille"], ["U17 M – Castelnau", "Hugo", "???"], ["Seniors F – Pézenas", "???", "???"]]} /> },
+  { at: 72, x: 560, y: 800, tilt: 0.8, scale: 1.3, node: <Federation /> },
+  { at: 92, x: 1000, y: 210, tilt: -1.4, scale: 1.3, node: <PlayerStats /> },
+  { at: 110, x: 1610, y: 110, tilt: 0, scale: 1.2, node: <Toast icon={<MessageCircle size={17} />} tint="#1E9E5A" title="Coach U17 M" text="On joue à quelle heure finalement ?" /> },
+  { at: 118, x: 300, y: 120, tilt: 0, scale: 1.2, node: <Toast icon={<PhoneMissed size={17} />} tint="#C2331F" title="Appel manqué" text="Président — 3 appels" /> },
+  { at: 124, x: 1650, y: 980, tilt: 0, scale: 1.2, node: <Toast icon={<Mail size={17} />} tint="#2563A8" title="Comité départemental" text="Dérogation U18 F : réponse avant vendredi" /> },
 ];
 
 /** Instants d'apparition (le design sonore pose une notification sur chacun). */
@@ -240,29 +226,28 @@ export const CHAOS_BEATS = ITEMS.map((item) => item.at);
 
 export function S01Chaos({ frame }: { frame: number }) {
   // Tension : la caméra se resserre à mesure que tout s'empile.
-  const push = 1 + tween(frame, [0, CHAOS.freeze], [0, 0.07], theme.ease.soft);
+  const push = 1 + tween(frame, [0, CHAOS.freeze], [0, 0.05], theme.ease.soft);
   // Silence : tout se fige et se désature.
   const silence = tween(frame, [CHAOS.freeze, CHAOS.freeze + 8], [0, 1], theme.ease.out);
-  const unread = Math.round(tween(frame, [10, CHAOS.freeze], [3, 147], theme.ease.soft));
 
   return (
     <AbsoluteFill style={{ background: theme.colors.stone, overflow: "hidden" }}>
-      <AbsoluteFill className="court-pattern" style={{ opacity: 0.6 }} />
+      <AbsoluteFill style={{ opacity: tween(frame, [0, 20], [0, 1]) * (1 - tween(frame, [CHAOS.suckStart, CHAOS.suckEnd], [0, 1])) }}>
+        <FullCourt />
+      </AbsoluteFill>
       <AbsoluteFill style={{ transform: `scale(${push})`, filter: silence > 0 ? `saturate(${1 - silence * 0.85})` : undefined }}>
         {ITEMS.map((item, i) => {
           const p = springAt(frame, item.at, theme.spring.ui);
           if (p <= 0.001) return null;
-          // Chaque arrivée repousse légèrement les fenêtres précédentes (profondeur).
-          const later = ITEMS.filter((o) => o.at > item.at && frame >= o.at).length;
-          const depth = 1 - Math.min(0.12, later * 0.012);
+          // Le dernier arrivé est le point focal : les précédents reculent (profondeur, atténuation).
+          const later = ITEMS.filter((o) => o.at > item.at && frame >= o.at + 4).length;
+          const depth = Math.min(1, later);
           // Aspiration vers le centre, les plus lointaines d'abord.
-          const dist = Math.hypot(item.x - 760, item.y - 400);
+          const dist = Math.hypot(item.x - 960, item.y - 540);
           const delay = Math.round((1 - dist / 1100) * 10);
           const suck = tween(frame, [CHAOS.suckStart + delay * 0.6, CHAOS.suckEnd - 2], [0, 1], theme.ease.inOut);
-          const cx = 960 - 200;
-          const cy = 540 - 120;
-          const x = item.x + (cx - item.x) * suck;
-          const y = item.y + (cy - item.y) * suck;
+          const x = item.x + (960 - item.x) * suck;
+          const y = item.y + (540 - item.y) * suck;
           return (
             <div
               key={i}
@@ -272,10 +257,9 @@ export function S01Chaos({ frame }: { frame: number }) {
                 top: y,
                 zIndex: i,
                 whiteSpace: "pre-line",
-                transformOrigin: "200px 120px",
                 opacity: Math.min(1, p * 1.6) * (1 - tween(suck, [0.7, 1], [0, 1])),
-                transform: `translate3d(0, ${(1 - p) * 26}px, 0) scale(${WINDOW_SCALE * (0.94 + 0.06 * p) * depth * (1 - suck * 0.95)}) rotate(${item.tilt * (1 - suck)}deg)`,
-                filter: `blur(${(1 - Math.min(1, p)) * 6 + suck * 10}px) brightness(${1 - (1 - depth) * 0.6})`,
+                transform: `translate(-50%, -50%) translate3d(0, ${(1 - p) * 30}px, 0) scale(${item.scale * (0.94 + 0.06 * p) * (1 - 0.06 * depth) * (1 - suck * 0.95)}) rotate(${item.tilt * (1 - suck)}deg)`,
+                filter: `blur(${(1 - Math.min(1, p)) * 6 + depth * 1.2 + suck * 10}px) brightness(${1 - depth * 0.05}) saturate(${1 - depth * 0.35})`,
               }}
             >
               {item.node}
@@ -283,12 +267,6 @@ export function S01Chaos({ frame }: { frame: number }) {
           );
         })}
       </AbsoluteFill>
-
-      {/* Horloge + compteur : le rythme de la journée d'un bénévole. */}
-      <div style={{ position: "absolute", left: 72, bottom: 64, display: "flex", alignItems: "baseline", gap: 28, fontFamily: theme.fonts.data, color: theme.colors.ink, opacity: tween(frame, [6, 20], [0, 1]) * (1 - tween(frame, [CHAOS.suckStart, CHAOS.suckStart + 10], [0, 1])) }}>
-        <span style={{ fontSize: 15, letterSpacing: "0.16em", textTransform: "uppercase", color: theme.colors.muted }}>Samedi · 8 h 12</span>
-        <span style={{ fontSize: 15, letterSpacing: "0.16em", textTransform: "uppercase", color: "#C2331F", fontVariantNumeric: "tabular-nums" }}>{unread} notifications</span>
-      </div>
     </AbsoluteFill>
   );
 }

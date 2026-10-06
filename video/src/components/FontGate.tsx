@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from "react";
 import { continueRender, delayRender } from "remotion";
 
-const FAMILIES = ['400 15px "Geist Variable"', '600 15px "Geist Variable"', '500 15px "Space Grotesk Variable"', '400 40px "Instrument Serif"'];
+const FAMILIES = ['400 15px "Geist Variable"', '600 15px "Geist Variable"', '500 15px "Space Grotesk Variable"', '400 40px "Instrument Serif"', '700 40px "Archivo Variable"'];
 
 /** Bloque le rendu tant que les 3 familles de l'app ne sont pas chargées (aucune frame en police de repli). */
 export function FontGate({ children }: { children: ReactNode }) {

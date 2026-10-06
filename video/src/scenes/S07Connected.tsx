@@ -1,4 +1,4 @@
-import { BarChart3, CalendarClock, CalendarDays, ClipboardList, FileText, RefreshCw, Shirt, Users } from "lucide-react";
+import { BarChart3, CalendarClock, CalendarDays, ClipboardList, Shirt, Users } from "lucide-react";
 import { IconMedallion } from "@/components/ui/Card";
 import { MaskLine } from "../components/Caption";
 import { MobileViewport } from "../components/MobileViewport";
@@ -20,19 +20,20 @@ export const HUB = { x: 960, y: 590, s: 0.42 };
  * IconMedallion) se branchent sur l'application, qui est au centre — pas un
  * schéma abstrait : c'est le vrai dashboard, en direct, qui reçoit les flux.
  */
+/** V2 : 6 catégories, une étiquette chacune — l'all-in-one se lit sans phrase. */
 const MODULES = [
-  { key: "ffbb", title: "FFBB", meta: "Calendrier & résultats officiels", icon: <RefreshCw />, x: 300, y: 470, tone: "neutral" as const },
-  { key: "emarque", title: "e-Marque", meta: "Feuilles de match importées", icon: <FileText />, x: 300, y: 730, tone: "neutral" as const },
-  { key: "matchs", title: "Matchs", meta: "Toute la saison, par journée", icon: <CalendarDays />, x: 700, y: 292, tone: "accent" as const },
-  { key: "joueurs", title: "Joueurs", meta: "Fiches et historique", icon: <Users />, x: 1220, y: 292, tone: "accent" as const },
-  { key: "stats", title: "Statistiques", meta: "Par joueur, par match", icon: <BarChart3 />, x: 1620, y: 470, tone: "accent" as const },
-  { key: "tables", title: "Tables de marque", meta: "Suggestions expliquées", icon: <ClipboardList />, x: 1620, y: 730, tone: "accent" as const },
-  { key: "equipes", title: "Équipes", meta: "Effectifs et coachs", icon: <Shirt />, x: 600, y: 915, tone: "accent" as const },
-  { key: "derogations", title: "Dérogations", meta: "Du coach au coordinateur", icon: <CalendarClock />, x: 960, y: 915, tone: "accent" as const },
+  { key: "matchs", title: "Matchs", icon: <CalendarDays />, x: 300, y: 380 },
+  { key: "stats", title: "Stats", icon: <BarChart3 />, x: 1620, y: 380 },
+  { key: "joueurs", title: "Joueurs", icon: <Users />, x: 300, y: 800 },
+  { key: "tables", title: "Tables", icon: <ClipboardList />, x: 1620, y: 800 },
+  { key: "equipes", title: "Équipes", icon: <Shirt />, x: 960, y: 212 },
+  { key: "derogations", title: "Dérogations", icon: <CalendarClock />, x: 960, y: 962 },
 ];
 
-const appear = (i: number) => C.start + 34 + i * 4;
-const COLLAPSE = C.start + 142;
+const appear = (i: number) => C.start + 36 + i * 8;
+const COLLAPSE = C.start + 152;
+/** La promesse, une fois tout rassemblé. */
+export const ALL_IN_ONE = { caption: COLLAPSE + 22, captionOut: C.end - 34 } as const;
 
 function collapseT(frame: number, i: number) {
   return tween(frame, [COLLAPSE + i * 1.5, COLLAPSE + 16 + i * 1.5], [0, 1], theme.ease.in);
@@ -85,27 +86,19 @@ export function S07Modules({ frame }: { frame: number }) {
               position: "absolute",
               left: x,
               top: y,
-              width: 300,
               display: "flex",
               alignItems: "center",
-              gap: 14,
-              padding: 14,
+              gap: 16,
+              padding: "14px 24px 14px 14px",
               transform: `translate(-50%, -50%) scale(${(0.8 + 0.2 * Math.min(1, p)) * (1 - k * 0.7)})`,
               opacity: Math.min(1, p * 1.6) * (1 - k),
               filter: p < 0.99 || k > 0 ? `blur(${(1 - Math.min(1, p)) * 8 + k * 8}px)` : undefined,
             }}
           >
-            <IconMedallion tone={m.tone} size="lg">
+            <IconMedallion tone="accent" size="lg" className="!size-14 [&_svg]:!size-6">
               {m.icon}
             </IconMedallion>
-            <span style={{ display: "flex", flexDirection: "column", gap: 2 }}>
-              <span className="type-card text-foreground" style={{ fontSize: 17 }}>
-                {m.title}
-              </span>
-              <span className="type-meta" style={{ fontSize: 14 }}>
-                {m.meta}
-              </span>
-            </span>
+            <span style={{ fontFamily: theme.fonts.display, fontStretch: theme.headline.stretch, fontWeight: 700, fontSize: 30, letterSpacing: "0.03em", textTransform: "uppercase", color: theme.colors.ink, whiteSpace: "nowrap" }}>{m.title}</span>
           </div>
         );
       })}
@@ -114,14 +107,14 @@ export function S07Modules({ frame }: { frame: number }) {
 }
 
 export function S07Caption({ frame }: { frame: number }) {
-  if (frame < C.start + 50 || frame > C.end + 6) return null;
+  if (frame < ALL_IN_ONE.caption - 2 || frame > ALL_IN_ONE.captionOut + 14) return null;
   return (
-    <div style={{ position: "absolute", top: 96, left: 0, right: 0, display: "flex", justifyContent: "center", gap: 30 }}>
-      <MaskLine frame={frame} at={C.start + 60} out={C.end - 70} size={84}>
-        Moins d&apos;administratif.
+    <div style={{ position: "absolute", top: 120, left: 0, right: 0, display: "flex", justifyContent: "center", gap: 28 }}>
+      <MaskLine frame={frame} at={ALL_IN_ONE.caption} out={ALL_IN_ONE.captionOut} size={92}>
+        Tout votre club.
       </MaskLine>
-      <MaskLine frame={frame} at={C.start + 80} out={C.end - 68} size={84} color={theme.colors.accent}>
-        Plus de basket.
+      <MaskLine frame={frame} at={ALL_IN_ONE.caption + 10} out={ALL_IN_ONE.captionOut + 2} size={92} color={theme.colors.accent}>
+        Au même endroit.
       </MaskLine>
     </div>
   );
@@ -132,9 +125,10 @@ export function S07Caption({ frame }: { frame: number }) {
  * mobile (barre du bas, cartes empilées), posé contre l'app desktop.
  */
 export function S07Phone({ frame }: { frame: number }) {
-  if (frame < C.start + 36 || frame > COLLAPSE + 24) return null;
+  if (frame < C.start + 36 || frame > ALL_IN_ONE.captionOut + 12) return null;
   const p = springAt(frame, C.start + 44, theme.spring.smooth);
-  const k = tween(frame, [COLLAPSE + 4, COLLAPSE + 20], [0, 1], theme.ease.in);
+  // Le téléphone reste aux côtés de l'app pendant la promesse, puis s'efface avec le retour au plan large.
+  const k = tween(frame, [ALL_IN_ONE.captionOut - 6, ALL_IN_ONE.captionOut + 10], [0, 1], theme.ease.in);
   const scale = 0.5 * (1 - k * 0.6);
   const x = 1300 + (HUB.x - 1300) * k;
   const y = 700 + (1 - p) * 80 + (HUB.y - 700) * k;

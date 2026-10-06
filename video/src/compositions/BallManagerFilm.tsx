@@ -7,8 +7,8 @@ import { Scrim } from "../components/Caption";
 import { Soundtrack } from "../components/Soundtrack";
 import { S01Chaos, CHAOS } from "../scenes/S01Chaos";
 import { S02Logo } from "../scenes/S02Logo";
-import { DashboardPage } from "../scenes/S03Dashboard";
-import { FieldChips, MatchesPage, MATCH_CAPTION_OUT, S04Overlay } from "../scenes/S04Matches";
+import { DASH_FOCUS, DashboardPage } from "../scenes/S03Dashboard";
+import { MatchesPage, MATCH_CAPTION_OUT, S04Overlay } from "../scenes/S04Matches";
 import { S05Overlay, TablesPage, TB } from "../scenes/S05Tables";
 import { DerogationThreadPage, DerogationsInboxPage, DG, S05bOverlay, S05bPhone } from "../scenes/S05bDerogations";
 import { PlayerPage, S06Overlay } from "../scenes/S06Player";
@@ -25,7 +25,7 @@ import { T } from "./timeline";
 type PageDef = { key: string; from: number; to: number; path: string; fadeIn?: number; render: (frame: number) => ReactNode };
 
 const PAGES: PageDef[] = [
-  { key: "dashboard", from: T.product.in, to: T.dashboard.end, path: "/dashboard", render: (f) => <DashboardPage frame={f} start={T.dashboard.start} /> },
+  { key: "dashboard", from: T.product.in, to: T.dashboard.end, path: "/dashboard", render: (f) => <DashboardPage frame={f} start={T.dashboard.start} focus={DASH_FOCUS} /> },
   {
     key: "matches",
     from: T.matches.start,
@@ -110,7 +110,6 @@ export function BallManagerFilm() {
       {/* Habillages écran */}
       <Scrim frame={frame} at={T.matches.start} out={MATCH_CAPTION_OUT} width={1000} />
       <S04Overlay frame={frame} />
-      <FieldChips frame={frame} at={MATCH_CAPTION_OUT + 22} out={T.tables.start - 22} />
       <Scrim frame={frame} at={TB.sheetOpen} out={TB.captionOut} width={1060} />
       <S05Overlay frame={frame} />
       <S05bOverlay frame={frame} />

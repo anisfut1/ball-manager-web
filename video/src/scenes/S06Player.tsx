@@ -5,8 +5,9 @@ import { StatusBadge } from "@/components/ui/Badge";
 import { Table, TBody, THead, Td, Th, Tr } from "@/components/ui/Table";
 import { MATCH_STATUS_LABELS, formatSecondsPlayed } from "@/features/matches/detail/labels";
 import { PLAYER, PLAYER_MATCHES } from "../data/demo";
-import { Eyebrow, MaskLine } from "../components/Caption";
+import { MaskLine } from "../components/Caption";
 import { count, enter, tween } from "../lib/motion";
+import { dim } from "../presentation/focus";
 import { T } from "../compositions/timeline";
 import { theme } from "../theme";
 
@@ -49,7 +50,7 @@ export function PlayerPage({ frame, start }: { frame: number; start: number }) {
         </div>
       </header>
 
-      <section className="flex flex-col gap-4">
+      <section className="flex flex-col gap-4" style={dim(tween(frame, [start + 40, start + 56], [0, 0.8], theme.ease.out))}>
         <div style={e(18, { y: 12 })}>
           <SectionHeader icon={<BarChart3 />} title={`Matchs (${PLAYER_MATCHES.length})`} description="Statistiques lues sur chaque feuille e-Marque." />
         </div>
@@ -119,11 +120,10 @@ export function PlayerPage({ frame, start }: { frame: number; start: number }) {
 const played = [...PLAYER_MATCHES].reverse();
 const points = played.map((m) => m.stats?.points ?? 0);
 const totalPoints = points.reduce((a, b) => a + b, 0);
-const totalSeconds = played.reduce((a, m) => a + (m.stats?.secondsPlayed ?? 0), 0);
 
 function PointsChart({ frame, at }: { frame: number; at: number }) {
-  const W = 560;
-  const H = 190;
+  const W = 640;
+  const H = 200;
   const max = 28;
   const pts = points.map((p, i) => [16 + (i * (W - 32)) / (points.length - 1), H - 14 - (p / max) * (H - 34)] as const);
   const d = pts.map(([x, y], i) => `${i ? "L" : "M"}${x.toFixed(1)} ${y.toFixed(1)}`).join(" ");
@@ -174,33 +174,27 @@ export function S06Overlay({ frame }: { frame: number }) {
   const out = P.end - 30;
   if (frame < at - 2 || frame > out + 14) return null;
   const exitT = tween(frame, [out, out + 12], [0, 1], theme.ease.in);
+  // V2 : 3 chiffres, pas un de plus.
   const kpis = [
-    { value: count(frame, at + 14, played.length), label: "matchs joués" },
-    { value: count(frame, at + 18, totalPoints), label: "points" },
-    { value: (count(frame, at + 22, Math.round((totalPoints / played.length) * 10)) / 10).toLocaleString("fr-FR", { minimumFractionDigits: 1 }), label: "pts / match" },
-    { value: `${count(frame, at + 26, Math.round(totalSeconds / 60))}′`, label: "temps de jeu" },
+    { value: String(count(frame, at + 12, played.length)), label: "matchs" },
+    { value: String(count(frame, at + 16, totalPoints)), label: "points" },
+    { value: (count(frame, at + 20, Math.round((totalPoints / played.length) * 10)) / 10).toLocaleString("fr-FR", { minimumFractionDigits: 1 }), label: "pts / match" },
   ];
   return (
-    <div style={{ position: "absolute", left: 120, top: 200, opacity: 1 - exitT, filter: exitT > 0 ? `blur(${exitT * 6}px)` : undefined }}>
-      <Eyebrow frame={frame} at={at}>
-        Joueurs & statistiques
-      </Eyebrow>
-      <div style={{ marginTop: 24 }}>
-        <MaskLine frame={frame} at={at + 4} size={84}>
-          Chaque match compte.
-        </MaskLine>
-      </div>
-      <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "repeat(2, 260px)", rowGap: 28 }}>
+    <div style={{ position: "absolute", left: 120, top: 210, opacity: 1 - exitT, filter: exitT > 0 ? `blur(${exitT * 6}px)` : undefined }}>
+      <MaskLine frame={frame} at={at} size={84}>
+        Chaque match compte.
+      </MaskLine>
+      <div style={{ marginTop: 56, display: "flex", gap: 56 }}>
         {kpis.map((k, i) => (
-          <div key={k.label} style={{ display: "flex", flexDirection: "column", gap: 4, ...enter(frame, at + 12 + i * 4, { y: 16 }).style }}>
-            <span style={{ fontFamily: theme.fonts.data, fontSize: 60, fontWeight: 500, letterSpacing: "-0.04em", lineHeight: 1, color: theme.colors.ink, fontVariantNumeric: "tabular-nums" }}>{k.value}</span>
-            <span style={{ fontFamily: theme.fonts.sans, fontSize: 19, color: theme.colors.muted }}>{k.label}</span>
+          <div key={k.label} style={{ display: "flex", flexDirection: "column", gap: 6, ...enter(frame, at + 10 + i * 4, { y: 18 }).style }}>
+            <span style={{ fontFamily: theme.fonts.display, fontStretch: theme.headline.stretch, fontSize: 104, fontWeight: 700, letterSpacing: "-0.04em", lineHeight: 0.95, color: i === 2 ? theme.colors.accent : theme.colors.ink, fontVariantNumeric: "tabular-nums" }}>{k.value}</span>
+            <span style={{ fontFamily: theme.fonts.sans, fontSize: 22, fontWeight: 500, color: theme.colors.muted }}>{k.label}</span>
           </div>
         ))}
       </div>
-      <div style={{ marginTop: 40, ...enter(frame, at + 28, { y: 14 }).style }}>
-        <p style={{ fontFamily: theme.fonts.data, fontSize: 14, letterSpacing: "0.14em", textTransform: "uppercase", color: theme.colors.muted, margin: "0 0 14px" }}>Points par match · feuilles e-Marque</p>
-        <PointsChart frame={frame} at={at + 34} />
+      <div style={{ marginTop: 52, ...enter(frame, at + 24, { y: 14 }).style }}>
+        <PointsChart frame={frame} at={at + 28} />
       </div>
     </div>
   );

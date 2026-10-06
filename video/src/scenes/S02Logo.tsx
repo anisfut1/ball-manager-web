@@ -64,11 +64,37 @@ export function S02Logo({ frame }: { frame: number }) {
         Ball Manager
       </div>
 
-      <div style={{ position: "absolute", top: 600, left: 0, right: 0, display: "flex", justifyContent: "center", gap: 34 }}>
-        <MaskLine frame={frame} at={L.club} out={L.out} size={76} style={{ letterSpacing: "0.04em" }}>
+      {/* Positionnement : on sait tout de suite que c'est du basket. */}
+      <div
+        style={{
+          position: "absolute",
+          top: 596,
+          left: 0,
+          right: 0,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          gap: 14,
+          opacity: tween(frame, [L.tagline, L.tagline + 10], [0, 1]) * (1 - tween(frame, [L.taglineOut, L.taglineOut + 6], [0, 1], theme.ease.in)),
+          transform: `translate3d(0, ${(1 - springAt(frame, L.tagline, theme.spring.ui)) * 14}px, 0)`,
+          fontFamily: theme.fonts.display,
+          fontStretch: theme.headline.stretch,
+          fontWeight: 600,
+          fontSize: 30,
+          letterSpacing: "0.14em",
+          textTransform: "uppercase",
+          color: theme.colors.muted,
+        }}
+      >
+        <span style={{ width: 12, height: 12, borderRadius: 12, background: theme.colors.ball }} />
+        Gestion de club de basket
+      </div>
+
+      <div style={{ position: "absolute", top: 590, left: 0, right: 0, display: "flex", justifyContent: "center", gap: 30 }}>
+        <MaskLine frame={frame} at={L.club} out={L.out} size={84}>
           UN CLUB.
         </MaskLine>
-        <MaskLine frame={frame} at={L.outil} out={L.out + 2} size={76} style={{ letterSpacing: "0.04em" }}>
+        <MaskLine frame={frame} at={L.outil} out={L.out + 2} size={84}>
           UN OUTIL<span style={{ color: theme.colors.accent }}>.</span>
         </MaskLine>
       </div>

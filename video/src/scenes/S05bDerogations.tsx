@@ -1,4 +1,4 @@
-import { ArrowRight, MessageSquareText, Plus, Send } from "lucide-react";
+import { ArrowRight, Check, Inbox, MessageSquareText, Plus, Send } from "lucide-react";
 import { PageContainer, PageHeader, BackButton } from "@/components/ui/PageHeader";
 import { Button, ButtonLink } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
@@ -11,12 +11,14 @@ import { VenuePlanning } from "@/features/derogation-requests/VenuePlanning";
 import { RequestThread } from "@/features/derogation-requests/RequestThread";
 import { RequestSections } from "@/features/derogation-requests/RequestList";
 import { formatDayLongCapitalized, formatShortDateTime, formatTime } from "@/features/derogation-requests/labels";
-import { AVAILABILITY, BASE, CHOSEN_SLOT, CLUB, COACH, DEROG_CONTEXT, DEROG_MATCH, INBOX, TZ, VENUES, derogationRequest } from "../data/demo";
+import { AVAILABILITY, BASE, CHOSEN_SLOT, CLUB, COACH, DEROG_MATCH, INBOX, TZ, VENUES, derogationRequest } from "../data/demo";
 import { ProductShell } from "../components/ProductShell";
+import { PresentationRequest } from "../presentation/PresentationRequest";
+import { shellDimCss } from "../presentation/focus";
 import { TablesPage } from "./S05Tables";
 import { MobileViewport } from "../components/MobileViewport";
 import { PHONE, PhoneFrame, Tap } from "../components/PhoneFrame";
-import { Eyebrow, MaskLine } from "../components/Caption";
+import { MaskLine } from "../components/Caption";
 import { enter, springAt, tween } from "../lib/motion";
 import { T } from "../compositions/timeline";
 import { theme } from "../theme";
@@ -140,7 +142,7 @@ function phoneScroll(frame: number): number {
   if (frame < DG.coachIn) return 0;
   if (frame < DG.summary) return tween(frame, [DG.coachIn + 14, DG.coachIn + 50], [0, 470], theme.ease.inOut);
   if (frame < DG.sent) return tween(frame, [DG.summary + 4, DG.typeFrom + 8], [0, 250], theme.ease.inOut);
-  return tween(frame, [DG.taken + 8, DG.taken + 30], [0, 160], theme.ease.inOut);
+  return 0;
 }
 
 function DeviceScreen({ frame, width, height }: { frame: number; width: number; height: number }) {
@@ -177,6 +179,36 @@ function DeviceScreen({ frame, width, height }: { frame: number; width: number; 
   );
 }
 
+/** Cadrages successifs DANS le téléphone : le créneau, le bouton, le statut. Coordonnées du viewport mobile. */
+const ZOOM_KEYS: Array<[number, { w: number; s: number; vx: number; vy: number; sx: number; sy: number }]> = [
+  [DG.coachIn + 14, { w: 0, s: 2.1, vx: 195, vy: 330, sx: 1320, sy: 560 }],
+  [DG.coachIn + 36, { w: 1, s: 2.1, vx: 195, vy: 330, sx: 1320, sy: 560 }],
+  [DG.continueTap - 14, { w: 1, s: 2.1, vx: 195, vy: 330, sx: 1320, sy: 560 }],
+  [DG.continueTap - 2, { w: 1, s: 2.1, vx: 250, vy: 690, sx: 1320, sy: 600 }],
+  [DG.summary + 6, { w: 1, s: 2.1, vx: 250, vy: 690, sx: 1320, sy: 600 }],
+  [DG.summary + 22, { w: 1, s: 1.75, vx: 195, vy: 300, sx: 1320, sy: 520 }],
+  [DG.sendTap - 14, { w: 1, s: 1.75, vx: 195, vy: 300, sx: 1320, sy: 520 }],
+  [DG.sendTap - 2, { w: 1, s: 2.1, vx: 250, vy: 690, sx: 1320, sy: 600 }],
+  [DG.sent + 4, { w: 1, s: 2.1, vx: 250, vy: 690, sx: 1320, sy: 600 }],
+  [DG.sent + 16, { w: 1, s: 2.2, vx: 195, vy: 165, sx: 1320, sy: 500 }],
+  [DG.handoff - 4, { w: 1, s: 2.2, vx: 195, vy: 165, sx: 1320, sy: 500 }],
+  [DG.handoff + 18, { w: 0, s: 2.2, vx: 195, vy: 165, sx: 1320, sy: 500 }],
+];
+
+function phoneZoom(frame: number) {
+  const first = ZOOM_KEYS[0];
+  if (frame <= first[0]) return first[1];
+  for (let i = 0; i < ZOOM_KEYS.length - 1; i += 1) {
+    const [f0, a] = ZOOM_KEYS[i];
+    const [f1, b] = ZOOM_KEYS[i + 1];
+    if (frame <= f1) {
+      const t = tween(frame, [f0, f1], [0, 1], theme.ease.inOut);
+      return { w: a.w + (b.w - a.w) * t, s: a.s + (b.s - a.s) * t, vx: a.vx + (b.vx - a.vx) * t, vy: a.vy + (b.vy - a.vy) * t, sx: a.sx + (b.sx - a.sx) * t, sy: a.sy + (b.sy - a.sy) * t };
+    }
+  }
+  return ZOOM_KEYS[ZOOM_KEYS.length - 1][1];
+}
+
 /**
  * L'app desktop DEVIENT le téléphone : la fenêtre rétrécit réellement de
  * 1920 à 390 px de large — l'app traverse ses breakpoints (la Sidebar
@@ -193,9 +225,10 @@ export function S05bPhone({ frame }: { frame: number }) {
   const leave = tween(frame, [T.derog.end - 12, T.derog.end], [0, 1], theme.ease.in);
   const vpW = 1920 + (PHONE.screenW - 1920) * m;
   const vpH = 1080 + (PHONE.screenH - PHONE.status - 1080) * m;
-  const scale = (0.86 + (1.08 - 0.86) * m) - 0.2 * aside;
-  const cx = 960 + (1180 - 960) * m + (210 - 1180) * aside;
-  const cy = 540;
+  // V2 : le téléphone est le HÉROS — centré, plus grand ; puis il se range à gauche, en retrait.
+  const freeScale = 0.86 + (1.1 - 0.86) * m + (0.68 - 1.1) * aside;
+  const freeCx = 960 + (250 - 960) * aside;
+  const freeCy = 540 + (600 - 540) * aside;
   // Taps dans le viewport mobile (repères mesurés sur le rendu réel, voir README).
   const taps = [
     { at: DG.slotTap, x: 190, y: 326 },
@@ -203,10 +236,23 @@ export function S05bPhone({ frame }: { frame: number }) {
     { at: DG.sendTap, x: 284, y: 706 },
   ];
   const geo = { screenW: vpW, screenH: vpH + PHONE.status * shell, bezel: PHONE.bezel * shell, status: PHONE.status * shell, radius: 35 + (50 - 35) * m, chrome: shell };
-  const w = (geo.screenW + geo.bezel * 2) * scale;
-  const h = (geo.screenH + geo.bezel * 2) * scale;
+  const fw = geo.screenW + geo.bezel * 2;
+  const fh = geo.screenH + geo.bezel * 2;
+  // Zoom DANS le téléphone : un point du viewport mobile (vx, vy) est amené en (sx, sy) à l'écran.
+  const z = phoneZoom(frame);
+  const zoomLeft = z.sx - (geo.bezel + z.vx) * z.s;
+  const zoomTop = z.sy - (geo.bezel + geo.status + z.vy) * z.s;
+  const freeLeft = freeCx - (fw * freeScale) / 2;
+  const freeTop = freeCy - (fh * freeScale) / 2;
+  const scale = freeScale + (z.s - freeScale) * z.w;
+  const left = freeLeft + (zoomLeft - freeLeft) * z.w;
+  const top = freeTop + (zoomTop - freeTop) * z.w;
+  const w = fw * scale;
+  const h = fh * scale;
+  // Quand le coordinateur a la parole, le téléphone recule ; il revient au premier plan à la validation.
+  const recede = tween(frame, [DG.handoff + 20, DG.handoff + 40], [0, 1], theme.ease.inOut) * (1 - tween(frame, [DG.taken + 2, DG.taken + 16], [0, 1], theme.ease.inOut));
   return (
-    <div style={{ position: "absolute", left: cx - w / 2, top: cy - h / 2, width: w, height: h, opacity: 1 - leave }}>
+    <div style={{ position: "absolute", left, top, width: w, height: h, opacity: (1 - leave) * (1 - 0.45 * recede), filter: recede > 0.01 ? `saturate(${1 - 0.7 * recede}) blur(${recede * 1.5}px)` : undefined }}>
       <div style={{ transform: `scale(${scale})`, transformOrigin: "0 0" }}>
         <PhoneFrame geometry={geo} overlay={taps.map((t) => <Tap key={t.at} frame={frame} {...t} />)}>
           <DeviceScreen frame={frame} width={vpW} height={vpH} />
@@ -225,13 +271,14 @@ export function DerogationsInboxPage({ frame }: { frame: number }) {
   const fresh = springAt(frame, DG.inboxArrive, theme.spring.ui);
   return (
     <PageContainer width="wide" className="gap-6">
+      <style>{shellDimCss(0.8)}</style>
       <style>{`[data-inbox] section:first-child li:first-child { opacity: ${Math.min(1, fresh * 1.4)}; transform: translate3d(0, ${(1 - fresh) * -26}px, 0) scale(${0.97 + 0.03 * fresh}); filter: blur(${(1 - Math.min(1, fresh)) * 6}px); }
+[data-inbox] section:not(:first-child), [data-inbox] header, [data-inbox-head] { opacity: 0.32; filter: blur(1.6px) saturate(0.3); }
 [data-inbox] section:first-child li:first-child > a { box-shadow: var(--shadow-2), 0 0 0 ${arrived ? 1.5 : 0}px color-mix(in oklab, var(--club-accent) ${Math.round(tween(frame, [DG.inboxArrive + 10, DG.inboxArrive + 50], [55, 0]))}%, transparent); }`}</style>
-      <div style={e(0)}>
+      <div style={e(0)} data-inbox-head>
         <PageHeader
           eyebrow={CLUB.name}
           title="Dérogations"
-          description="Les demandes de changement de date envoyées par les coachs. Tu t'occupes des démarches officielles, la conversation garde la trace de tout."
           actions={
             <ButtonLink href="#" variant="primary" icon={<Plus />}>
               Nouvelle demande
@@ -250,11 +297,12 @@ export function DerogationThreadPage({ frame }: { frame: number }) {
   const status = frame >= DG.taken ? "IN_PROGRESS" : "REQUESTED";
   return (
     <PageContainer className="gap-5">
+      <style>{shellDimCss(0.8)}</style>
       <div style={enter(frame, DG.thread, { y: 12 }).style}>
         <BackButton href="#" label="Dérogations" />
       </div>
-      <div style={enter(frame, DG.thread + 3, { y: 18 }).style}>
-        <RequestThread key={status} source={SOURCE} initial={derogationRequest("coordinator", status)} timezone={TZ} venues={VENUES} justSent={false} />
+      <div style={enter(frame, DG.thread + 3, { y: 18 }).style} data-request>
+        <PresentationRequest status={status} busy={frame >= DG.takeTap && frame < DG.taken} />
       </div>
       {frame >= DG.taken + 2 && frame < T.derog.end ? <Toast message="Tu t'occupes de cette demande." /> : null}
     </PageContainer>
@@ -265,49 +313,78 @@ export function DerogationThreadPage({ frame }: { frame: number }) {
 
 export function S05bOverlay({ frame }: { frame: number }) {
   if (frame < D || frame > T.derog.end + 4) return null;
-  const firstOut = DG.handoff - 6;
-  const mobileOut = DG.coachIn + 10;
-  const c = DG.coachIn + 24;
+  const mobileOut = DG.coachIn + 6;
+  const coachOut = DG.handoff - 6;
   return (
     <>
-      <div style={{ position: "absolute", left: 120, top: 360 }}>
-        <Eyebrow frame={frame} at={D + 30} out={mobileOut}>
-          100 % mobile
-        </Eyebrow>
-        <div style={{ marginTop: 26, display: "flex", flexDirection: "column", gap: 6 }}>
-          <MaskLine frame={frame} at={D + 34} out={mobileOut} size={96}>
-            Le même outil,
-          </MaskLine>
-          <MaskLine frame={frame} at={D + 40} out={mobileOut + 2} size={96} color={theme.colors.accent}>
-            dans la poche.
-          </MaskLine>
-        </div>
-      </div>
-      <div style={{ position: "absolute", left: 120, top: 330 }}>
-        <Eyebrow frame={frame} at={c} out={firstOut}>
-          Dérogations · sur mobile
-        </Eyebrow>
-        <div style={{ marginTop: 26, display: "flex", flexDirection: "column", gap: 6 }}>
-          <MaskLine frame={frame} at={c + 4} out={firstOut} size={100}>
-            Le coach demande,
-          </MaskLine>
-          <MaskLine frame={frame} at={c + 12} out={firstOut + 2} size={100} color={theme.colors.muted}>
-            où qu&apos;il soit.
-          </MaskLine>
-        </div>
-        <div style={{ marginTop: 34, maxWidth: 560, fontFamily: theme.fonts.sans, fontSize: 24, lineHeight: 1.45, color: theme.colors.muted, ...enter(frame, c + 22, { y: 12 }).style, opacity: (enter(frame, c + 22).style.opacity as number) * (1 - tween(frame, [firstOut, firstOut + 8], [0, 1])) }}>
-          Le planning des gymnases en direct : les créneaux libres, les matchs déjà programmés, les demandes en cours.
-        </div>
-      </div>
-      <div style={{ position: "absolute", left: 470, right: 0, top: 70, display: "flex", justifyContent: "center", gap: 28 }}>
-        <MaskLine frame={frame} at={DG.handoff + 18} out={DG.captionOut} size={72}>
-          Le coordinateur
+      {/* Un message à la fois, autour du téléphone héros. */}
+      <div style={{ position: "absolute", left: 120, top: 410, display: "flex", flexDirection: "column", gap: 6 }}>
+        <MaskLine frame={frame} at={D + 34} out={mobileOut} size={88}>
+          Le même outil.
         </MaskLine>
-        <MaskLine frame={frame} at={DG.handoff + 26} out={DG.captionOut + 2} size={72} color={theme.colors.accent}>
-          s&apos;en occupe.
+        <MaskLine frame={frame} at={D + 40} out={mobileOut + 2} size={88} color={theme.colors.accent}>
+          Dans la poche.
         </MaskLine>
       </div>
+      <div style={{ position: "absolute", left: 120, top: 430 }}>
+        <MaskLine frame={frame} at={DG.coachIn + 30} out={coachOut} size={80}>
+          Le coach demande.
+        </MaskLine>
+      </div>
+      <div style={{ position: "absolute", left: 0, right: 0, top: 46, display: "flex", justifyContent: "center" }}>
+        <MaskLine frame={frame} at={DG.handoff + 22} out={DG.captionOut} size={72}>
+          Le coordinateur <span style={{ color: theme.colors.accent }}>valide.</span>
+        </MaskLine>
+      </div>
+      <WorkflowChips frame={frame} />
       <Handoff frame={frame} />
+    </>
+  );
+}
+
+/** Jalons du workflow, lisibles sans lire les écrans : COACH → COORDINATEUR. */
+function WorkflowChips({ frame }: { frame: number }) {
+  const taken = frame >= DG.taken;
+  const coach = {
+    at: DG.sent + 6,
+    label: "Coach",
+    status: taken ? "Prise en charge" : "Demande envoyée",
+    ok: true,
+    // Sous la phrase pendant la demande, puis au-dessus du téléphone rangé à gauche.
+    x: 120 + (250 - 120) * tween(frame, [DG.handoff, DG.handoff + 26], [0, 1], theme.ease.inOut),
+    y: 560 + (196 - 560) * tween(frame, [DG.handoff, DG.handoff + 26], [0, 1], theme.ease.inOut),
+    anchor: tween(frame, [DG.handoff, DG.handoff + 26], [0, 1], theme.ease.inOut),
+  };
+  const coord = { at: DG.inboxArrive, label: "Coordinateur", status: taken ? "Prise en charge" : "Demande reçue", ok: taken, x: 1190, y: 196, anchor: 1 };
+  return (
+    <>
+      {[coach, coord].map((c) => {
+        const p = springAt(frame, c.at, theme.spring.ui);
+        if (p <= 0.01) return null;
+        const pulse = springAt(frame, DG.taken, theme.spring.ui);
+        return (
+          <div
+            key={c.label}
+            style={{
+              position: "absolute",
+              left: c.x,
+              top: c.y,
+              transform: `translate(${-50 * c.anchor}%, -50%) scale(${(0.9 + 0.1 * p) * (taken ? 0.96 + 0.04 * pulse : 1)})`,
+              opacity: Math.min(1, p * 1.5) * (1 - tween(frame, [T.derog.end - 14, T.derog.end - 4], [0, 1])),
+              display: "flex",
+              alignItems: "center",
+              gap: 10,
+              whiteSpace: "nowrap",
+            }}
+          >
+            <span style={{ height: 50, display: "inline-flex", alignItems: "center", padding: "0 20px", borderRadius: 99, background: theme.colors.ink, color: "#fff", fontFamily: theme.fonts.display, fontStretch: theme.headline.stretch, fontWeight: 700, fontSize: 21, letterSpacing: "0.12em", textTransform: "uppercase" }}>{c.label}</span>
+            <span style={{ height: 50, display: "inline-flex", alignItems: "center", gap: 9, padding: "0 20px", borderRadius: 99, background: c.ok ? "var(--success-soft)" : "var(--club-accent-softer)", color: c.ok ? "var(--success)" : "var(--club-accent-text)", border: "1px solid", borderColor: c.ok ? "color-mix(in oklab, var(--success) 25%, transparent)" : "var(--club-accent-border)", fontFamily: theme.fonts.sans, fontWeight: 600, fontSize: 21 }}>
+              {c.ok ? <Check size={21} /> : <Inbox size={21} />}
+              {c.status}
+            </span>
+          </div>
+        );
+      })}
     </>
   );
 }
@@ -316,8 +393,8 @@ export function S05bOverlay({ frame }: { frame: number }) {
 function Handoff({ frame }: { frame: number }) {
   const t = tween(frame, [DG.inboxArrive - 22, DG.inboxArrive], [0, 1], theme.ease.inOut);
   if (t <= 0 || t >= 1) return null;
-  const from = { x: 330, y: 470 };
-  const to = { x: 900, y: 560 };
+  const from = { x: 250, y: 600 };
+  const to = { x: 1069, y: 516 };
   const x = from.x + (to.x - from.x) * t;
   const y = from.y + (to.y - from.y) * t - Math.sin(t * Math.PI) * 120;
   return (

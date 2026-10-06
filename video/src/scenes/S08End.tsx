@@ -35,7 +35,7 @@ export function S08End({ frame }: { frame: number }) {
           </div>
         </div>
         <div style={{ marginTop: 34, overflow: "hidden", paddingBottom: 10 }}>
-          <div style={{ fontFamily: theme.fonts.display, fontSize: 64, color: "#CFCDC6", letterSpacing: "-0.01em", transform: `translate3d(0, ${(1 - springAt(frame, END.tagline, theme.spring.smooth)) * 110}%, 0)` }}>
+          <div style={{ fontFamily: theme.fonts.display, fontStretch: theme.headline.stretch, fontWeight: 650, fontSize: 60, color: "#CFCDC6", letterSpacing: theme.headline.tracking, transform: `translate3d(0, ${(1 - springAt(frame, END.tagline, theme.spring.smooth)) * 110}%, 0)` }}>
             Pilotez votre club<span style={{ color: theme.colors.ball }}>.</span>
           </div>
         </div>
