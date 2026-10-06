@@ -1,0 +1,52 @@
+/*
+ * Les tokens, classes et utilitaires sont ceux de l'application, importés
+ * tels quels : la vidéo n'a AUCUNE copie du design system.
+ */
+@import "tailwindcss";
+@import "./.generated/app-globals.css";
+@source "../../src";
+@source "./";
+
+@import "@fontsource-variable/geist/index.css";
+@import "@fontsource-variable/space-grotesk/index.css";
+@import "@fontsource/instrument-serif/400.css";
+
+/* next/font pose ces variables dans l'app ; ici, les mêmes familles via Fontsource. */
+:root {
+  --font-geist-sans: "Geist Variable";
+  --font-geist-mono: ui-monospace;
+  --font-instrument-serif: "Instrument Serif";
+  --font-space-grotesk: "Space Grotesk Variable";
+}
+
+html,
+body {
+  margin: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+/*
+ * Une vidéo est rendue frame par frame : les transitions/animations CSS de
+ * l'app (temps réel) produiraient du scintillement. Tout mouvement est piloté
+ * par useCurrentFrame().
+ */
+.film *,
+.film *::before,
+.film *::after {
+  transition: none !important;
+  animation: none !important;
+}
+
+/* Panneau latéral réel (Sheet) piloté par la scène via des variables CSS. */
+#overlay-root [role="dialog"] > button {
+  opacity: var(--sheet-backdrop, 1);
+}
+#overlay-root [role="dialog"] > div {
+  transform: translate3d(var(--sheet-x, 0px), 0, 0);
+  opacity: var(--sheet-opacity, 1);
+}
+
+/* Le logo réel de la Sidebar reste masqué tant que la tuile du film n'y a pas atterri (scène 02). */
+.brand-hidden aside > a:first-child img {
+  opacity: 0;
+}

@@ -1,0 +1,37 @@
+{
+  "name": "ball-manager-video",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Film produit Ball Manager — Remotion, construit avec les vrais composants de ../src",
+  "scripts": {
+    "sync": "node scripts/sync-globals.mjs",
+    "prestudio": "npm run sync",
+    "studio": "remotion studio src/index.ts",
+    "prerender": "npm run sync",
+    "render": "remotion render src/index.ts BallManagerFilm out/ball-manager.mp4 --codec h264 --crf 16",
+    "prestill": "npm run sync",
+    "still": "remotion still src/index.ts BallManagerFilm out/still.png",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@fontsource-variable/geist": "5.3.0",
+    "@fontsource-variable/space-grotesk": "5.3.0",
+    "@fontsource/instrument-serif": "5.3.0",
+    "@remotion/cli": "4.0.533",
+    "@remotion/tailwind-v4": "4.0.533",
+    "lucide-react": "1.52.0",
+    "react": "19.2.8",
+    "react-dom": "19.2.8",
+    "remotion": "4.0.533"
+  },
+  "devDependencies": {
+    "@supabase/ssr": "^0.12.7",
+    "@supabase/supabase-js": "^2.117.2",
+    "@tailwindcss/postcss": "4.3.3",
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "tailwindcss": "4.3.3",
+    "typescript": "5.9.3",
+    "zod": "^4.6.5"
+  }
+}

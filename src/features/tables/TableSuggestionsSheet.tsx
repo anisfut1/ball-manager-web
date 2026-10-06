@@ -34,7 +34,7 @@ function matchesSearch(query: string, name: string, teams: { name: string }[]): 
   return haystack.includes(query.trim().toLowerCase());
 }
 
-function CandidateRow({ candidate, onChoose, choosing }: { candidate: TableSuggestionCandidateDto; onChoose: () => void; choosing: boolean }) {
+export function CandidateRow({ candidate, onChoose, choosing }: { candidate: TableSuggestionCandidateDto; onChoose: () => void; choosing: boolean }) {
   const name = `${candidate.licencie.firstName} ${candidate.licencie.lastName}`;
   const recommended = candidate.eligibility === "RECOMMENDED";
   return (
@@ -88,7 +88,7 @@ function CandidateRow({ candidate, onChoose, choosing }: { candidate: TableSugge
  * une confirmation. Déjà sur ce match ou sur une autre table au même moment :
  * toujours bloqué.
  */
-function UnavailableRow({ candidate, onForce, choosing }: { candidate: TableUnavailableCandidateDto; onForce: () => void; choosing: boolean }) {
+export function UnavailableRow({ candidate, onForce, choosing }: { candidate: TableUnavailableCandidateDto; onForce: () => void; choosing: boolean }) {
   const name = `${candidate.licencie.firstName} ${candidate.licencie.lastName}`;
   const Icon = UNAVAILABLE_ICON[candidate.reasonCode];
   const [confirming, setConfirming] = useState(false);
@@ -132,7 +132,7 @@ function UnavailableRow({ candidate, onForce, choosing }: { candidate: TableUnav
   );
 }
 
-function SectionTitle({ children, count }: { children: React.ReactNode; count: number }) {
+export function SectionTitle({ children, count }: { children: React.ReactNode; count: number }) {
   return (
     <h3 className="type-eyebrow flex items-center gap-2">
       {children}
