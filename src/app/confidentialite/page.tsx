@@ -6,7 +6,7 @@ export const metadata: Metadata = { title: "Confidentialité — Ball Manager", 
 /**
  * Politique de confidentialité : décrit UNIQUEMENT ce que fait le code
  * (données, durées, sous-traitants techniques). À faire relire avant la
- * publication sur l'App Store (MANUAL_APPLE_STEPS.md).
+ * publication sur l'App Store (docs/MOBILE_WEB_SUPPORT.md).
  */
 export default function PrivacyPage() {
   const email = supportEmail();

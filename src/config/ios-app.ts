@@ -1,5 +1,5 @@
 /**
- * App iOS officielle Ball Manager (docs/IOS_AUDIT.md). Valeurs PUBLIQUES
+ * App mobile Ball Manager (ball-manager-app, docs/MOBILE_WEB_SUPPORT.md). Valeurs PUBLIQUES
  * (publiées par Apple dans le fichier AASA et dans l'App Store) : jamais un
  * secret ici. Surchargeables par variable d'environnement.
  */

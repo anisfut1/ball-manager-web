@@ -72,7 +72,7 @@ L'audit n'a pas pu être fait directement : aucun accès Vercel depuis cette ses
 
 - **OpenAPI.** Le web génère `src/lib/api/generated/schema.ts` depuis `/openapi.json` du backend (`npm run api:generate`, avec `CLUB_MANAGER_OPENAPI_URL` ou `http://localhost:3001`). Aucun chemin de fichier inter-dépôts : seulement une URL HTTP. Le renommage n'a pas d'effet.
 - **Pas de sous-module git, pas de dépendance npm** entre les dépôts.
-- **Capacitor** : `SCSB/mobile/`, sur la branche `claude/ios-app`, non fusionnée. Il importe `../src` du web, et reste comme référence jusqu'à la parité Expo.
+- **Capacitor** (état au 2026-10-10) : `SCSB/mobile/`, sur la branche `claude/ios-app`, non fusionnée. **Retiré depuis** (branche `claude/mobile-support`) : `ball-manager-app` (Expo) est l'unique application mobile.
 
 ## Remotes locaux (cette session)
 

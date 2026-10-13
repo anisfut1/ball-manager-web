@@ -1,12 +1,12 @@
-# Notifications push de l'app iOS
+# Notifications push de l'app mobile Ball Manager
 
-APNs direct : pas de OneSignal, pas de Firebase. Le code serveur est dans `ball-manager-back/src/modules/push/`, le code de l'app dans `mobile/src/push/push.ts`.
+APNs direct : pas de OneSignal, pas de Firebase, pas de service push Expo. Le code serveur est dans `ball-manager-back/src/modules/push/`, le code de l'app dans `ball-manager-app/src/push/` (voir `ball-manager-app/docs/PUSH.md`).
 
 ## Parcours
 
-1. **Permission.** Elle n'est jamais demandée au lancement. L'utilisateur la déclenche lui-même dans Mon compte → Notifications, après le texte « Recevez vos convocations et les changements de match… ».
-2. **Jeton.** iOS fournit le jeton à `AppDelegate`, qui le transmet à Capacitor. L'app l'envoie ensuite à `PUT /v1/public/clubs/{slug}/auth/session/push-token`, pour **chaque** club connecté (une session par club), avec :
-   - `environment` : `development` pour une build Xcode Debug, `production` pour TestFlight et l'App Store. Il est fixé au build par `BM_APNS_ENV`.
+1. **Permission.** Elle n'est jamais demandée au lancement. L'utilisateur la déclenche lui-même, après connexion : invitation sur l'accueil ou Profil → Notifications.
+2. **Jeton.** L'app récupère le jeton APNs brut (`getDevicePushTokenAsync`, `expo-notifications`) et l'envoie à `PUT /v1/public/clubs/{slug}/auth/session/push-token`, pour **chaque** club connecté (une session par club), avec :
+   - `environment` : lu dans le profil de signature (`getIosPushNotificationServiceEnvironmentAsync`) : `development` pour une Development Build, `production` pour TestFlight et l'App Store ;
    - `appVersion`.
 3. **Rafraîchissement.** Au démarrage, si la permission est déjà accordée, le jeton est ré-envoyé : il peut changer après une réinstallation ou une restauration.
 4. **Arrêt.**
@@ -50,7 +50,7 @@ Un iPhone qui suit deux enfants convoqués reçoit **une** seule notification, c
 
 Aucune notification n'est envoyée pour un score, ni pour un match ou une séance déjà passés.
 
-Les chemins sont produits par `paths.*` (`src/links/links.ts`). Ce sont **les mêmes** que ceux du web et des Universal Links. L'app ouvre `path` avec le même `UniversalLinkRouter` (`onPushTap` → `handle(path)`), et une session est requise.
+Les chemins sont produits par `paths.*` (`src/links/links.ts`). Ce sont **les mêmes** que ceux du web et des Universal Links. L'app ouvre `path` avec le même résolveur que les Universal Links (`resolveDestination`), et une session est requise.
 
 ## Contenu (écran verrouillé)
 
@@ -106,4 +106,4 @@ Le JWT fournisseur est signé en ES256 et renouvelé toutes les 50 min. Une mêm
   - déclencheurs FFBB et séances ;
   - JWT ES256 vérifié par la clé publique ;
   - contenu du payload.
-- **Pas testé** : aucun envoi réel vers APNs, aucune réception sur iPhone, ni l'ouverture d'une notification sur un appareil. Il faut un iPhone, une build signée et la clé `.p8` (voir `MANUAL_APPLE_STEPS.md`).
+- **Pas testé** : aucun envoi réel vers APNs, aucune réception sur iPhone, ni l'ouverture d'une notification sur un appareil. Il faut un iPhone, une build signée et la clé `.p8` (voir `ball-manager-app/MANUAL_STEPS.md`).

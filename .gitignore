@@ -47,14 +47,3 @@ next-env.d.ts
 spikes/fbi-auth/.local/
 spikes/fbi-auth/node_modules/
 spikes/fbi-auth/*.log
-
-# App iOS (Capacitor)
-mobile/node_modules/
-mobile/dist/
-mobile/ios/App/build/
-mobile/ios/App/Pods/
-mobile/ios/DerivedData/
-mobile/ios/App/App/public/
-mobile/ios/App/App/capacitor.config.json
-mobile/ios/App/App/config.xml
-xcuserdata/

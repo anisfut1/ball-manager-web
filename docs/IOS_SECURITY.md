@@ -1,6 +1,6 @@
-# Sécurité de l'app iOS
+# Sécurité de l'app mobile Ball Manager
 
-L'architecture et la décision sont dans `docs/IOS_AUDIT.md`, les routes dans `ball-manager-back/docs/MOBILE_AUTH.md`, les notifications dans `docs/IOS_PUSH.md`.
+L'app mobile est **`ball-manager-app`** (Expo / React Native), l'unique application mobile de Ball Manager. Son architecture est décrite dans `ball-manager-app/docs/MOBILE_ARCHITECTURE.md` et `ball-manager-app/docs/AUTH.md`, les routes dans `ball-manager-back/docs/MOBILE_AUTH.md`, les notifications dans `docs/IOS_PUSH.md`. Ce dépôt (`ball-manager-web`) ne fournit que le support web : AASA, pages de connexion ouvertes dans Safari, pages légales.
 
 ## Une seule identité, aucun compte
 
@@ -12,28 +12,28 @@ L'architecture et la décision sont dans `docs/IOS_AUDIT.md`, les routes dans `b
 
 | Donnée | Où | Protection |
 |---|---|---|
-| Secret de session (`bmd_…`, 32 octets aléatoires) | Keychain (plugin `BMNative`) | `kSecAttrAccessibleAfterFirstUnlockThisDeviceOnly` : pas de sauvegarde iCloud, pas de transfert vers un autre iPhone |
-| Personnes, club actif, préférences | Keychain (même entrée) | idem |
+| Secret de session (`bmd_…`, 32 octets aléatoires) | Keychain via `expo-secure-store` | `AFTER_FIRST_UNLOCK_THIS_DEVICE_ONLY` : pas de sauvegarde iCloud, pas de transfert vers un autre iPhone |
+| Personnes, club actif, préférences | Keychain via `expo-secure-store` | idem |
 | Destination en attente (lien ouvert avant connexion) | mémoire uniquement | effacée après usage |
 
-Rien n'est mis en `localStorage`, ni secret ni donnée personnelle. Côté serveur, seul le **SHA-256** du secret est conservé.
+Aucun secret ni donnée personnelle hors du Keychain. Côté serveur, seul le **SHA-256** du secret est conservé.
 
 ## Transport et requêtes
 
-- HTTPS uniquement, vers l'API (`BM_API_URL`, fixée au build). Aucune exception ATS.
+- HTTPS uniquement, vers l'API (`EXPO_PUBLIC_API_URL`, fixée au build par profil EAS). Aucune exception ATS.
 - En-têtes : `Authorization: Bearer <secret>` et `X-BM-As: <licencieId>`. Chaque requête est vérifiée par `licencieFromRequest` : session de **ce** club, non révoquée, non expirée, et personne présente dans la session avec un lien encore valide. Sinon 401 ou 403.
-- CORS : l'origine `capacitor://localhost` est autorisée. Il n'y a aucun cookie côté API, donc aucun risque CSRF.
+- CORS ne concerne que le web : l'app native n'envoie pas d'en-tête `Origin`. Il n'y a aucun cookie côté API, donc aucun risque CSRF.
 
-## Contenu de la WebView
+## Pas de WebView
 
-- Le bundle est **local** (`webDir: dist`) : aucun site distant n'est chargé en production. `CAP_SERVER_URL`, réservé au développement, n'est jamais défini dans une build de distribution.
-- Les liens hors de l'espace public (espace club par compte, pages légales) s'ouvrent dans **Safari** (`openExternal`), jamais dans la WebView.
+- Les écrans sont **natifs** (React Native) : aucun site distant n'est chargé dans l'app.
+- Les liens hors de l'espace public (espace club par compte, pages légales) s'ouvrent dans **Safari** (`expo-web-browser`).
 
 ## Connexion depuis Safari (SSO)
 
 `ASWebAuthenticationSession` partage les cookies de Safari (`prefersEphemeral = false`) :
 
-1. L'app génère `code_verifier` (CryptoKit), `code_challenge` (S256) et `state` (aléatoire).
+1. L'app génère `code_verifier` (`expo-crypto`), `code_challenge` (S256) et `state` (aléatoire).
 2. La page `/public/{slug}/auth/app`, déjà identifiée par le cookie `bm_session`, demande un code à l'API.
 3. Ce code est **lié au challenge**, valable **5 min** et à **usage unique** (mise à jour conditionnelle `used_at is null`).
 4. Le rappel `fr.ballmanager.app://auth/callback` est intercepté **uniquement** par la session d'authentification. Le `state` est comparé et rejeté s'il diffère.
@@ -43,7 +43,7 @@ Garanties côté serveur : PKCE S256 seul, jamais `plain`, et comparaison en tem
 
 ## Liens entrants (Universal Links, liens collés, push)
 
-`mobile/src/links/universal-link-router.ts` est une fonction pure, avec 9 tests.
+Un résolveur unique et pur (`ball-manager-app/src/linking/`, `+native-intent` → `resolveDestination`), couvert par des tests unitaires.
 - Seuls `https://www.ball-manager.fr`, `ball-manager.fr` et `open.ball-manager.fr` sont acceptés. Tout autre domaine, et le `http`, sont rejetés.
 - Le chemin est normalisé, et toute tentative `..` est refusée. Une route inconnue mène à l'accueil.
 - `?token=` et `#token=` : le jeton est échangé puis **retiré** du chemin. Il n'est jamais conservé ni affiché.

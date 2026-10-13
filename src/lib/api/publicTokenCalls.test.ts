@@ -92,26 +92,3 @@ describe("drapeau : seule la valeur \"1\" active l'en-tête", () => {
     expect(calls[0].url.search).toBe(`?token=${ENC}`);
   });
 });
-
-describe("app iOS : session d'appareil à la place du jeton (transport branchable)", () => {
-  afterEach(async () => (await import("./publicTokenTransport")).setPublicCredentialTransport(null));
-
-  it("une référence `as:<id>` part en en-têtes, jamais dans l'URL ; le web reste inchangé", async () => {
-    const { setPublicCredentialTransport } = await import("./publicTokenTransport");
-    const { publicTeamLife } = await import("./teamLife");
-    setPublicCredentialTransport((token) => (token.startsWith("as:") ? { Authorization: "Bearer bmd_session-de-test", "X-BM-As": token.slice(3) } : null));
-
-    await getPublicMe(S, "as:lic-1");
-    expect(calls[0].url.search).toBe("");
-    const headers = new Headers(calls[0].init.headers);
-    expect(headers.get("Authorization")).toBe("Bearer bmd_session-de-test");
-    expect(headers.get("X-BM-As")).toBe("lic-1");
-
-    await publicTeamLife.actionCenter(S, ["as:lic-1", "as:lic-2"]);
-    expect(new Headers(calls[1].init.headers).get("Authorization")).toBe("Bearer bmd_session-de-test");
-
-    // Un vrai jeton (web) n'est pas concerné par le transport : `?token=` comme avant.
-    await getPublicMe(S, T);
-    expect(calls[2].url.search).toBe(`?token=${ENC}`);
-  });
-});

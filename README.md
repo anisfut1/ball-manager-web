@@ -18,6 +18,13 @@ Utilisateur → ball-manager-web (Next.js/Vercel) → Supabase Auth (JWT)
                                          → FFBB / FBI / e-Marque
 ```
 
+**Application mobile** : l'unique app mobile est
+**[ball-manager-app](https://github.com/anisfut1/ball-manager-app)** (Expo /
+React Native). Ce repository n'en contient aucune ; il fournit seulement son
+support web (AASA, connexion depuis Safari, liens de connexion, pages
+`/confidentialite` et `/support`, Smart App Banner) : voir
+[`docs/MOBILE_WEB_SUPPORT.md`](docs/MOBILE_WEB_SUPPORT.md).
+
 Ce frontend :
 
 - utilise **Supabase Auth directement**, uniquement pour l'authentification

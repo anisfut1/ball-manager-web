@@ -1,6 +1,6 @@
 import type { ApiFetcher } from "./client";
 import { apiFetch } from "./client";
-import { credentialHeadersFor, publicFetch } from "./publicTokenTransport";
+import { publicFetch } from "./publicTokenTransport";
 import type { components } from "./generated/schema";
 
 /**
@@ -115,6 +115,6 @@ export const publicTeamLife = {
   respondAvailability: (clubSlug: string, token: string, matchId: string, response: MatchAvailabilityValue) => publicFetch<unknown>(`${publicBase(clubSlug)}/matches/${matchId}/availability/response`, token, { method: "PUT", body: { response } }),
   respondConvocation: (clubSlug: string, token: string, matchId: string, response: "CONFIRMED" | "DECLINED") => publicFetch<unknown>(`${publicBase(clubSlug)}/matches/${matchId}/convocation/response`, token, { method: "PUT", body: { response } }),
   /** Home « À faire » : les liens de l'appareil voyagent dans le corps, jamais dans l'URL. */
-  actionCenter: (clubSlug: string, tokens: string[]) => apiFetch<ActionCenterDto>(`${publicBase(clubSlug)}/action-center`, { method: "POST", body: { tokens }, headers: credentialHeadersFor(tokens) }),
-  planning: (clubSlug: string, tokens: string[], period: PeriodQuery & { teamId?: string } = {}) => apiFetch<PlanningDto>(`${publicBase(clubSlug)}/planning${qs({ ...period })}`, { method: "POST", body: { tokens }, headers: credentialHeadersFor(tokens) }),
+  actionCenter: (clubSlug: string, tokens: string[]) => apiFetch<ActionCenterDto>(`${publicBase(clubSlug)}/action-center`, { method: "POST", body: { tokens } }),
+  planning: (clubSlug: string, tokens: string[], period: PeriodQuery & { teamId?: string } = {}) => apiFetch<PlanningDto>(`${publicBase(clubSlug)}/planning${qs({ ...period })}`, { method: "POST", body: { tokens } }),
 };

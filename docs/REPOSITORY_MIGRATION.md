@@ -38,10 +38,12 @@ git remote add origin https://github.com/anisfut1/ball-manager-app.git
 
 ## Branches
 
+`claude/ios-app` (web et back) est **historique** : remplacée par `claude/mobile-support`, à supprimer après fusion. L'ancienne app Capacitor (`mobile/`) est **retirée** : `ball-manager-app` est l'unique application mobile.
+
 | Dépôt | Branche par défaut | Travail mobile |
 |---|---|---|
-| `ball-manager-web` | `claude/sete-basket-app-architecture-c3hlxx` (production) | `claude/ios-app` (Capacitor, gardé comme référence) |
-| `ball-manager-back` | `main` | `claude/ios-app` (sessions d'appareil, push) |
+| `ball-manager-web` | `claude/sete-basket-app-architecture-c3hlxx` (production) | `claude/mobile-support` (support web de l'app : AASA, connexion Safari, pages légales) |
+| `ball-manager-back` | `main` | `claude/mobile-support` (sessions d'appareil, push) |
 | `ball-manager-app` | `main` | `claude/expo-app` |
 
 ## OpenAPI
