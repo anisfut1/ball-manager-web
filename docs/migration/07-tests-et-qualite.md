@@ -43,7 +43,7 @@ Run `37612678201` : `verify` ✅ (9 étapes) et `gitleaks` ✅. Détails et limi
 - LOT-06 : jeu synthétique 390 matchs ; parité d'affichage 7 scénarios × 2 sémantiques de `to` ; comptes figés relevés sur le code d'origine (un premier jeu de valeurs saisi à la main était faux : corrigé en lisant le résultat réel de l'ancien code).
 
 ## CI après LOT-04, LOT-06 et révision Railway (2026-10-07)
-Run `37618494863` (https://github.com/anisfut1/SCSB/actions/runs/37618494863), commit `b540bbd` : `Typecheck, lint, tests, build` ✅ et `Secrets (gitleaks, historique complet)` ✅. Ce commit inclut le code des LOT-04 et LOT-06 (151 tests). Le push qui consigne ce run déclenche un run supplémentaire (docs seulement), non relevé ici.
+Run `37618494863` (https://github.com/anisfut1/ball-manager-web/actions/runs/37618494863), commit `b540bbd` : `Typecheck, lint, tests, build` ✅ et `Secrets (gitleaks, historique complet)` ✅. Ce commit inclut le code des LOT-04 et LOT-06 (151 tests). Le push qui consigne ce run déclenche un run supplémentaire (docs seulement), non relevé ici.
 
 ## R-015 et LOT-14/CSP (2026-10-07)
 - R-015 : `publicMatches.test.ts` (8 tests) ; la caractérisation d'origine (1 appel, 200 reçus sur 390) était verte sur l'ancien code avant le correctif.
@@ -51,7 +51,7 @@ Run `37618494863` (https://github.com/anisfut1/SCSB/actions/runs/37618494863), c
 - Baseline : 159 tests avant LOT-14 ; **172 tests (24 fichiers) après**, typecheck, lint et build propres.
 
 ## CI après R-015 et LOT-14/CSP (2026-10-07)
-Run `37681560073` (https://github.com/anisfut1/SCSB/actions/runs/37681560073), commit `f830e38` : `Typecheck, lint, tests, build` ✅ (172 tests) et `Secrets (gitleaks, historique complet)` ✅. Le push qui consigne ce run déclenche un run docs seulement, non relevé.
+Run `37681560073` (https://github.com/anisfut1/ball-manager-web/actions/runs/37681560073), commit `f830e38` : `Typecheck, lint, tests, build` ✅ (172 tests) et `Secrets (gitleaks, historique complet)` ✅. Le push qui consigne ce run déclenche un run docs seulement, non relevé.
 
 ## Q-020 à Q-023 : jeton en fragment et anti-framing (2026-10-07)
 - Baseline avant : **172 tests** (24 fichiers). Après : **223 tests (26 fichiers)**, typecheck, lint propres, build OK avec drapeau off **et** on.

@@ -1,6 +1,6 @@
 import type { TableAssignmentRole } from "@/lib/api/tables";
 
-/** Libellés FR des 4 rôles (§3 de la demande, REFEREE ajouté le 2026-09-28) — mêmes libellés que `ROLE_LABELS` côté club-manager-api (table-suggestion-service.ts), capitalisés ici pour les titres d'UI. */
+/** Libellés FR des 4 rôles (§3 de la demande, REFEREE ajouté le 2026-09-28) — mêmes libellés que `ROLE_LABELS` côté ball-manager-back (table-suggestion-service.ts), capitalisés ici pour les titres d'UI. */
 export const TABLE_ROLE_LABELS: Record<TableAssignmentRole, string> = {
   SCORER: "Marqueur",
   TIMEKEEPER: "Chronométreur",

@@ -1,5 +1,5 @@
 # 03 — Plan de migration
-_Phase 2, 2026-10-07. Ordre : **sécurité d'abord**, puis meilleur ratio gain/effort, en respectant les dépendances. Chaque lot est petit, testable, réversible (règle 3). Tout lot « back requis » est **⛔ bloqué par Q-001** tant que l'accès à `club-manager-api` n'est pas confirmé ; les lots **front seul** peuvent démarrer dès validation._
+_Phase 2, 2026-10-07. Ordre : **sécurité d'abord**, puis meilleur ratio gain/effort, en respectant les dépendances. Chaque lot est petit, testable, réversible (règle 3). Tout lot « back requis » est **⛔ bloqué par Q-001** tant que l'accès à `ball-manager-back` n'est pas confirmé ; les lots **front seul** peuvent démarrer dès validation._
 
 ## Vue d'ensemble
 | Lot | Intitulé | TRT | Prio | Back requis | Statut |
@@ -18,7 +18,7 @@ _Phase 2, 2026-10-07. Ordre : **sécurité d'abord**, puis meilleur ratio gain/e
 | LOT-11 | CI minimale (typecheck, lint, tests, build) + gitleaks | — | P2 | non | ✅ (commit ci-après ; premier run réel à observer après push) |
 | LOT-12 | Petites listes & résumés (opportuniste) | TRT-012 à 015 | P3 | oui | ⛔ |
 | LOT-13 | Nettoyage : `worker/`, `next.config.ts`, commentaires | — | P3 | non | ⬜ Phase 5 (Q-005 ✅) |
-| LOT-14 | En-têtes de sécurité (CSP **Report-Only** ✅) + durcissement jeton public (R-008, ⬜) | — | P2 | non (jeton : nouveau back) | 🟡 CSP Report-Only, anti-framing et jeton en fragment (front) livrés (`12-csp-report-only.md`) ; reste R-008, le passage en mode bloquant (plan `12` §6) et l'activation du transport par en-tête (dépend de `club-manager-api`) |
+| LOT-14 | En-têtes de sécurité (CSP **Report-Only** ✅) + durcissement jeton public (R-008, ⬜) | — | P2 | non (jeton : nouveau back) | 🟡 CSP Report-Only, anti-framing et jeton en fragment (front) livrés (`12-csp-report-only.md`) ; reste R-008, le passage en mode bloquant (plan `12` §6) et l'activation du transport par en-tête (dépend de `ball-manager-back`) |
 
 **Ordre recommandé** : LOT-01 → LOT-11 (livrés) ; puis, dès que le nouveau back existe : **LOT-02 en tête (R-013)** → LOT-03 → LOT-04 → LOT-05 → (LOT-06 ∥ LOT-07 ∥ LOT-08) → LOT-09 → LOT-10 → LOT-12 ; LOT-13 en Phase 5.
 **Phase 3 (2026-10-07)** : LOT-04 et la majeure partie de LOT-06 sont **réalisables sans nouveau back** (endpoints existants, `04` E-2/E-3). Ils ne sont pas lancés : en attente de la validation 🛑 de fin de Phase 3.
@@ -110,7 +110,7 @@ Flags : variable `NEXT_PUBLIC_*` **interdite** pour un flag sensible ; utiliser 
 
 ## LOT-14 — En-têtes de sécurité et jeton public (R-008) — P2, **non implémenté**
 - **Périmètre** : `next.config.ts` (`headers()` : CSP, `X-Content-Type-Options`, `Referrer-Policy`, `frame-ancestors`/`X-Frame-Options`, `Permissions-Policy`) ; `src/lib/publicToken.ts:13-41` (localStorage).
-- **Points d'attention** : Next 16 + styles inline/Tailwind exigent une CSP à nonce (à valider dans `node_modules/next/dist/docs/` avant d'écrire du code, AGENTS.md) ; autoriser `connect-src` vers l'URL Supabase et `club-manager-api` ; déployer d'abord en `Content-Security-Policy-Report-Only`.
+- **Points d'attention** : Next 16 + styles inline/Tailwind exigent une CSP à nonce (à valider dans `node_modules/next/dist/docs/` avant d'écrire du code, AGENTS.md) ; autoriser `connect-src` vers l'URL Supabase et `ball-manager-back` ; déployer d'abord en `Content-Security-Policy-Report-Only`.
 - **Jeton public** : durée de vie, rotation et révocation côté back (Q-001) ; envisager un cookie `HttpOnly` plutôt que `localStorage` (change l'architecture du lien personnel : décision à part).
 - **Tests** : test d'en-têtes sur la config ; parcours manuel connexion/espace public. **Done** : CSP en mode report-only sans violation sur les parcours principaux, puis enforcement. **Rollback** : retirer `headers()`.
 
@@ -153,4 +153,4 @@ En-têtes posés dans `next.config.ts` via `src/config/security-headers.ts` ; **
 
 ## Addendum 2026-10-07 — LOT-02 étendu à R-018 ; LOT-14 front livré
 - LOT-02 : périmètre élargi (Q-022) : `request-link` uniforme + file de validation admin + exclusion des rôles coach/admin ; spécification `11` §7.9, contrat `04` B.1 bis. Tests de contrat d'abord (`11` §7.9.6).
-- LOT-14 : livré côté front `4570207` (fragment `#token=`, nettoyage de l'URL, transport isolé, drapeau `NEXT_PUBLIC_PUBLIC_TOKEN_HEADER` défaut off) et `f2841a7` (anti-framing). **Rollback** : `git revert` du commit ; ou ne pas activer le drapeau. Ordre d'activation de l'en-tête : `club-manager-api` accepte + autorise en CORS `X-Personal-Link-Token` → activer en prévisualisation → production → fermer `?token=` (`400 TOKEN_IN_QUERY`).
+- LOT-14 : livré côté front `4570207` (fragment `#token=`, nettoyage de l'URL, transport isolé, drapeau `NEXT_PUBLIC_PUBLIC_TOKEN_HEADER` défaut off) et `f2841a7` (anti-framing). **Rollback** : `git revert` du commit ; ou ne pas activer le drapeau. Ordre d'activation de l'en-tête : `ball-manager-back` accepte + autorise en CORS `X-Personal-Link-Token` → activer en prévisualisation → production → fermer `?token=` (`400 TOKEN_IN_QUERY`).

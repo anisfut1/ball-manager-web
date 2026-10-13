@@ -10,7 +10,7 @@ import { DeleteRequestButton } from "./DeleteRequestButton";
 /**
  * Liste des demandes, regroupées en sections (inbox du coordinateur ou
  * suivi du coach — voir `groupRequests`). Server Component : données déjà
- * filtrées par club-manager-api selon les droits.
+ * filtrées par ball-manager-back selon les droits.
  */
 /**
  * Archivée : demande terminée / annulée, ou match passé (retour du club,

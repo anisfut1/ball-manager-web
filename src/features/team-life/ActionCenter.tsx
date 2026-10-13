@@ -60,7 +60,24 @@ export function useActionCenter(clubSlug: string, activeToken: string): { data: 
  * message si l'envoi échoue. « Ajouter un enfant » seulement quand c'est
  * plausible (homonyme de nom de famille au club, ou déjà plusieurs enfants).
  */
-export function ActionCenter({ clubSlug, timezone, data, tokens, failed, onAddPerson }: { clubSlug: string; timezone: string; data: ActionCenterDto | null; tokens: string[]; failed: boolean; onAddPerson: () => void }) {
+export function ActionCenter({
+  clubSlug,
+  timezone,
+  data,
+  tokens,
+  failed,
+  onAddPerson,
+  matchId,
+}: {
+  clubSlug: string;
+  timezone: string;
+  data: ActionCenterDto | null;
+  tokens: string[];
+  failed: boolean;
+  onAddPerson?: () => void;
+  /** Page d'un match (lien de convocation, app iOS) : seulement ce que la famille a à faire pour CE match. */
+  matchId?: string;
+}) {
   const [answers, setAnswers] = useState<Record<string, string | null>>({});
   const [saving, setSaving] = useState<Record<string, boolean>>({});
   const [toast, setToast] = useState<{ tone: "success" | "danger"; message: string } | null>(null);
@@ -136,7 +153,8 @@ export function ActionCenter({ clubSlug, timezone, data, tokens, failed, onAddPe
   // Un élément fait sur place passe en vert tout de suite, sans changer de place avant le prochain passage.
   const several = data.people.length > 1;
   const items: HomeItem[] = [];
-  for (const a of data.actions) {
+  const forMatch = (a: ActionCenterActionDto): boolean => !matchId || ((a.type === "MATCH_AVAILABILITY" || a.type === "CONVOCATION_RESPONSE" || a.type === "LAUNDRY_DUTY") && a.match.id === matchId);
+  for (const a of data.actions.filter(forMatch)) {
     if (isAnswerable(a)) items.push({ key: keyOf(a), kind: "answer", action: a, doneAtLoad: !isTodo(a) });
     else if (a.type === "COACH_MATCH") {
       items.push({ key: `coach-m-${a.match.id}`, kind: "coach-match", action: a, doneAtLoad: coachMatchDone(a) });
@@ -183,14 +201,16 @@ export function ActionCenter({ clubSlug, timezone, data, tokens, failed, onAddPe
     return <ConvocationCard action={a} timezone={timezone} value={(current(a) ?? "PENDING") as ConvocationResponseValue} saving={busy} onRespond={(v) => void respond(a, v, (token) => publicTeamLife.respondConvocation(clubSlug, token, a.match.id, v))} />;
   };
 
+  if (matchId && items.length === 0) return null;
+
   return (
-    <section aria-labelledby="todo-title" className="flex flex-col gap-4">
+    <section id={matchId ? "convocation" : undefined} aria-labelledby="todo-title" className="flex scroll-mt-24 flex-col gap-4">
       <SectionHeader
         id="todo-title"
-        title="À faire"
+        title={matchId ? "Pour ce match" : "À faire"}
         description={several ? `Pour ${data.people.map((p) => p.firstName).join(", ")}.` : undefined}
         action={
-          data.canAddRelative ? (
+          data.canAddRelative && !matchId && onAddPerson ? (
             <Button variant="ghost" size="sm" icon={<UserPlus />} onClick={onAddPerson}>
               Ajouter un enfant
             </Button>

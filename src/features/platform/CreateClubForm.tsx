@@ -8,7 +8,7 @@ import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Field, FormMessage, Input } from "@/components/ui/Field";
 
-/** §24 de la demande : `POST /v1/platform/clubs` — l'invitation du premier club_admin (email Ball Manager, voir club-manager-api `auth/account-invites.ts`) est gérée par le backend, jamais depuis ce frontend avec une clé service role. */
+/** §24 de la demande : `POST /v1/platform/clubs` — l'invitation du premier club_admin (email Ball Manager, voir ball-manager-back `auth/account-invites.ts`) est gérée par le backend, jamais depuis ce frontend avec une clé service role. */
 export function CreateClubForm() {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();

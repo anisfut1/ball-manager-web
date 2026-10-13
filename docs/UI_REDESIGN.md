@@ -2,7 +2,7 @@
 
 Source de vérité visuelle : [`design-system/scsb/MASTER.md`](../design-system/scsb/MASTER.md).
 Périmètre : frontend uniquement. Aucune route, aucun contrat API, aucune logique métier modifiés
-(seul ajout côté client API : `api.me()` pour lire `GET /v1/me`, déjà exposé par club-manager-api,
+(seul ajout côté client API : `api.me()` pour lire `GET /v1/me`, déjà exposé par ball-manager-back,
 afin d'afficher le `displayName` réel au lieu de l'email).
 
 Inventaire établi à partir de `src/app/**` (page/layout/error/not-found/loading) et des composants

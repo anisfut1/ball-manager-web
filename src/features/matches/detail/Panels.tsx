@@ -131,7 +131,7 @@ function StatsTable({ team, rows, playerBasePath }: { team: ScoreboardTeam; rows
               <Td className="sticky left-0 z-10 min-w-[180px] bg-surface-raised">
                 <span className="flex items-center gap-2.5">
                   <span className="type-numeric w-6 shrink-0 text-right text-muted">{row.jerseyNumber ?? "?"}</span>
-                  {/* Vers la fiche joueur (docs/LICENCIES.md côté club-manager-api) — uniquement dans l'espace club et si ce participant a déjà un licencié rattaché. */}
+                  {/* Vers la fiche joueur (docs/LICENCIES.md côté ball-manager-back) — uniquement dans l'espace club et si ce participant a déjà un licencié rattaché. */}
                   {playerBasePath && row.licencieId ? (
                     <Link href={`${playerBasePath}/${row.licencieId}`} className="font-medium text-foreground underline-offset-4 hover:text-accent-text hover:underline">
                       {personName(row)}

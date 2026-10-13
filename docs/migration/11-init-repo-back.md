@@ -79,12 +79,12 @@ Ordre strict, **tests d'abord** :
 2. **Accès aux données** : rôle Postgres **lecture seule** limité aux colonnes `id`, prénom, nom de la table des licenciés ; normalisation (minuscules, sans accents, séparateurs) ; correspondance par **préfixe de mot** ; `LIMIT 5` dans la requête ; aucune pagination exposée ; aucune colonne sensible lue (date de naissance, catégorie, e-mail).
 3. **Anti-énumération** : budgets du §7.2 (par IP, par club, résultats vides) ; clé de limitation = HMAC de l'IP à sel journalier, **en mémoire seulement** (un seul réplica ; sinon table de compteurs) ; journaux sans `q`, sans nom, sans IP (§7.4).
 4. **Staging** : déploiement, vérifications V1 à V3, test d'énumération du §7.5 exécuté contre l'instance, calibrage des budgets sur un jour d'usage réel, **revue sécurité** (matrice, tentative d'énumération, `Origin` non autorisé).
-5. **Front (PR dans SCSB, séparée)** : `resolveBase(path)` dans `src/lib/api/client.ts` + liste de modules actifs ; `IdentifyView.tsx` interroge le serveur avec anti-rebond (≈ 300 ms), supprime le chargement complet (`IdentifyView.tsx:66-87`) et le filtre local ; **tests de composant** avec jsdom + Testing Library (Q-009 accepté, devDependencies seulement) ; drapeau `FF_PUBLIC_SEARCH`, défaut = ancien comportement.
-6. **Bascule** : activer le drapeau en staging puis en production ; **fermer l'ancien endpoint** `GET …/licencies` (`410`) — **changement à faire côté `club-manager-api` par le propriétaire** (l'agent n'y a pas accès) ; sans cela **R-013 reste ouvert**.
+5. **Front (PR dans ball-manager-web, séparée)** : `resolveBase(path)` dans `src/lib/api/client.ts` + liste de modules actifs ; `IdentifyView.tsx` interroge le serveur avec anti-rebond (≈ 300 ms), supprime le chargement complet (`IdentifyView.tsx:66-87`) et le filtre local ; **tests de composant** avec jsdom + Testing Library (Q-009 accepté, devDependencies seulement) ; drapeau `FF_PUBLIC_SEARCH`, défaut = ancien comportement.
+6. **Bascule** : activer le drapeau en staging puis en production ; **fermer l'ancien endpoint** `GET …/licencies` (`410`) — **changement à faire côté `ball-manager-back` par le propriétaire** (l'agent n'y a pas accès) ; sans cela **R-013 reste ouvert**.
 7. **Clôture** : mesure avant/après du payload (`08`), mise à jour de `04`/`CHANGELOG`/`10` (R-013 → fermé, ou renouvelé explicitement), commit atomique.
 **Critères de done** : un anonyme ne peut plus obtenir plus de 5 prénoms+initiales par requête ; le test d'énumération (§7.5) passe ; aucun nom ni IP dans les journaux ; CI verte ; V1 consignée ; **et, pour clore R-013 : ancien endpoint fermé (§7.6)**.
 **Rollback** : drapeau `FF_PUBLIC_SEARCH` à l'ancien comportement (redéploiement du front en option (a)) ; l'ancien endpoint n'est fermé qu'**après** une période d'observation (≥ 7 jours, estimé).
-**Jeton en en-tête (R-014)** : le LOT-02 est **anonyme** et ne manipule aucun jeton. Le transport du jeton personnel par en-tête (`04` B.9, ADR-006) concerne les routes qui suivent (`request-link`, accueil, tables, dérogations) : il est livré avec **LOT-14** ; en attendant, ces routes restent chez `club-manager-api`.
+**Jeton en en-tête (R-014)** : le LOT-02 est **anonyme** et ne manipule aucun jeton. Le transport du jeton personnel par en-tête (`04` B.9, ADR-006) concerne les routes qui suivent (`request-link`, accueil, tables, dérogations) : il est livré avec **LOT-14** ; en attendant, ces routes restent chez `ball-manager-back`.
 
 ## 6. Ce que le front devra préparer (hors LOT-02, rappel)
 `resolveBase` testé (chaque préfixe porté a un test), `NEXT_PUBLIC_NEW_API_URL` + liste de modules (non secrets), CSP/`connect-src` vers le nouveau domaine (LOT-14), erreurs `429`/`400 QUERY_TOO_SHORT` gérées dans l'UI.
@@ -147,11 +147,11 @@ Réponse au dépassement : `429 RATE_LIMITED` + `Retry-After` (secondes) + en-t�
 3. **Rollback** : **promouvoir le déploiement Vercel précédent** (retour immédiat à l'ancien build) ou retirer `public-search` de la liste et redéployer. Aucun état à restaurer (lecture seule).
 4. Observation ≥ 7 jours (estimé) avant de fermer l'ancien endpoint.
 
-### 7.7 Fermeture de l'ancien endpoint dans `club-manager-api` — **action du propriétaire** (R-013)
+### 7.7 Fermeture de l'ancien endpoint dans `ball-manager-back` — **action du propriétaire** (R-013)
 - **À faire** : faire répondre `410 GONE` (ou `404`) à `GET /v1/public/clubs/{clubSlug}/licencies`, **y compris** avec des paramètres (`?limit=1000`, `?q=`), sans authentification et avec un `Origin` du front. `POST …/licencies/{id}/request-link` doit continuer de fonctionner.
 - **Critère de done vérifiable (une requête d'essai qui DOIT échouer)** :
 ```bash
-API="https://<url-club-manager-api>"; SLUG="<slug-du-club>"
+API="https://<url-ball-manager-back>"; SLUG="<slug-du-club>"
 curl -s -o /tmp/old.json -w "%{http_code}\n" "$API/v1/public/clubs/$SLUG/licencies"                 # attendu : 410 (ou 404) — JAMAIS 200
 curl -s -o /dev/null -w "%{http_code}\n" "$API/v1/public/clubs/$SLUG/licencies?limit=1000&q=a"      # attendu : 410 (ou 404)
 curl -s -H "Origin: https://<domaine-du-front>" -o /dev/null -w "%{http_code}\n" "$API/v1/public/clubs/$SLUG/licencies"   # idem
@@ -162,7 +162,7 @@ curl -s -o /dev/null -w "%{http_code}\n" -X POST -H "Content-Type: application/j
 - **R-013 reste OUVERT après la livraison du LOT-02 tant que ces commandes n'ont pas donné le résultat attendu** ; l'acceptation du risque (D-3) **expire à la livraison du LOT-02** et doit être explicitement renouvelée si l'ancien endpoint n'est pas fermé à ce moment.
 
 ### 7.8 Point de sécurité préexistant révélé par cette spécification (R-018) — **traité dans le LOT-02, voir §7.9**
-Le flux « lien perdu / première inscription » demande une adresse e-mail quand aucune n'est connue (`IdentifyView.tsx:106-111` : `EMAIL_REQUIRED` → champ e-mail → `requestPersonalLink({ email })`, `publicTables.ts:57-62`) et la **rattache à la fiche**. D'après le code du front, **n'importe quel visiteur qui connaît un nom (même partiel) peut revendiquer une fiche sans adresse et recevoir le lien personnel d'un autre licencié** — y compris un coach ou un administrateur du club (`isClubAdmin`, droits d'écriture FBI via les routes publiques). La recherche bornée réduit la découverte des noms, **pas** cette revendication. **Non vérifié côté `club-manager-api`** (code non lu). Mesures à étudier (hors LOT-02) : première revendication soumise à validation par un admin du club, ou pré-chargement des adresses par le club, ou code de confirmation envoyé à l'adresse **déjà connue** uniquement.
+Le flux « lien perdu / première inscription » demande une adresse e-mail quand aucune n'est connue (`IdentifyView.tsx:106-111` : `EMAIL_REQUIRED` → champ e-mail → `requestPersonalLink({ email })`, `publicTables.ts:57-62`) et la **rattache à la fiche**. D'après le code du front, **n'importe quel visiteur qui connaît un nom (même partiel) peut revendiquer une fiche sans adresse et recevoir le lien personnel d'un autre licencié** — y compris un coach ou un administrateur du club (`isClubAdmin`, droits d'écriture FBI via les routes publiques). La recherche bornée réduit la découverte des noms, **pas** cette revendication. **Non vérifié côté `ball-manager-back`** (code non lu). Mesures à étudier (hors LOT-02) : première revendication soumise à validation par un admin du club, ou pré-chargement des adresses par le club, ou code de confirmation envoyé à l'adresse **déjà connue** uniquement.
 
 ### 7.9 R-018 intégré au LOT-02 — revendication de fiche soumise à validation (Q-022, décision du 2026-10-07)
 _Règles décidées : (1) la revendication d'une fiche **sans adresse connue** est soumise à la validation d'un **admin du club**, **sans envoi automatique du lien** ; (2) **aucune fiche portant un rôle coach ou admin n'est revendicable** par le parcours public — généralisé le 2026-10-07 : **tout rôle disposant de droits d'écriture** est exclu (§7.9.2). Les valeurs chiffrées ci-dessous sont des **propositions** (marquées « estimé »). **Paramètres fixés le 2026-10-07 (Q-024)** : délai d'expiration 14 jours, validateur `club_admin` seul, règle générale des rôles à droits d'écriture (§7.9.2). Reste « estimé » : les limites de débit.
@@ -215,7 +215,7 @@ _Règles décidées : (1) la revendication d'une fiche **sans adresse connue** e
 **7.9.7 Procédure de vérification de R-018 sur l'existant** _(à lancer par le propriétaire, sur un **club de test**, avec des fiches **synthétiques** ; aucune donnée réelle ; ne jamais coller de sortie contenant un jeton)_
 Préparation (dans l'application, club de test) : fiche **A** « Test Joueur » sans adresse, sans rôle ; fiche **B** « Test Coach » sans adresse, rôle coach ; fiche **C** « Test Admin » sans adresse, rôle admin. Une boîte e-mail de test que vous contrôlez (`vous+r018@…`).
 ```bash
-API="https://<url-club-manager-api>"; SLUG="<slug-du-club-de-TEST>"; MAIL="<votre-adresse-de-test>"
+API="https://<url-ball-manager-back>"; SLUG="<slug-du-club-de-TEST>"; MAIL="<votre-adresse-de-test>"
 # 1) récupérer les identifiants des 3 fiches de test (ancien endpoint, club de test uniquement)
 curl -sS "$API/v1/public/clubs/$SLUG/licencies" | jq -r '.licencies[]|select(.lastName|test("^Test"))|"\(.id) \(.firstName) \(.lastName) claimed=\(.claimed)"'
 A="<id fiche A>"; B="<id fiche B>"; C="<id fiche C>"

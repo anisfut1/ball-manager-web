@@ -17,7 +17,7 @@ import { createApi } from "./factory";
  * propre. Le proxy (`src/proxy.ts`) rafraîchit déjà le cookie de session à
  * chaque requête, mais une session réellement expirée (jeton de
  * rafraîchissement révoqué/expiré) n'a rien à rafraîchir — le seul signal
- * fiable de ce cas précis est le 401 renvoyé par club-manager-api lui-même
+ * fiable de ce cas précis est le 401 renvoyé par ball-manager-back lui-même
  * (§ `browserFetcher`, même philosophie côté Client Components : jamais de
  * crash, toujours une redirection nette).
  */

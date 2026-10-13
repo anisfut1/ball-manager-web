@@ -8,13 +8,13 @@ import { parseMatchTab } from "@/features/matches/detail/labels";
 import type { MatchDetailsDto } from "@/lib/api/matches";
 import { PublicMatchRequestBlock } from "@/features/public-derogations/PublicMatchRequestBlock";
 import { PublicOfficialDerogationBlock } from "@/features/public-derogations/PublicOfficialDerogationBlock";
-import { PublicMatchTeamLifeBlock } from "@/features/team-life/MatchTeamLifeBlocks";
+import { PublicMatchFamilyBlock, PublicMatchTeamLifeBlock } from "@/features/team-life/MatchTeamLifeBlocks";
 
 /**
  * Fiche match PUBLIQUE (retour du club, 2026-09-29 : "toutes les infos en
  * vue directe... sans les fonctions admin, et sans compte"). Mêmes onglets
  * que la vue authentifiée (MatchDetailView en `mode="public"`) : aucun
- * bouton d'action pour un simple visiteur — voir club-manager-api/docs/PUBLIC_MATCHES.md.
+ * bouton d'action pour un simple visiteur — voir ball-manager-back/docs/PUBLIC_MATCHES.md.
  * Seule exception : un coach reconnu par son lien personnel peut demander une
  * dérogation (`PublicMatchRequestBlock`, retour du club 2026-10-01).
  */
@@ -55,6 +55,8 @@ export default async function PublicMatchDetailPage({
         isAdmin={false}
         playerBasePath={`/public/${clubSlug}/joueurs`}
       />
+      {/* Famille : disponibilité / convocation / maillots de CE match (destination des liens de convocation, web et app iOS). */}
+      {tab === "informations" ? <PublicMatchFamilyBlock clubSlug={clubSlug} matchId={id} timezone={club.timezone} /> : null}
       {/* Vie d'équipe (Lot 2) : disponibilités et convocation, coach de l'équipe / admin reconnu par son lien. */}
       {tab === "informations" ? <PublicMatchTeamLifeBlock clubSlug={clubSlug} matchId={id} timezone={club.timezone} /> : null}
       {/* Coach reconnu par son lien personnel : demande de dérogation depuis la fiche (rien pour les autres visiteurs). */}

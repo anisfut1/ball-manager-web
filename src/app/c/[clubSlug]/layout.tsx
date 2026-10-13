@@ -11,7 +11,7 @@ import { getShellIdentity } from "@/components/shell/session";
  * contexte si elles en ont besoin côté service (§36 du brief SaaS).
  *
  * Le nom d'affichage vient de `GET /v1/me` (profiles.display_name résolu
- * par club-manager-api) — ce repository ne lit jamais `profiles` lui-même.
+ * par ball-manager-back) — ce repository ne lit jamais `profiles` lui-même.
  * La navigation n'expose que les sections autorisées par les rôles du
  * club courant (voir src/components/shell/nav.ts).
  */

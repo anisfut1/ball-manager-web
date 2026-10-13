@@ -48,7 +48,7 @@ Aucun `report-uri` n'est configuré : les violations n'apparaissent **que dans l
 
 ## 5. Restes de LOT-14 (non faits)
 - **R-008** : jeton public en `localStorage` (`publicToken.ts:19-28`). Pistes : cookie `HttpOnly` posé par le back après échange (change l'architecture du lien), CSP bloquante avec nonce (réduit la surface XSS). Dépend du nouveau back (ADR-006).
-- **R-014** : fragment `#token=` dans le lien d'e-mail (le serveur ne le reçoit pas) — modification de `club-manager-api` (ADR-007 §Conséquences de Q-017).
+- **R-014** : fragment `#token=` dans le lien d'e-mail (le serveur ne le reçoit pas) — modification de `ball-manager-back` (ADR-007 §Conséquences de Q-017).
 
 ## 6. Relevé des hôtes de logos et passage en mode bloquant avec nonce (plan, **rien n'est exécuté**)
 
@@ -69,7 +69,7 @@ Pour les violations déjà journalisées, copier uniquement la partie `https://<
 **Prérequis (tous requis)**
 - Relevé §6.1 terminé et liste d'hôtes intégrée à `img-src` **en Report-Only d'abord**.
 - **≥ 7 jours** (jours calendaires, dont un week-end de matchs) d'observation du Report-Only en production, par le propriétaire, **sans violation inattendue** (sont attendues : barre d'outils Vercel en prévisualisation, extensions du navigateur).
-- Le jeton a quitté les URLs (R-014 : fragment + nettoyage immédiat livrés côté front ; lien d'e-mail en fragment côté `club-manager-api`) — sinon la CSP bloquante n'apporte rien contre la fuite de jeton et le relevé reste pollué par `document-uri`.
+- Le jeton a quitté les URLs (R-014 : fragment + nettoyage immédiat livrés côté front ; lien d'e-mail en fragment côté `ball-manager-back`) — sinon la CSP bloquante n'apporte rien contre la fuite de jeton et le relevé reste pollué par `document-uri`.
 - Lecture de `node_modules/next/dist/docs/01-app/02-guides/content-security-policy.md` § « With Nonces » le jour J (AGENTS.md : l'API de ce Next peut avoir changé).
 **Étapes**
 1. **Branche dédiée** : générer un nonce par requête dans `src/proxy.ts` (fonction existante de proxy), le poser en `x-nonce` (requête) et dans l'en-tête de réponse ; construire `script-src 'self' 'nonce-<n>' 'strict-dynamic'` (+ `'unsafe-eval'` en `next dev` seulement). `style-src` reste `'self' 'unsafe-inline'` (décision 6).

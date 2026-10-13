@@ -8,19 +8,19 @@ export interface ApiRequestInit extends Omit<RequestInit, "body"> {
   /**
    * Dépasse `API_FETCH_TIMEOUT_MS` pour un endpoint dont le temps de
    * réponse normal excède 20s (ex: `.../fbi/process-jobs`, qui pilote
-   * `BrowserFbiClient` en synchrone côté club-manager-api — un seul job
+   * `BrowserFbiClient` en synchrone côté ball-manager-back — un seul job
    * `discover_emarque` prend déjà ~25-30s en pratique, voir docs/FBI.md
-   * côté club-manager-api). Sans ce dépassement, le fetch expirait avant
+   * côté ball-manager-back). Sans ce dépassement, le fetch expirait avant
    * la réponse alors que le traitement backend, lui, réussissait
    * (constaté en production le 2026-09-24 : "Traitement impossible"
-   * affiché côté SCSB pendant que les jobs continuaient de se terminer
+   * affiché côté ball-manager-web pendant que les jobs continuaient de se terminer
    * avec succès côté serveur).
    */
   timeoutMs?: number;
 }
 
 /**
- * `fetch()` seul n'a aucun délai d'expiration : un club-manager-api lent ou
+ * `fetch()` seul n'a aucun délai d'expiration : un ball-manager-back lent ou
  * injoignable bloque indéfiniment la Server Action/le Server Component
  * appelant, jusqu'à ce que Vercel tue la Function avec un
  * `504 FUNCTION_INVOCATION_TIMEOUT` générique (page d'erreur opaque,
@@ -37,7 +37,7 @@ function withTimeout(signal: AbortSignal | null | undefined, timeoutMs: number):
 
 /**
  * Client HTTP central (§5 de la demande) : UN SEUL point d'appel réseau
- * vers club-manager-api, isomorphe (fonctionne identiquement en Server
+ * vers ball-manager-back, isomorphe (fonctionne identiquement en Server
  * Component et en Client Component) — jamais un `fetch()` dispersé dans un
  * composant. `T` est laissé au type généré (`components["schemas"][...]`)
  * par les modules de src/lib/api/*.ts, jamais deviné à la main.

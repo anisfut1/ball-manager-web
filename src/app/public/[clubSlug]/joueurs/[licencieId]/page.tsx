@@ -5,7 +5,7 @@ import { ApiError } from "@/lib/api/client";
 import { PageContainer, BackButton } from "@/components/ui/PageHeader";
 import { PublicPlayerProfile } from "@/features/public-players/PublicPlayerProfile";
 
-/** Fiche joueur publique, sans compte (retour du club, 2026-10-08) — voir club-manager-api `GET /v1/public/clubs/:clubSlug/players/:licencieId`. */
+/** Fiche joueur publique, sans compte (retour du club, 2026-10-08) — voir ball-manager-back `GET /v1/public/clubs/:clubSlug/players/:licencieId`. */
 export default async function PublicPlayerPage({ params }: { params: Promise<{ clubSlug: string; licencieId: string }> }) {
   const { clubSlug, licencieId } = await params;
 

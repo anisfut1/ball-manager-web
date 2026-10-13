@@ -7,7 +7,7 @@ Aucune notification n'est envoyée, aucun service externe n'est utilisé, aucun 
 - `src/lib/push/client.ts` : détection de support (sur iPhone : iOS ≥ 16.4 **et PWA installée** uniquement), demande de permission sur geste, abonnement VAPID, désabonnement. Inactif tant que `NEXT_PUBLIC_PUSH_ENABLED` ≠ `1` ou sans `NEXT_PUBLIC_VAPID_PUBLIC_KEY`.
 - `src/lib/api/push.ts` : contrat client des endpoints proposés ci-dessous (non appelés).
 
-## À construire côté club-manager-api (non fait : dépôt absent de cet environnement)
+## À construire côté ball-manager-back (non fait : dépôt absent de cet environnement)
 Table `push_subscriptions` (migration Supabase côté API) :
 ```sql
 create table push_subscriptions (

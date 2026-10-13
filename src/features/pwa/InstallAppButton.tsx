@@ -7,6 +7,7 @@ import { Notice } from "@/components/ui/Notice";
 import { Sheet } from "@/components/ui/Sheet";
 import { iosNeedsSafari, readInstallEnvironment, type InstallEnvironment } from "@/lib/pwa/platform";
 import { promptInstall, useNativeInstall } from "./install-prompt";
+import { appStoreId } from "@/config/ios-app";
 
 function Step({ n, icon, children }: { n: number; icon?: React.ReactNode; children: React.ReactNode }) {
   return (
@@ -90,6 +91,8 @@ export function InstallAppButton({ className }: { className?: string }) {
   }, []);
 
   if (!env || env.standalone || installed || env.os === "other") return null;
+  // App iOS publiée : sur iPhone, c'est la bannière Safari (Smart App Banner) qui propose l'app — jamais deux invitations à la fois.
+  if (env.os === "ios" && appStoreId()) return null;
 
   async function onClick() {
     if (canPrompt && (await promptInstall()) !== "unavailable") return;

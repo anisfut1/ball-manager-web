@@ -80,7 +80,7 @@ export function countsSummary(counts: { present: number; absent: number; uncerta
   return parts.length ? parts.join(" · ") : "Aucun joueur dans l'effectif";
 }
 
-/** « U15 (F) » — même règle que club-manager-api (`formatTeamNameWithGender`). */
+/** « U15 (F) » — même règle que ball-manager-back (`formatTeamNameWithGender`). */
 export function teamDisplayName(team: { name: string; sexe: "M" | "F" | null }): string {
   if (team.sexe !== "M" && team.sexe !== "F") return team.name;
   if (new RegExp(`(^|\\s)${team.sexe}$`).test(team.name.trim())) return team.name;

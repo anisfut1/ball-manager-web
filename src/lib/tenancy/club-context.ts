@@ -9,7 +9,7 @@ import type { ClubDto } from "@/lib/api/clubs";
 /**
  * Point d'entrée UNIQUE pour résoudre "quel club, avec quels droits" pour
  * une requête donnée (voir docs/MULTI_TENANCY.md). Depuis la migration vers
- * club-manager-api (§12/§13 de la demande), ce module ne lit plus JAMAIS
+ * ball-manager-back (§12/§13 de la demande), ce module ne lit plus JAMAIS
  * `clubs`/`club_memberships` directement dans Supabase : il appelle
  * `GET /v1/clubs`, qui ne renvoie déjà que les clubs dont l'utilisateur est
  * membre actif (RLS appliquée côté backend) — un slug qui n'y figure pas
@@ -53,7 +53,7 @@ export async function requireClubAdminContext(slug: string): Promise<ClubDto> {
 /**
  * Variante stricte pour un ENSEMBLE de rôles équivalents sur un module
  * (ex: Tables de marque, §31 de la demande : club_admin OU
- * responsable_tables — même porte d'entrée que club-manager-api,
+ * responsable_tables — même porte d'entrée que ball-manager-back,
  * `requireAnyClubRole`, voir routes.ts côté API).
  */
 export async function requireAnyClubRoleContext(slug: string, roles: readonly ClubRole[]): Promise<ClubDto> {

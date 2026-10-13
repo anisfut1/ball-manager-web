@@ -10,7 +10,7 @@ import type { RefereeStatusResultDto, TableSuggestionsDto } from "./tables";
  * 2026-09-29 : "je vais envoyer le lien à tout le monde... l'accès se
  * fera sans création de compte"). Jamais de jeton Supabase ici — l'identité
  * vient exclusivement d'un jeton personnel (transport : `publicTokenTransport.ts`, voir
- * club-manager-api/docs/PUBLIC_TABLE_ACCESS.md). Utilise `apiFetch`
+ * ball-manager-back/docs/PUBLIC_TABLE_ACCESS.md). Utilise `apiFetch`
  * directement (jamais `browserApi`/`api.server`, qui attachent un jeton
  * Supabase) : ce module est volontairement indépendant de toute session.
  */

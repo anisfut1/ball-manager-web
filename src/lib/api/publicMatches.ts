@@ -14,7 +14,7 @@ export type { PoolStandingsDto, StandingRowDto } from "./standings";
  * `publicTables.ts` (auto-affectation), il n'y a ICI aucune identité à
  * prouver — pas de jeton, pas de `?token=` : seul le `clubSlug` de l'URL
  * compte. Utilise `apiFetch` directement (jamais `browserApi`/`api.server`,
- * qui attachent un jeton Supabase) — voir club-manager-api/docs/PUBLIC_MATCHES.md.
+ * qui attachent un jeton Supabase) — voir ball-manager-back/docs/PUBLIC_MATCHES.md.
  */
 
 export interface PublicMatchesListResponse {
@@ -28,7 +28,7 @@ export async function listPublicTeams(clubSlug: string): Promise<TeamDto[]> {
   return teams;
 }
 
-/** Taille de page demandée à l'API publique (maximum accepté : 200, comme `MAX_MATCHES_LIMIT` côté club-manager-api). */
+/** Taille de page demandée à l'API publique (maximum accepté : 200, comme `MAX_MATCHES_LIMIT` côté ball-manager-back). */
 const PUBLIC_MATCHES_PAGE_SIZE = 200;
 /**
  * Plafond de sécurité : au plus 25 pages, soit 5 000 matchs. Une saison de club

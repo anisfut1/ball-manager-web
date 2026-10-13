@@ -40,7 +40,7 @@ function greetingDate(): string {
 
 /**
  * Tableau de bord : uniquement des données réelles déjà exposées par
- * club-manager-api (matchs de la saison, anomalies, dérogations). Les
+ * ball-manager-back (matchs de la saison, anomalies, dérogations). Les
  * indicateurs admin ne sont chargés — et affichés — que pour un club_admin ;
  * les raccourcis ne mènent qu'aux pages que le rôle peut réellement ouvrir.
  */

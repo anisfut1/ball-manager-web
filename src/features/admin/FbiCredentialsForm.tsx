@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { Field, FormMessage, Input } from "@/components/ui/Field";
 
 /**
- * §20 de la demande : envoyé directement à club-manager-api en HTTPS
+ * §20 de la demande : envoyé directement à ball-manager-back en HTTPS
  * (Client Component, jamais un Server Action) — jamais stocké dans
  * localStorage, jamais loggé côté frontend, jamais renvoyé après succès.
  * Le champ mot de passe est vidé après un enregistrement réussi.
@@ -54,7 +54,7 @@ export function FbiCredentialsForm({ clubId }: { clubId: string }) {
         <Field label="Identifiant FBI" required>
           {(props) => <Input {...props} name="username" type="text" autoComplete="off" placeholder="ex: club0034008" />}
         </Field>
-        <Field label="Mot de passe FBI" hint="Jamais affiché ni renvoyé une fois enregistré — chiffré (AES-256-GCM) côté club-manager-api.">
+        <Field label="Mot de passe FBI" hint="Jamais affiché ni renvoyé une fois enregistré — chiffré (AES-256-GCM) côté ball-manager-back.">
           {(props) => (
             <Input
               {...props}

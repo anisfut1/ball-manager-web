@@ -31,7 +31,7 @@ function resolveDemandeurTeam(derogation: { demandeur: string | null; domicile: 
 
 /**
  * Consultation de l'état d'une dérogation FBI pour ce match (demande du
- * club, voir docs/FBI.md côté club-manager-api : "faut qu'on gere les
+ * club, voir docs/FBI.md côté ball-manager-back : "faut qu'on gere les
  * derog depuis l'outil"). `isAdmin` uniquement (même verrou que POST
  * .../derogation/check côté API). "Vérifier sur FBI" est SYNCHRONE depuis
  * 2026-09-28 ("doit y avoir rien en attente") : login/consulte FBI et

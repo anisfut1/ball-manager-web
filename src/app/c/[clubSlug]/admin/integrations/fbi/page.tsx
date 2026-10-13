@@ -14,7 +14,7 @@ import { CheckAllDerogationsButton } from "@/features/admin/CheckAllDerogationsB
 
 /**
  * §20/§21 de la demande. Le formulaire et le bouton de test appellent
- * club-manager-api directement (Client Components, voir
+ * ball-manager-back directement (Client Components, voir
  * src/features/admin/{FbiCredentialsForm,TestFbiConnectionButton}.tsx).
  *
  * BACKEND_API_GAP (voir docs/MIGRATION_TO_API.md) : la bascule de la
@@ -22,7 +22,7 @@ import { CheckAllDerogationsButton } from "@/features/admin/CheckAllDerogationsB
  * reste affiché en LECTURE (`integrations.fbi.autoImportEmarque`), aucune
  * commande factice n'est proposée.
  */
-/** Libellé lisible par type de job FBI — voir `FbiActiveJobDto` côté club-manager-api. */
+/** Libellé lisible par type de job FBI — voir `FbiActiveJobDto` côté ball-manager-back. */
 const FBI_JOB_TYPE_LABELS: Record<string, string> = {
   test_connection: "Test de connexion FBI",
   discover_emarque: "Téléchargement d'un document e-Marque",
@@ -78,7 +78,7 @@ export default async function FbiIntegrationPage({ params }: { params: Promise<{
       {/*
        * Retour du club, 2026-09-29 : "il me faut un truc pour savoir quand
        * ya un truc en cours" — une seule session FBI active à la fois par
-       * club (voir claim_next_fbi_job côté club-manager-api). Rendu côté
+       * club (voir claim_next_fbi_job côté ball-manager-back). Rendu côté
        * serveur (page non auto-rafraîchie) : recharge la page pour une mise
        * à jour, pas de polling client ici.
        */}

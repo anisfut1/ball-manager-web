@@ -20,7 +20,7 @@ export interface ServerAuth {
  * (JWKS en cache) avec des clés de signature asymétriques, sinon il retombe
  * lui-même sur `getUser()` côté Supabase — jamais moins sûr que l'ancien
  * `getUser()` systématique, jamais plus d'un appel réseau par requête.
- * club-manager-api revalide de toute façon le JWT à chaque appel.
+ * ball-manager-back revalide de toute façon le JWT à chaque appel.
  */
 export const getServerAuth = cache(async (): Promise<ServerAuth | null> => {
   const supabase = await createServerSupabaseClient();
@@ -37,7 +37,7 @@ export const getServerAuth = cache(async (): Promise<ServerAuth | null> => {
   return { accessToken: session.access_token, userId: data.claims.sub, email: typeof email === "string" ? email : null };
 });
 
-/** Jeton d'accès Supabase pour un appel club-manager-api depuis un Server Component / Server Action (§8 de la demande). */
+/** Jeton d'accès Supabase pour un appel ball-manager-back depuis un Server Component / Server Action (§8 de la demande). */
 export async function getServerAccessToken(): Promise<string | null> {
   return (await getServerAuth())?.accessToken ?? null;
 }

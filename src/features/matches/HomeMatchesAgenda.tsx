@@ -19,7 +19,7 @@ import { MatchCard, type MatchCardClub } from "./MatchCard";
  * fausse localisation.
  *
  * Le rapprochement se fait par mot-clé tolérant (normalisation des accents,
- * comme `venuesLikelyMatch` côté club-manager-api) plutôt que par égalité
+ * comme `venuesLikelyMatch` côté ball-manager-back) plutôt que par égalité
  * stricte : `venueLabel` renvoyé par l'API peut différer en formatage de
  * `venue_raw_label` observé en base.
  */

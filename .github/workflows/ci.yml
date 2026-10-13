@@ -38,7 +38,7 @@ jobs:
       - run: npm run lint
       - run: npm test
       - name: Build
-        # Valeurs factices : le build ne contacte ni Supabase ni club-manager-api (aucun secret en CI).
+        # Valeurs factices : le build ne contacte ni Supabase ni ball-manager-back (aucun secret en CI).
         env:
           NEXT_PUBLIC_SUPABASE_URL: https://ci.supabase.co
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ci-anon-key

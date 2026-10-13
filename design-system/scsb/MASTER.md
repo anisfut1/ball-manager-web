@@ -1,6 +1,6 @@
 # Club Manager — Design System (MASTER)
 
-> Source de vérité visuelle de SCSB. Toute page, tout composant s'y conforme.
+> Source de vérité visuelle de ball-manager-web. Toute page, tout composant s'y conforme.
 > Les surcharges par page, s'il en faut un jour, vont dans `design-system/scsb/pages/<page>.md`
 > (convention UI UX Pro Max : le fichier de page prime sur ce MASTER pour cette page uniquement).
 >

@@ -12,7 +12,7 @@ import { NO_COORDINATOR_MESSAGE } from "@/features/derogation-requests/RequestWi
 /**
  * Dérogations internes (retour du club, 2026-10-01) : le coach demande, le
  * coordinateur traite. Inbox du coordinateur ou suivi du coach selon les
- * droits renvoyés par club-manager-api (`context.canManage`). Distinct des
+ * droits renvoyés par ball-manager-back (`context.canManage`). Distinct des
  * dérogations officielles FBI (/admin/derogations).
  */
 export default async function DerogationRequestsPage({ params }: { params: Promise<{ clubSlug: string }> }) {

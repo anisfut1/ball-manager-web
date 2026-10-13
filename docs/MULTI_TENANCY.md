@@ -3,9 +3,9 @@
 > **Note post-migration** (voir `docs/MIGRATION_TO_API.md`) : le modèle
 > décrit ci-dessous (schéma `clubs`/`club_memberships`/`membership_roles`,
 > RLS, fonctions `is_club_member()`/`has_club_role()`) reste exact — il n'a
-> pas changé. Ce qui a changé : **club-manager-api est désormais
+> pas changé. Ce qui a changé : **ball-manager-back est désormais
 > l'unique propriétaire de `supabase/migrations/`** et l'unique service qui
-> écrit sur ces tables (hors authentification). SCSB ne lit plus ce modèle
+> écrit sur ces tables (hors authentification). ball-manager-web ne lit plus ce modèle
 > qu'à travers `GET /v1/clubs` (voir `src/lib/tenancy/club-context.ts`),
 > jamais par une requête Supabase directe. Ce document reste la référence
 > conceptuelle du modèle de données.

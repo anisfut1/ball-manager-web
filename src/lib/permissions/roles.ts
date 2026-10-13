@@ -40,6 +40,6 @@ export function isClubAdmin(roles: readonly ClubRole[]): boolean {
 /**
  * Demandes de dérogation internes (coach → coordinateur) : coachs,
  * coordinateur (`correspondant_club`) et club_admin — même porte que
- * club-manager-api (la portée fine par équipe y est appliquée).
+ * ball-manager-back (la portée fine par équipe y est appliquée).
  */
 export const DEROGATION_REQUEST_ROLES: readonly ClubRole[] = ["club_admin", "correspondant_club", "coach"];

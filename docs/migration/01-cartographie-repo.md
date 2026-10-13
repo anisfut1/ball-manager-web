@@ -3,12 +3,12 @@ _Phase 1, 2026-10-07. Toute affirmation cite `fichier:ligne` ou une commande rep
 
 ## 1. Arborescence commentée
 ```
-SCSB/
+ball-manager-web/
 ├── src/                      225 fichiers suivis (git ls-files src)
 │   ├── app/            50    App Router : /login, /c/[clubSlug]/* (privé), /public/[clubSlug]/* (sans compte), /platform/*
 │   ├── features/       78    UI par domaine : admin, matches, tables, derogation-requests, licencies, public-*, results…
 │   ├── components/     40    UI partagée (shell, ui, brand)
-│   ├── lib/            50    api/ (client club-manager-api), supabase/ (auth), auth/, tenancy/, permissions/, publicToken.ts
+│   ├── lib/            50    api/ (client ball-manager-back), supabase/ (auth), auth/, tenancy/, permissions/, publicToken.ts
 │   ├── server/          2    Server Actions : auth.ts, club-settings.ts
 │   ├── config/          3    env.public.ts (validation Zod des NEXT_PUBLIC_*), site.ts
 │   └── proxy.ts              Garde d'auth (ex-middleware) + refresh session
@@ -28,8 +28,8 @@ Pas de `.github/` ni de `vercel.json` dans le repo (vérifié) : **aucun CI/CD v
 | État | Aucune lib d'état globale ni de cache de requêtes (pas de TanStack Query/SWR/Redux/Zustand) | `package.json` (8 deps prod) |
 | Validation | Zod 4 | `src/config/env.public.ts:12` |
 | Auth | Supabase Auth (`@supabase/ssr`, `supabase-js`) — session uniquement | `src/lib/supabase/{server,browser}.ts`, `src/proxy.ts:21` |
-| Back | **club-manager-api** : Hono/TypeScript sur Vercel Functions, repo séparé, **absent localement** | `ARCHITECTURE.md` §1 (tableau) ; Q-001 |
-| BDD | PostgreSQL (Supabase), migrations possédées par club-manager-api | `ARCHITECTURE.md` §1 |
+| Back | **ball-manager-back** : Hono/TypeScript sur Vercel Functions, repo séparé, **absent localement** | `ARCHITECTURE.md` §1 (tableau) ; Q-001 |
+| BDD | PostgreSQL (Supabase), migrations possédées par ball-manager-back | `ARCHITECTURE.md` §1 |
 | Hébergement | Vercel (2 projets) | `ARCHITECTURE.md` §1 |
 | CI/CD | Aucun fichier versionné | absence de `.github/`, `vercel.json` |
 | Tests | Vitest 5 : 18 fichiers / 109 tests, tous sous `src/` ; env `node`, aucun test de composant | `vitest.config.mts`, `07-tests-et-qualite.md` |
@@ -58,14 +58,14 @@ Dev (consignées, hors lot) : `@next/eslint-plugin-next`, `eslint-config-next`, 
 `worker/` : `npm audit --package-lock-only` → 0 vulnérabilité (prod et dev).
 
 ## 4. Flux de données
-Toute donnée métier passe par `apiFetch` (`src/lib/api/client.ts:45`) → club-manager-api, avec `Authorization: Bearer <JWT Supabase>` (`client.ts:54-56`), `cache: "no-store"` par défaut (`client.ts:67`), timeout 20 s (`client.ts:31`). Deux fabriques : `api` serveur (`src/lib/api/server.ts:37`, 401 → redirect `/login`) et `browserApi` navigateur (`src/lib/api/browserClient.ts:54`, 1 refresh puis redirect).
+Toute donnée métier passe par `apiFetch` (`src/lib/api/client.ts:45`) → ball-manager-back, avec `Authorization: Bearer <JWT Supabase>` (`client.ts:54-56`), `cache: "no-store"` par défaut (`client.ts:67`), timeout 20 s (`client.ts:31`). Deux fabriques : `api` serveur (`src/lib/api/server.ts:37`, 401 → redirect `/login`) et `browserApi` navigateur (`src/lib/api/browserClient.ts:54`, 1 refresh puis redirect).
 
 ```mermaid
 flowchart LR
   U[Navigateur] -->|cookies session| P[proxy.ts<br/>getUser Supabase]
   P --> RSC[Server Components / Actions<br/>Next.js Vercel]
   U -->|Client Components<br/>66 fichiers use client| BA[browserApi]
-  RSC -->|api serveur + JWT| API[(club-manager-api<br/>Hono / Vercel)]
+  RSC -->|api serveur + JWT| API[(ball-manager-back<br/>Hono / Vercel)]
   BA -->|JWT navigateur| API
   RSC -->|auth seulement| SBA[Supabase Auth]
   U --> SBA
@@ -79,7 +79,7 @@ flowchart LR
 - **Aucun `fetch()` hors client central** : seul `src/lib/api/client.ts:60` (grep).
 - **Stockage navigateur** : jeton public `localStorage` `scsb:public-token:<slug>` (`src/lib/publicToken.ts:13,19,28,37`) ; cookie « known » (`src/features/public/PublicIdentityProvider.tsx:46`).
 - **Auth** : `proxy.ts:37-47` appelle `supabase.auth.getUser()` (aller-retour réseau Supabase) à **chaque** requête hors assets ; `requireUser()` (`src/lib/auth/session.ts:29`) ré-appelle `getUser()` ; `getUserClubs` est dédupliqué par `cache()` (`src/lib/tenancy/club-context.ts:24`). Pas encore évalué : coût cumulé → Phase 2.
-- **Autorisation** : `requireClubAdminContext` / `requireAnyClubRoleContext` testent les rôles côté Next (`club-context.ts:43-67`) ; `club.roles` vient du back. L'API revérifie (« même porte d'entrée que club-manager-api », `club-context.ts:56`) — **à confirmer côté back (Q-001)**.
+- **Autorisation** : `requireClubAdminContext` / `requireAnyClubRoleContext` testent les rôles côté Next (`club-context.ts:43-67`) ; `club.roles` vient du back. L'API revérifie (« même porte d'entrée que ball-manager-back », `club-context.ts:56`) — **à confirmer côté back (Q-001)**.
 - **Calculs côté front repérés (candidats Phase 2, non évalués ici)** : `group-by-day.ts:13-34`, `match-filters.ts`, `result-groups.ts`, `VenuePlanning.tsx`, `DaySummary.tsx`, `HomeMatchesAgenda.tsx`, pages `admin/stats`, `admin/issues`, `dashboard`, `platform/clubs` (grep `reduce|sort|filter`).
 
 ## 5. Points d'entrée
@@ -128,12 +128,12 @@ _Méthode : `git ls-files` (Dockerfile, docker-compose, ecosystem/pm2, nginx, Ca
 
 | Indice | Preuve | Ce que cela indique |
 |---|---|---|
-| Hébergement déclaré : Vercel, projet séparé de `club-manager-api` | `README.md:15` (« SCSB (Next.js/Vercel) »), `README.md:51` (« Déploiement visé : Vercel — projet séparé »), `README.md:217-218` (variables « du projet sur Vercel (production) », « Connecter CE repository à un projet Vercel séparé »), `ARCHITECTURE.md:78` (« Hébergement \| Vercel \| Deux projets séparés ») | Cible documentée = Vercel |
+| Hébergement déclaré : Vercel, projet séparé de `ball-manager-back` | `README.md:15` (« ball-manager-web (Next.js/Vercel) »), `README.md:51` (« Déploiement visé : Vercel — projet séparé »), `README.md:217-218` (variables « du projet sur Vercel (production) », « Connecter CE repository à un projet Vercel séparé »), `ARCHITECTURE.md:78` (« Hébergement \| Vercel \| Deux projets séparés ») | Cible documentée = Vercel |
 | Dossier `.vercel` ignoré | `.gitignore:38-39` | Outil Vercel utilisé en local (au minimum prévu) |
 | Commentaires de code supposant le runtime Vercel | `src/lib/timezone.ts:34` (« UTC sur Vercel »), `src/features/matches/match-display.tsx:11`, `src/features/admin/DerogationsList.tsx:16`, `src/lib/logger.ts:4` (« logs Vercel »), `src/lib/api/client.ts:25` (« jusqu'à ce que Vercel tue la Function ») | Le code a été écrit et débogué sur Vercel (production constatée) |
 | Scripts : `next build` / `next start` | `package.json:7-8` | Compatible avec un Node auto-hébergé, mais n'indique rien en soi |
 | Pas de mode `standalone` | `next.config.ts` ne contient pas `output` (seulement `serverExternalPackages` et `outputFileTracingIncludes`, `:7,16`) | Aucune préparation d'image Docker minimale pour le front |
-| **Aucun** artefact de serveur auto-hébergé | absents de `git ls-files` : `docker-compose*`, `ecosystem.config.*`, `nginx*`, `Caddyfile`, `*.service`, `deploy*`, `Procfile`, `vercel.json`, `railway.json` | Aucune trace de déploiement VPS ni d'un `vercel.json` (les crons ont migré vers `club-manager-api`, `docs/MIGRATION_TO_API.md:68`) |
+| **Aucun** artefact de serveur auto-hébergé | absents de `git ls-files` : `docker-compose*`, `ecosystem.config.*`, `nginx*`, `Caddyfile`, `*.service`, `deploy*`, `Procfile`, `vercel.json`, `railway.json` | Aucune trace de déploiement VPS ni d'un `vercel.json` (les crons ont migré vers `ball-manager-back`, `docs/MIGRATION_TO_API.md:68`) |
 | Seul fichier Docker : celui du worker FBI | `worker/Dockerfile:1-24` (image Playwright, port 8080, healthcheck `/health`) | Prévu pour Railway (`docs/FBI_WORKER.md:76`, `worker/.env.example:2`) mais **jamais déployé** : `docs/FBI_WORKER.md:250-253`, et le document est déclaré obsolète (`docs/FBI_WORKER.md:3-13`) |
 | Railway déjà envisagé pour un worker | `docs/FBI_WORKER.md:4,10,34,76`, `ARCHITECTURE.md:496-509` (décision finale : pas de worker, crons Vercel) | Railway n'est pas nouveau dans le projet ; il n'a jamais servi |
 | CI | `.github/workflows/ci.yml` (vérifications seulement, ajouté par LOT-11) | Aucun déploiement automatisé |

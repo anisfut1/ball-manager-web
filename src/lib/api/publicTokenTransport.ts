@@ -1,12 +1,12 @@
 import { apiFetch, type ApiRequestInit } from "./client";
 
 /**
- * Transport du jeton personnel public vers `club-manager-api` (R-014, ADR-006
+ * Transport du jeton personnel public vers `ball-manager-back` (R-014, ADR-006
  * addendum 2026-10-07) : UN seul endroit décide si le jeton voyage en query
  * string (`?token=`, comportement d'origine) ou en en-tête.
  *
  * Le mode en-tête est derrière `NEXT_PUBLIC_PUBLIC_TOKEN_HEADER=1`
- * (DÉFAUT = query). Ne l'activer qu'APRÈS que `club-manager-api` accepte
+ * (DÉFAUT = query). Ne l'activer qu'APRÈS que `ball-manager-back` accepte
  * `X-Personal-Link-Token` ET l'autorise en CORS (`Access-Control-Allow-Headers`) :
  * un en-tête personnalisé déclenche un préflight, et sans cela chaque appel
  * public échouerait. `Authorization` n'est pas utilisé (réservé au JWT Supabase).

@@ -17,22 +17,22 @@
 > nouvelle fonctionnalité métier doit être conçue tenant-aware dès le
 > départ** (paramétrée par `clubId`, jamais un club implicite global).
 >
-> **IMPORTANT — lire avant tout ce qui suit.** Ce repository (SCSB) est
+> **IMPORTANT — lire avant tout ce qui suit.** Ce repository (ball-manager-web) est
 > désormais le **frontend web uniquement** de la plateforme. Toute la
 > logique métier décrite plus bas comme vivant dans "Next.js" (synchro
 > FFBB, connexion FBI, parsing e-Marque, jobs, cron, service role,
 > `supabase/migrations`) a été déplacée vers un backend séparé,
-> **[club-manager-api](https://github.com/anisfut1/club-manager-api)** —
+> **[ball-manager-back](https://github.com/anisfut1/ball-manager-back)** —
 > voir `docs/MIGRATION_TO_API.md` pour l'audit complet. Ce document
 > décrit encore le MODÈLE FONCTIONNEL/PRODUIT (modules, données, règles
 > métier), qui reste valide ; les sections décrivant explicitement Next.js
 > comme propriétaire de la synchronisation/des cron/de la service role
 > (§1 tableau stack, §3, §7 dernier point, §8.3, §13, §14, §15) sont
-> annotées ci-dessous pour rediriger vers club-manager-api. Toute
+> annotées ci-dessous pour rediriger vers ball-manager-back. Toute
 > fonctionnalité métier NOUVELLE (dérogations, tables de marque, moteur de
-> recommandation...) doit désormais être implémentée côté club-manager-api
+> recommandation...) doit désormais être implémentée côté ball-manager-back
 > et exposée via son API REST — jamais réimplémentée dans ce frontend
-> (§58 de la demande de migration : "SCSB ne doit plus savoir COMMENT").
+> (§58 de la demande de migration : "ball-manager-web ne doit plus savoir COMMENT").
 
 ## Sommaire
 
@@ -67,16 +67,16 @@ flowchart LR
     SYNC -.->|historique + logs| DB
 ```
 
-**Choix de stack — mis à jour après la migration vers club-manager-api (voir `docs/MIGRATION_TO_API.md`).**
+**Choix de stack — mis à jour après la migration vers ball-manager-back (voir `docs/MIGRATION_TO_API.md`).**
 
 | Brique | Choix | Justification |
 |---|---|---|
-| Frontend | **Next.js (App Router) + TypeScript**, repository SCSB | SSR pour le mobile-first, écosystème mûr. **N'est plus le backend** : aucune logique métier, aucun accès direct à Supabase pour une donnée métier. |
-| Backend | **club-manager-api** (Hono/TypeScript, Vercel Functions), repository séparé | Source de vérité de toute la logique métier (FFBB, FBI, e-Marque, jobs, cron) — voir son propre `ARCHITECTURE.md`. |
-| Base de données | **PostgreSQL via Supabase** | Relationnel adapté au modèle (matchs, licenciés, affectations), RLS native pour les permissions, pas d'infra à gérer. Migrations possédées par club-manager-api. |
-| Auth | **Supabase Auth** | Utilisée directement par SCSB pour la session utilisateur ; club-manager-api valide le JWT à chaque requête. |
-| Hébergement | **Vercel** | Deux projets séparés (SCSB, club-manager-api). Cron Jobs natifs côté club-manager-api pour la synchronisation planifiée. |
-| Synchronisation FFBB | **club-manager-api**, déclenchée par cron Vercel | Voir `docs/JOBS.md` côté club-manager-api. Pas de queue/broker (Redis, SQS...) : la volumétrie d'un seul club ne le justifie pas. |
+| Frontend | **Next.js (App Router) + TypeScript**, repository ball-manager-web | SSR pour le mobile-first, écosystème mûr. **N'est plus le backend** : aucune logique métier, aucun accès direct à Supabase pour une donnée métier. |
+| Backend | **ball-manager-back** (Hono/TypeScript, Vercel Functions), repository séparé | Source de vérité de toute la logique métier (FFBB, FBI, e-Marque, jobs, cron) — voir son propre `ARCHITECTURE.md`. |
+| Base de données | **PostgreSQL via Supabase** | Relationnel adapté au modèle (matchs, licenciés, affectations), RLS native pour les permissions, pas d'infra à gérer. Migrations possédées par ball-manager-back. |
+| Auth | **Supabase Auth** | Utilisée directement par ball-manager-web pour la session utilisateur ; ball-manager-back valide le JWT à chaque requête. |
+| Hébergement | **Vercel** | Deux projets séparés (ball-manager-web, ball-manager-back). Cron Jobs natifs côté ball-manager-back pour la synchronisation planifiée. |
+| Synchronisation FFBB | **ball-manager-back**, déclenchée par cron Vercel | Voir `docs/JOBS.md` côté ball-manager-back. Pas de queue/broker (Redis, SQS...) : la volumétrie d'un seul club ne le justifie pas. |
 | PWA | **next-pwa ou Web App Manifest natif** | Ajout léger, pas de dépendance lourde type React Native tant que le besoin n'est pas prouvé. |
 
 **Ajustements proposés par rapport à l'énoncé :**
@@ -108,7 +108,7 @@ Ces 8 modules correspondent à 8 "domaines" de code (voir §13) et peuvent avanc
 > **jamais auto-affectant** ("le logiciel suggère, le responsable
 > décide"), aucun buffer de trajet ni compétence par rôle pour l'instant
 > (architecturé pour, pas construit). Logique métier entièrement dans
-> club-manager-api (`modules/tables/`, voir son `docs/TABLE_ASSIGNMENTS.md`) ;
+> ball-manager-back (`modules/tables/`, voir son `docs/TABLE_ASSIGNMENTS.md`) ;
 > ce repository ne fait qu'appeler `GET/PUT/DELETE
 > /v1/clubs/:clubId/(matches/:matchId/)table-assignments...` — voir
 > `/c/{slug}/tables` (`src/app/c/[clubSlug]/tables/page.tsx`,
@@ -121,7 +121,7 @@ Ces 8 modules correspondent à 8 "domaines" de code (voir §13) et peuvent avanc
 > **Note post-migration** : le diagramme et le flux ci-dessous décrivent la
 > logique FONCTIONNELLE — l'implémentation réelle (`/api/sync/ffbb`,
 > `FFBBProvider`, écriture en base) vit désormais entièrement dans
-> club-manager-api (`integrations/ffbb/`), pas dans ce repository. SCSB lit
+> ball-manager-back (`integrations/ffbb/`), pas dans ce repository. ball-manager-web lit
 > le résultat via `GET /v1/clubs/:clubId/matches` et
 > `GET /v1/clubs/:clubId/sync-runs`.
 
@@ -363,7 +363,7 @@ erDiagram
   - `coach` : lecture sur les matchs de ses équipes (`scope_team_id`), création de `derogations` pour ses équipes.
   - `joueur` : lecture de ses propres matchs/affectations, écriture sur ses propres `availabilities`.
   - `parent` : mêmes droits que `joueur`, mais pour les licenciés listés dans `parent_child_links`.
-- **Service role key** (Supabase) — n'existe plus du tout dans SCSB (voir `docs/MIGRATION_TO_API.md`, §30/§31 de la demande de migration). Utilisée **uniquement** par club-manager-api (job de sync, routes cron internes), jamais exposée à ce frontend.
+- **Service role key** (Supabase) — n'existe plus du tout dans ball-manager-web (voir `docs/MIGRATION_TO_API.md`, §30/§31 de la demande de migration). Utilisée **uniquement** par ball-manager-back (job de sync, routes cron internes), jamais exposée à ce frontend.
 - Un licencié peut exister **sans compte** (`licencies.id` sans `profiles` associé) — c'est la norme pour beaucoup de joueurs, notamment jeunes. Le rattachement à un compte se fait plus tard (auto-inscription avec validation, ou création manuelle par l'admin).
 
 ---
@@ -393,10 +393,10 @@ interface FFBBProvider {
 
 ### 8.3 Cadence et déclenchement
 
-> Implémenté côté club-manager-api (`GET /internal/cron/ffbb`, voir son
+> Implémenté côté ball-manager-back (`GET /internal/cron/ffbb`, voir son
 > `docs/FFBB.md`/`docs/JOBS.md`) — plus dans ce repository.
 
-- Vercel Cron déclenche la synchronisation (protégée par `CRON_SECRET`, géré côté club-manager-api) toutes les 15 minutes.
+- Vercel Cron déclenche la synchronisation (protégée par `CRON_SECRET`, géré côté ball-manager-back) toutes les 15 minutes.
 - Chaque run crée une ligne `sync_runs` avec statut et stats (créés / mis à jour / inchangés / erreurs), consultable via `GET /v1/clubs/:clubId/sync-runs` sur `/c/{slug}/admin/sync`.
 - Bouton "Relancer maintenant" (`/c/{slug}/admin/integrations`) réservé à `club_admin` pour le debug — appelle `POST /v1/clubs/:clubId/integrations/ffbb/sync`, ce n'est pas un import manuel de données, juste un déclenchement anticipé du même pipeline automatique.
 
@@ -475,51 +475,51 @@ Ce module réutilise entièrement §10 et §11 — aucune logique dupliquée, se
 
 ## 13. Organisation du projet
 
-> **Obsolète depuis la migration vers club-manager-api** (voir
+> **Obsolète depuis la migration vers ball-manager-back** (voir
 > `docs/MIGRATION_TO_API.md`) : `/lib/ffbb`, `/lib/domain`,
-> `/api/internal/*` et `/supabase/migrations` n'existent plus dans SCSB —
-> ce contenu vit désormais dans club-manager-api (voir son propre
+> `/api/internal/*` et `/supabase/migrations` n'existent plus dans ball-manager-web —
+> ce contenu vit désormais dans ball-manager-back (voir son propre
 > `ARCHITECTURE.md`, §"Organisation"). Pour l'organisation RÉELLE et
 > actuelle de ce repository, voir `README.md` §"Organisation du code".
 > Les modules fonctionnels non encore implémentés (dérogations, tables de
 > marque, moteur de recommandation, conflits) seront, le jour de leur
-> développement, ajoutés côté club-manager-api (routes `/v1/...` + tables)
-> et consommés par SCSB via `src/lib/api/`, jamais réimplémentés ici.
+> développement, ajoutés côté ball-manager-back (routes `/v1/...` + tables)
+> et consommés par ball-manager-web via `src/lib/api/`, jamais réimplémentés ici.
 
 ---
 
 ## 14. Tâches cron / workers
 
 > **Mise à jour majeure — toutes les tâches cron/jobs décrites ci-dessous
-> vivent désormais exclusivement dans club-manager-api**, jamais dans SCSB
+> vivent désormais exclusivement dans ball-manager-back**, jamais dans ball-manager-web
 > (voir `docs/MIGRATION_TO_API.md`). `docs/FBI_WORKER.md` (ce repository)
 > est obsolète — l'architecture réelle (3 phases cron Vercel Functions,
 > sans worker Railway/Docker séparé) est documentée dans
-> `docs/JOBS.md`/`docs/FBI.md` côté club-manager-api.
+> `docs/JOBS.md`/`docs/FBI.md` côté ball-manager-back.
 
-| Tâche | Fréquence | Déclencheur (côté club-manager-api) |
+| Tâche | Fréquence | Déclencheur (côté ball-manager-back) |
 |---|---|---|
 | Synchronisation FFBB (matchs, scores, statuts) | Toutes les 15 min | `GET /internal/cron/ffbb` |
 | Empilement des jobs de découverte e-Marque | Toutes les heures | `GET /internal/cron/fbi-enqueue` |
 | Traitement des jobs FBI (connexion, découverte, téléchargement) | Toutes les 5 min | `GET /internal/cron/fbi-jobs` |
 | Parsing des documents e-Marque téléchargés | Toutes les 10 min | `GET /internal/cron/emarque-parse` |
-| Recalcul de conflits (module non encore développé) | Événementiel | À concevoir côté club-manager-api le jour de l'implémentation |
+| Recalcul de conflits (module non encore développé) | Événementiel | À concevoir côté ball-manager-back le jour de l'implémentation |
 
-Pas de worker séparé (Railway/Render/Fly.io) : club-manager-api tourne
+Pas de worker séparé (Railway/Render/Fly.io) : ball-manager-back tourne
 entièrement sur des Vercel Functions déclenchées par cron — voir
 `docs/JOBS.md` et `docs/FBI.md` (client navigateur Playwright serverless,
-`@sparticuz/chromium`) côté club-manager-api pour le détail technique.
+`@sparticuz/chromium`) côté ball-manager-back pour le détail technique.
 
 ---
 
 ## 15. Points techniques à sécuriser dès le début
 
-> Les deux premiers points ci-dessous concernent désormais club-manager-api
-> (voir son `docs/DEPLOYMENT.md`/`docs/AUTH.md`), pas SCSB — conservés ici
+> Les deux premiers points ci-dessous concernent désormais ball-manager-back
+> (voir son `docs/DEPLOYMENT.md`/`docs/AUTH.md`), pas ball-manager-web — conservés ici
 > pour mémoire de la conception originale.
 
-- **Secret de déclenchement du cron** (`CRON_SECRET`, côté club-manager-api) : les routes `/internal/cron/*` vérifient `Authorization: Bearer <CRON_SECRET>` pour ne pas être appelables publiquement.
-- **Service role key Supabase** (côté club-manager-api uniquement) : en variable d'environnement serveur, jamais dans un bundle client, jamais loguée — n'existe plus du tout dans SCSB (voir `docs/MIGRATION_TO_API.md`).
+- **Secret de déclenchement du cron** (`CRON_SECRET`, côté ball-manager-back) : les routes `/internal/cron/*` vérifient `Authorization: Bearer <CRON_SECRET>` pour ne pas être appelables publiquement.
+- **Service role key Supabase** (côté ball-manager-back uniquement) : en variable d'environnement serveur, jamais dans un bundle client, jamais loguée — n'existe plus du tout dans ball-manager-web (voir `docs/MIGRATION_TO_API.md`).
 - **RLS activé sur toutes les tables dès la première migration** — ne jamais développer avec RLS désactivé "temporairement", car c'est le mécanisme de sécurité principal.
 - **Données personnelles de mineurs** (beaucoup de licenciés seront mineurs) : minimiser les champs collectés, prévoir une politique de rétention, restreindre l'accès aux coordonnées (téléphone/email) au strict nécessaire (RGPD).
 - **Idempotence stricte du sync** : ne jamais faire de `DELETE` puis `INSERT` sur les matchs — uniquement `UPSERT` — pour ne jamais perdre les FK vers `derogations`/`table_assignments`.

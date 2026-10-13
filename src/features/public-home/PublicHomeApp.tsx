@@ -37,7 +37,7 @@ const RELATION_LABEL: Record<HomeRelation, string> = { COACH: "Tu coaches", PLAY
  * Accueil personnel (retour du club, 2026-10-01 : « un onglet accueil pour
  * les coachs, il verra son agenda avec les matchs de ses équipes et où il
  * doit coacher. Pareil pour le joueur : en fonction de sa licence, on sait
- * son équipe »). Données réelles uniquement (club-manager-api `/home`).
+ * son équipe »). Données réelles uniquement (ball-manager-back `/home`).
  */
 export function PublicHomeApp({ clubSlug, club }: { clubSlug: string; club: HomeClub }) {
   const { identity, forget } = usePublicIdentity();

@@ -1,5 +1,5 @@
 # 02 — Inventaire des traitements front candidats
-_Phase 2, 2026-10-07. Périmètre : `src/` + `worker/` (hors `spikes/`, `.vscode/`). Toute cible qui dépend de `club-manager-api` est **« à confirmer après accès au back »** (Q-001 ouverte) : les endpoints cités sont des propositions, pas des faits._
+_Phase 2, 2026-10-07. Périmètre : `src/` + `worker/` (hors `spikes/`, `.vscode/`). Toute cible qui dépend de `ball-manager-back` est **« à confirmer après accès au back »** (Q-001 ouverte) : les endpoints cités sont des propositions, pas des faits._
 _Mesures : aucune mesure runtime n'a été prise (pas de back, pas de profil navigateur) ; les volumes sont des **estimations** signalées comme telles. Les mesures vont dans `08-metriques.md` avant chaque lot._
 
 ## Synthèse
@@ -35,7 +35,7 @@ _Mesures : aucune mesure runtime n'a été prise (pas de back, pas de profil nav
 - **Fréquence** : chaque navigation et chaque Server Action. **Estimation** : 9 × ~30-100 ms de latence Auth cumulée (non mesuré — à mesurer en `08-metriques.md`).
 - **Alternatives et impact sécurité** :
   1. **Mémoïser le jeton par requête** (`cache()` autour de `getServerAccessToken`) : 9 → ~3. **Sans changement de garantie** (même `getUser()` une fois par requête). Recommandé en premier.
-  2. **`getClaims()`** (supabase-js 2.116, présent) : vérification locale de la signature JWT via JWKS **si le projet utilise des clés de signature asymétriques** ; sinon retombe sur un appel réseau. Gain : proxy + `requireUser` quasi gratuits. Compromis : un utilisateur révoqué/banni reste valable jusqu'à expiration du JWT (≤ durée de vie du token) ; acceptable car `club-manager-api` revalide le JWT à chaque requête et fait foi sur les droits (`ARCHITECTURE.md` §1). **À confirmer** : type de clés JWT du projet Supabase (Q-008).
+  2. **`getClaims()`** (supabase-js 2.116, présent) : vérification locale de la signature JWT via JWKS **si le projet utilise des clés de signature asymétriques** ; sinon retombe sur un appel réseau. Gain : proxy + `requireUser` quasi gratuits. Compromis : un utilisateur révoqué/banni reste valable jusqu'à expiration du JWT (≤ durée de vie du token) ; acceptable car `ball-manager-back` revalide le JWT à chaque requête et fait foi sur les droits (`ARCHITECTURE.md` §1). **À confirmer** : type de clés JWT du projet Supabase (Q-008).
   3. Supprimer `getSession()` redondant : `getClaims()`/`getSession()` après `getUser()` relit le cookie, pas de coût réseau — pas de gain.
 - **Cible** : reste dans le front (hors périmètre « migration vers le back », mais gros gain). **Cplx** S. **Risque** moyen (auth). **Test** : tests unitaires de `auth.server` avec mock Supabase ; test de non-régression du 401 → `/login` (`server.test.ts` existe).
 
@@ -70,7 +70,7 @@ _Mesures : aucune mesure runtime n'a été prise (pas de back, pas de profil nav
 
 ### TRT-008 — « Journée = week-end » et fuseau  · P2
 - **Localisation** : `src/lib/timezone.ts:35-63,66-74` (règle samedi/dimanche, `weekendRangeForSaturday`) ; `match-filters.ts:57-64` — `matchWeekendKey`/`defaultWeekend` **fixent `"Europe/Paris"`** alors que `tables/page.tsx:37` et `BoardView.tsx:46` utilisent `club.timezone`. 28 occurrences de `"Europe/Paris"`/`PARIS` dans `src/` (grep). `match-display.tsx:10-15` justifie le choix par « le basket français n'existe qu'en France » ; `club-settings.ts:25,36` permet pourtant de saisir un fuseau.
-- **Problème** : règle métier dupliquée avec le back (`timezone.ts:6-11` le dit : « même technique que `computeDayRange` côté club-manager-api ») ; incohérence selon l'écran (Paris vs fuseau du club).
+- **Problème** : règle métier dupliquée avec le back (`timezone.ts:6-11` le dit : « même technique que `computeDayRange` côté ball-manager-back ») ; incohérence selon l'écran (Paris vs fuseau du club).
 - **Cible (à confirmer)** : le back calcule la journée et renvoie `weekendKey` + libellé par match ; ou accepte `weekend=YYYY-MM-DD`. Lié à TRT-006. **Cplx** M. **Test** : `timezone.test.ts`, `match-filters.test.ts` existent.
 
 ### TRT-009 — Résultats : groupage, bilan, jointure  · P2

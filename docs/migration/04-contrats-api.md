@@ -1,5 +1,5 @@
 # 04 — Contrats d'API
-_Phase 3, 2026-10-07. Deux parties : **(A)** le contrat **actuellement consommé** par le front (contrainte de compatibilité du nouveau back, Q-002) ; **(B)** les **nouveaux endpoints** nécessaires aux lots bloqués. Aucune hypothèse sur le code de `club-manager-api` (non lu) : tout vient de `src/lib/api/` et du schéma OpenAPI commité `src/lib/api/generated/schema.ts`._
+_Phase 3, 2026-10-07. Deux parties : **(A)** le contrat **actuellement consommé** par le front (contrainte de compatibilité du nouveau back, Q-002) ; **(B)** les **nouveaux endpoints** nécessaires aux lots bloqués. Aucune hypothèse sur le code de `ball-manager-back` (non lu) : tout vient de `src/lib/api/` et du schéma OpenAPI commité `src/lib/api/generated/schema.ts`._
 
 > **Fiabilité de la source.** `schema.ts` (8 307 lignes, généré par `npm run api:generate`) n'est **pas** une source de vérité sûre : il contient au moins un chemin différent de celui réellement appelé en production (voir §A.4). Règle retenue : **le code du front fait foi pour les chemins ; le schéma fait foi pour la forme des DTO** — à revalider contre le back réel avant implémentation (`npm run api:smoke`, `scripts/api-smoke.ts:11`).
 
@@ -146,7 +146,7 @@ _Généré le 2026-10-07 à partir de `generated/schema.ts` (100 opérations / 8
 | `POST /v1/clubs/{clubId}/matches/{matchId}/derogation/respond` | Aucun appel (le front utilise `…/derogations/{derogationId}/respond`, `derogations.ts:41`). |
 | `GET/POST /v1/clubs/{clubId}/members`, `PUT …/members/{membershipId}/roles` | Aucun appel dans `src/lib/api/` ; les rôles coach/coordinateur passent par `PATCH …/licencies/{id}/profile` (`licencies.ts:39`). |
 | `GET /health` | Utilisé par `scripts/api-smoke.ts:11` (hors `src/lib/api`). |
-→ **Politique de portage** : ne porter dans le nouveau back que ce que le front appelle (92 opérations) ; les 8 ci-dessus restent chez `club-manager-api` (coexistence) ou sont abandonnées après confirmation.
+→ **Politique de portage** : ne porter dans le nouveau back que ce que le front appelle (92 opérations) ; les 8 ci-dessus restent chez `ball-manager-back` (coexistence) ou sont abandonnées après confirmation.
 
 ### A.4 Écarts de contrat constatés (à corriger ou à connaître)
 | # | Écart | Preuve | Conséquence |
@@ -159,7 +159,7 @@ _Généré le 2026-10-07 à partir de `generated/schema.ts` (100 opérations / 8
 | E-6 | Types écrits à la main pour corriger le schéma (`opponentLogoUrl`, nullable imbriqué) | `matches.ts:12-13`, `publicTables.ts:27` | Le schéma perd des champs : le nouveau back doit générer un OpenAPI exact (zod-openapi) et le front régénérer. |
 
 ## B. Nouveaux endpoints nécessaires (dérivés de `02-inventaire-traitements.md`)
-_Principe (ADR-005) : tous **additifs sous `/v1`**, même enveloppe d'erreur, même schéma d'auth → le front n'a qu'une base d'URL ; le routage entre `club-manager-api` et le nouveau back se fait **dans le client front, par module** (ADR-005 révisé, option (a), Q-016 ouverte) — il n'y a plus de reverse proxy commun. Les noms de champs ci-dessous sont des **propositions**._
+_Principe (ADR-005) : tous **additifs sous `/v1`**, même enveloppe d'erreur, même schéma d'auth → le front n'a qu'une base d'URL ; le routage entre `ball-manager-back` et le nouveau back se fait **dans le client front, par module** (ADR-005 révisé, option (a), Q-016 ouverte) — il n'y a plus de reverse proxy commun. Les noms de champs ci-dessous sont des **propositions**._
 
 ### B.1 — LOT-02 (en tête de Phase 4, R-013) : recherche de licenciés publique **bornée** (Q-018 = option 1)
 `GET /v1/public/clubs/{clubSlug}/licencies/search?q=<prénom nom>` — **spécification v2 du 2026-10-07** (remplace la v1 « ≥ 2 caractères, 8 résultats, `claimed` »). Règles chiffrées justifiées dans `11-init-repo-back.md` §7 ; **à valider au 🛑 (Q-020)**.
@@ -222,7 +222,7 @@ _Principe (ADR-005) : tous **additifs sous `/v1`**, même enveloppe d'erreur, m�
 | budget dépassé | `429 RATE_LIMITED` + `Retry-After` |
 | jeton fourni (`?token=`, `Authorization`) | ignoré pour cette route ; `?token=` → `400 TOKEN_IN_QUERY` (règle globale, ADR-007 §7) |
 **Changements de contrat par rapport à l'annuaire actuel** (`PublicLicencieDto`, `schema.ts:7702-7708`) : plus de `lastName` complet, **plus de `claimed`** (indiquait quels profils n'ont pas encore de lien — cf. R-018), `id` + `firstName` + `lastInitial` seulement. Impact front : l'écran de confirmation ne peut plus distinguer « déjà inscrit » (`IdentifyView.tsx:173-175,240-246`) → message neutre ; « Lien envoyé, {firstName} » (`:133`) inchangé.
-**Ancien endpoint** `GET …/licencies` (annuaire complet) : à **fermer dans `club-manager-api`** (`410 GONE` ou `404`) — action du propriétaire, critère de done vérifiable en `11` §7.6 ; **tant qu'il répond `200`, R-013 n'est pas résolu**. `POST …/licencies/{id}/request-link` inchangé (`publicTables.ts:64`).
+**Ancien endpoint** `GET …/licencies` (annuaire complet) : à **fermer dans `ball-manager-back`** (`410 GONE` ou `404`) — action du propriétaire, critère de done vérifiable en `11` §7.6 ; **tant qu'il répond `200`, R-013 n'est pas résolu**. `POST …/licencies/{id}/request-link` inchangé (`publicTables.ts:64`).
 
 ### B.1 bis — LOT-02 / R-018 : revendication de fiche soumise à validation (Q-022, décision du 2026-10-07)
 Règles et flux : `11-init-repo-back.md` §7.9. **Propositions de contrat**, à figer par les tests de contrat (`11` §7.9.6).
@@ -254,7 +254,7 @@ components.schemas.ClaimRequestDto:   # additionalProperties: false ; JAMAIS de 
 | `POST …/approve` | JWT, **`club_admin` seul (décidé)** ; revalidation forte (introspection, ADR-006) ; relit le rôle de la fiche |
 | `POST …/reject` | JWT, `club_admin` |
 **Décidés le 2026-10-07 (Q-024)** : expiration des demandes `pending` à **14 jours** (`409 EXPIRED` ensuite) ; rôles exclus = **tout rôle à droits d'écriture** (coach, admin, coordinateur de dérogations aujourd'hui) ; `422 ROLE_NOT_CLAIMABLE` couvre aussi le coordinateur.
-**Écarts de contrat** : `RequestPersonalLinkResultDto.maskedEmail` et le code `EMAIL_REQUIRED` disparaissent (ils révélaient l'état de la fiche) ; impact front : `IdentifyView.tsx:106-111,133` (champ e-mail toujours facultatif, message neutre de repli « contacte ton club ») — **PR front du LOT-02**. L'ancien comportement reste servi par `club-manager-api` tant que le module n'est pas basculé (ADR-005) : **R-018 reste ouvert jusqu'à la bascule**.
+**Écarts de contrat** : `RequestPersonalLinkResultDto.maskedEmail` et le code `EMAIL_REQUIRED` disparaissent (ils révélaient l'état de la fiche) ; impact front : `IdentifyView.tsx:106-111,133` (champ e-mail toujours facultatif, message neutre de repli « contacte ton club ») — **PR front du LOT-02**. L'ancien comportement reste servi par `ball-manager-back` tant que le module n'est pas basculé (ADR-005) : **R-018 reste ouvert jusqu'à la bascule**.
 
 ### B.2 — LOT-03 : gymnases dynamiques
 - Ajouter `venueId: uuid | null` (additif) aux `MatchListItemDto` / `MatchDetailsDto` (aujourd'hui seulement `venueLabel`, `schema.ts:7355,7381`).

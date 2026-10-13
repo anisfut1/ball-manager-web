@@ -15,7 +15,7 @@ Problèmes :
 ## Ce qui a été fait
 
 `/public/{slug}/session` (`src/app/public/[clubSlug]/session/route.ts`) :
-- `POST {tokens, active?}` : chaque **nouveau** jeton est revalidé côté serveur (`GET …/me` de club-manager-api), puis rangé dans le cookie `bm_session` : **chiffré AES-256-GCM, `HttpOnly`, `Secure`, `SameSite=Lax`, `Path=/public/{slug}`** (un cookie par club → isolation), 90 jours glissants (renouvelé au plus 1×/jour), plafond absolu 365 jours.
+- `POST {tokens, active?}` : chaque **nouveau** jeton est revalidé côté serveur (`GET …/me` de ball-manager-back), puis rangé dans le cookie `bm_session` : **chiffré AES-256-GCM, `HttpOnly`, `Secure`, `SameSite=Lax`, `Path=/public/{slug}`** (un cookie par club → isolation), 90 jours glissants (renouvelé au plus 1×/jour), plafond absolu 365 jours.
 - `GET` : restitue les jetons de la session de CE club (le front les garde **en mémoire**, jamais dans un stockage).
 - `DELETE {tokens?}` : retire des jetons (révoqués, « oublier ») ou toute la session (déconnexion).
 - Le marqueur `scsb-public-known` est désormais posé **par le serveur** (échappe au plafond de 7 jours).
@@ -38,7 +38,7 @@ Problèmes :
 
 ## Limitations connues (à ne pas promettre)
 - **Safari ↔ PWA** : les cookies ne sont copiés qu'**au moment de l'ajout** à l'écran d'accueil (iOS ≥ 17.2) ; ensuite les deux sessions vivent séparément. Si le lien a été ouvert dans le navigateur intégré de WhatsApp, rien n'est transféré → parcours « Me reconnaître ».
-- Le jeton reste lu en mémoire par le JavaScript de la page (le front appelle encore club-manager-api directement avec le jeton, `publicFetch`). Aller plus loin (cookie jamais exposé au JS) exige que **club-manager-api** accepte une session (cookie/jeton de session émis par l'API) ou qu'un proxy Next relaie chaque appel — non fait ici : le dépôt club-manager-api n'est pas dans cet environnement.
+- Le jeton reste lu en mémoire par le JavaScript de la page (le front appelle encore ball-manager-back directement avec le jeton, `publicFetch`). Aller plus loin (cookie jamais exposé au JS) exige que **ball-manager-back** accepte une session (cookie/jeton de session émis par l'API) ou qu'un proxy Next relaie chaque appel — non fait ici : le dépôt ball-manager-back n'est pas dans cet environnement.
 - La révocation d'un lien côté club est effective dès la prochaine ouverture (revalidation), pas en temps réel.
 - Un cookie `Secure` n'est pas posé en `http://localhost` sous Safari : tester en HTTPS (preview Vercel / tunnel).
 

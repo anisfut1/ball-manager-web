@@ -51,7 +51,7 @@ export function RespondToDerogationAction({
         } else if (result.outcome === "error") {
           setStatus({ kind: "error", text: result.message ?? "FBI a rejeté l'envoi." });
         } else {
-          // "unknown" — jamais traité comme un succès (voir club-manager-api/docs/FBI.md) : ni confirmation ni erreur détectée, vérification manuelle nécessaire.
+          // "unknown" — jamais traité comme un succès (voir ball-manager-back/docs/FBI.md) : ni confirmation ni erreur détectée, vérification manuelle nécessaire.
           setStatus({ kind: "warning", text: result.message ?? "Résultat incertain — vérifie manuellement sur FBI avant de réessayer." });
         }
       } catch (error) {

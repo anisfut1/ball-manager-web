@@ -191,7 +191,7 @@ function CreateTeamForm({ clubId }: { clubId: string }) {
  * SM1/2/3, SF). Certaines catégories n'ont pas encore d'engagement FFBB
  * confirmé en début de saison (phase de brassage) : cette page permet de
  * les enregistrer manuellement dès maintenant, voir docs/TEAMS.md côté
- * club-manager-api — la synchro FFBB réutilisera ensuite la même ligne
+ * ball-manager-back — la synchro FFBB réutilisera ensuite la même ligne
  * (résolution par catégorie/sexe/numéro, jamais par le nom) une fois
  * l'engagement confirmé.
  */

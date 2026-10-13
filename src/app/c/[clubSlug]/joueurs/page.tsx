@@ -12,7 +12,7 @@ import { AddPersonButton } from "@/features/licencies/AddPersonButton";
 
 /**
  * Roster du club, sectorisé par équipe (demande du club, voir
- * docs/TEAMS.md côté club-manager-api) — point d'entrée vers chaque fiche
+ * docs/TEAMS.md côté ball-manager-back) — point d'entrée vers chaque fiche
  * individuelle. Affiche TOUTES les équipes (même sans licencié rattaché,
  * ex. une catégorie encore en brassage sans effectif connu) pour que
  * l'admin voie la structure complète du club, pas seulement les équipes

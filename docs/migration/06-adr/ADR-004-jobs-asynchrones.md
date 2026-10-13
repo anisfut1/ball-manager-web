@@ -3,7 +3,7 @@
 - **Statut** : Proposée (révisée le 2026-10-07 pour Railway ; dépend de Q-015 pour la connexion de `pg-boss`)
 
 ## Contexte
-TRT-004 : 11 endpoints retiennent une requête HTTP de 30 à 280 s depuis le navigateur (`integrations.ts:64,82,98,138`, `derogations.ts:44`, `matches.ts:107,127`, `publicTables.ts:134,143`, `licencies.ts:52,65`) ; incident de production documenté (`client.ts:13-17`). Le motif `202 + jobId` + `GET /v1/jobs/{jobId}` existe déjà (`jobs.ts:7-44`). Le travail réel (FFBB, FBI avec navigateur headless, e-Marque) est dans `club-manager-api` ; en coexistence, le nouveau back **pilote** ces traitements sans les réimplémenter.
+TRT-004 : 11 endpoints retiennent une requête HTTP de 30 à 280 s depuis le navigateur (`integrations.ts:64,82,98,138`, `derogations.ts:44`, `matches.ts:107,127`, `publicTables.ts:134,143`, `licencies.ts:52,65`) ; incident de production documenté (`client.ts:13-17`). Le motif `202 + jobId` + `GET /v1/jobs/{jobId}` existe déjà (`jobs.ts:7-44`). Le travail réel (FFBB, FBI avec navigateur headless, e-Marque) est dans `ball-manager-back` ; en coexistence, le nouveau back **pilote** ces traitements sans les réimplémenter.
 Besoins : retries, idempotence, visibilité du statut, planification récurrente, un seul service worker (pas de cluster), peu de services à exploiter.
 
 ## Options étudiées
@@ -15,7 +15,7 @@ Besoins : retries, idempotence, visibilité du statut, planification récurrente
 | D. Rester en synchrone, augmenter les timeouts | Zéro travail | Cause du TRT-004 ; fragile ; inacceptable |
 
 ## Décision (proposée)
-**Option A (`pg-boss`)**, processus **worker** distinct du processus API, **même image Docker**, commande différente — sur Railway : **service `worker` séparé** (ADR-007). Contrat HTTP : `Prefer: respond-async` → `202 {jobId}` ; `GET /v1/jobs/{jobId}` (statuts `pending|claimed|running|succeeded|failed`, déjà consommés par `pollJobUntilTerminal`). Idempotence : `Idempotency-Key` (clé = `singletonKey` du job). Chaque job porte `clubId` et `requestedBy` (autorisation du suivi). Les jobs de **coexistence** appellent `club-manager-api` en serveur-à-serveur avec un jeton de service (secret côté VPS, jamais le JWT utilisateur). Limites : concurrence 2 par défaut (estimé), délai par job 300 s, 3 essais avec backoff exponentiel pour les erreurs réseau uniquement (jamais de rejeu automatique d'une **écriture FBI** non idempotente → `retryLimit: 0` pour `derogation/create|respond`).
+**Option A (`pg-boss`)**, processus **worker** distinct du processus API, **même image Docker**, commande différente — sur Railway : **service `worker` séparé** (ADR-007). Contrat HTTP : `Prefer: respond-async` → `202 {jobId}` ; `GET /v1/jobs/{jobId}` (statuts `pending|claimed|running|succeeded|failed`, déjà consommés par `pollJobUntilTerminal`). Idempotence : `Idempotency-Key` (clé = `singletonKey` du job). Chaque job porte `clubId` et `requestedBy` (autorisation du suivi). Les jobs de **coexistence** appellent `ball-manager-back` en serveur-à-serveur avec un jeton de service (secret côté VPS, jamais le JWT utilisateur). Limites : concurrence 2 par défaut (estimé), délai par job 300 s, 3 essais avec backoff exponentiel pour les erreurs réseau uniquement (jamais de rejeu automatique d'une **écriture FBI** non idempotente → `retryLimit: 0` pour `derogation/create|respond`).
 
 ## Conséquences
 - (+) Le navigateur ne retient plus de connexion ; fermeture d'onglet sans perte ; statut consultable.
@@ -35,5 +35,5 @@ Besoins : retries, idempotence, visibilité du statut, planification récurrente
   | (c) petit Postgres Railway **dédié à la file** | Nominal ; enqueue non transactionnel avec les données métier (acceptable, ADR-003) |
 - **Repli** : si le test échoue en (a) → option (c). Le choix est réversible : seule la chaîne de connexion de la file change.
 - **Worker sur Railway** : service dédié, redémarrage automatique ; **les healthchecks Railway ne surveillent pas en continu** (ADR-007 §6) → job « battement » + alerte sur l'âge du plus vieux job et sur le battement manquant. Arrêt propre sur `SIGTERM` (terminer le job en cours avant sortie : à tester).
-- **Planification** : `pg-boss` (cron) suffit ; les « Cron jobs » Railway ne sont pas nécessaires. Les crons Vercel existants restent chez `club-manager-api` (ADR-005).
-- **Requêtes longues** : le motif `202 + jobId` reste obligatoire (limite plateforme 5 min d'inactivité/15 min, ADR-007) ; l'adaptateur vers `club-manager-api` utilise un délai de 300 s côté worker (non dépendant du navigateur).
+- **Planification** : `pg-boss` (cron) suffit ; les « Cron jobs » Railway ne sont pas nécessaires. Les crons Vercel existants restent chez `ball-manager-back` (ADR-005).
+- **Requêtes longues** : le motif `202 + jobId` reste obligatoire (limite plateforme 5 min d'inactivité/15 min, ADR-007) ; l'adaptateur vers `ball-manager-back` utilise un délai de 300 s côté worker (non dépendant du navigateur).

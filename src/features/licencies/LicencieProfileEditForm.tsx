@@ -18,9 +18,9 @@ type Status = { kind: "success" | "error"; text: string } | null;
  * soit en admin avec photo, infos persos etc, ou bien le joueur direct
  * s'il a un compte associé à son profil"). Deux jeux de champs distincts,
  * décidés CÔTÉ SERVEUR (voir `[licencieId]/page.tsx`) — jamais recalculés
- * ici : le serveur (club-manager-api) rejette de toute façon (400) tout
+ * ici : le serveur (ball-manager-back) rejette de toute façon (400) tout
  * champ hors de la population autorisée pour l'appelant, voir
- * docs/LICENCIES.md côté club-manager-api. `mode="admin"` expose
+ * docs/LICENCIES.md côté ball-manager-back. `mode="admin"` expose
  * l'identité complète, `mode="self"` UNIQUEMENT le contact/la photo.
  */
 export function LicencieProfileEditForm({

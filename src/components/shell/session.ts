@@ -7,7 +7,7 @@ import type { ShellUser } from "./types";
 
 /**
  * Identité affichée dans le shell : `GET /v1/me` (displayName +
- * isPlatformAdmin, résolus par club-manager-api). Repli sur l'email de la
+ * isPlatformAdmin, résolus par ball-manager-back). Repli sur l'email de la
  * session si l'appel échoue — le shell ne doit jamais faire tomber la page.
  */
 export const getShellIdentity = cache(async (): Promise<{ user: ShellUser; isPlatformAdmin: boolean }> => {

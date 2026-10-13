@@ -4,11 +4,17 @@ import { notFound } from "next/navigation";
 import { getPublicClub, type PublicClubDto } from "@/lib/api/publicTables";
 import { ApiError } from "@/lib/api/client";
 import { PublicShell } from "@/components/public/PublicShell";
+import { appStoreId } from "@/config/ios-app";
 
 /** Manifeste PWA du club : l'application installée s'ouvre directement sur l'accueil de CE club. */
 export async function generateMetadata({ params }: { params: Promise<{ clubSlug: string }> }): Promise<Metadata> {
   const { clubSlug } = await params;
-  return { manifest: `/public/${encodeURIComponent(clubSlug)}/manifest.webmanifest` };
+  // Smart App Banner de Safari (seulement quand l'app est publiée) : « Ouvrir » si installée, sinon App Store.
+  const appId = appStoreId();
+  return {
+    manifest: `/public/${encodeURIComponent(clubSlug)}/manifest.webmanifest`,
+    ...(appId ? { itunes: { appId, appArgument: `https://www.ball-manager.fr/public/${encodeURIComponent(clubSlug)}/accueil` } } : {}),
+  };
 }
 
 /**

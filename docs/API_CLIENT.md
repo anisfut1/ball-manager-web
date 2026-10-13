@@ -1,8 +1,8 @@
-# Client API — club-manager-api
+# Client API — ball-manager-back
 
-SCSB ne parle jamais directement à Supabase pour une donnée métier, ni à
+ball-manager-web ne parle jamais directement à Supabase pour une donnée métier, ni à
 FFBB/FBI/e-Marque : tout passe par
-[club-manager-api](https://github.com/anisfut1/club-manager-api) — voir
+[ball-manager-back](https://github.com/anisfut1/ball-manager-back) — voir
 `docs/MIGRATION_TO_API.md` pour l'audit complet de cette migration.
 
 ## Architecture (`src/lib/api/`)
@@ -41,20 +41,20 @@ import { browserApi } from "@/lib/api/browserClient";
 await browserApi.integrations.saveFbi(clubId, { username, password });
 ```
 
-Ne jamais appeler `fetch()` directement vers club-manager-api dans un
+Ne jamais appeler `fetch()` directement vers ball-manager-back dans un
 composant — toujours via `api`/`browserApi`.
 
 ## Régénération des types (`npm run api:generate`)
 
 Les types de `src/lib/api/generated/schema.ts` sont générés depuis le
-contrat OpenAPI RÉEL de club-manager-api (`GET /openapi.json`), jamais
+contrat OpenAPI RÉEL de ball-manager-back (`GET /openapi.json`), jamais
 devinés à la main — voir `scripts/generate-api-types.ts`.
 
 ```bash
-# 1. Backend club-manager-api lancé en local (dans SON repository) :
+# 1. Backend ball-manager-back lancé en local (dans SON repository) :
 npm run dev   # écoute par défaut sur http://localhost:3001
 
-# 2. Depuis ce repository (SCSB) :
+# 2. Depuis ce repository (ball-manager-web) :
 npm run api:generate
 ```
 
@@ -64,11 +64,11 @@ Pour générer depuis un backend déployé plutôt qu'en local :
 CLUB_MANAGER_OPENAPI_URL=https://api.example.com/openapi.json npm run api:generate
 ```
 
-Le fichier généré est commité (le build de SCSB ne doit jamais dépendre de
-la disponibilité réseau de club-manager-api) — commence par
+Le fichier généré est commité (le build de ball-manager-web ne doit jamais dépendre de
+la disponibilité réseau de ball-manager-back) — commence par
 `AUTO-GENERATED — DO NOT EDIT.` et ne doit jamais être modifié à la main.
 
-**Après un changement de contrat côté club-manager-api :**
+**Après un changement de contrat côté ball-manager-back :**
 
 1. Déployer (ou lancer localement) le backend avec le nouveau contrat.
 2. `npm run api:generate`.
@@ -86,9 +86,9 @@ jamais d'un backend réel, voir ci-dessous) : à lancer à la main ou dans une
 
 ## Tests
 
-Les tests (`npm test`) simulent systématiquement club-manager-api (mock de
+Les tests (`npm test`) simulent systématiquement ball-manager-back (mock de
 `fetch` ou du module `@/lib/api/server`) — jamais d'appel réseau réel, ni
-vers club-manager-api ni vers Supabase/FFBB/FBI. Voir
+vers ball-manager-back ni vers Supabase/FFBB/FBI. Voir
 `src/lib/api/client.test.ts` (bearer token, base URL, 200/401/403/404/422/5xx,
 JSON invalide, erreur réseau) et `src/lib/tenancy/club-context.test.ts`
 (résolution club/rôles/isolation cross-tenant, API mockée).
@@ -98,7 +98,7 @@ JSON invalide, erreur réseau) et `src/lib/tenancy/club-context.test.ts`
 Le jeton d'accès Supabase (JWT) est lu depuis la session côté serveur ou
 navigateur (`auth.server.ts`/`auth.browser.ts`) et transmis en
 `Authorization: Bearer <token>` — jamais de mot de passe, jamais de clé
-service role, jamais de refresh token transmis à club-manager-api. Sur un
+service role, jamais de refresh token transmis à ball-manager-back. Sur un
 401 côté navigateur, `browserClient.ts` tente UNE fois un rafraîchissement
 de session avant de rediriger vers `/login` (jamais de boucle).
 

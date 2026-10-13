@@ -15,7 +15,7 @@ import { matchesServerFiltersEnabled } from "@/config/flags";
  * boutons etc, en gros sans les fonctions admin, et sans compte, en libre
  * service") — même rendu que `/c/{clubSlug}/matchs` (MatchesView), sans
  * session Supabase : toutes les données viennent de
- * `GET /v1/public/clubs/{clubSlug}/...` (voir club-manager-api/docs/PUBLIC_MATCHES.md),
+ * `GET /v1/public/clubs/{clubSlug}/...` (voir ball-manager-back/docs/PUBLIC_MATCHES.md),
  * aucune action possible.
  */
 export default async function PublicMatchsPage({

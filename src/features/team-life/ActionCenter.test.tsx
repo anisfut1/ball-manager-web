@@ -197,3 +197,29 @@ describe("Home « À faire » — maillots (Lot 3)", () => {
     expect(await screen.findByText("Fait")).toBeTruthy();
   });
 });
+
+describe("Page d'un match (lien de convocation, app iOS)", () => {
+  function MatchPage({ matchId }: { matchId: string }) {
+    const state = useActionCenter("sete", "lien-lina");
+    return <ActionCenter clubSlug="sete" timezone="Europe/Paris" {...state} matchId={matchId} />;
+  }
+
+  it("seulement ce que la famille a à faire pour CE match ; rien pour un autre match", async () => {
+    actionCenter.mockResolvedValue({
+      ...DTO,
+      actions: [
+        { type: "MATCH_AVAILABILITY", licencieId: "tom", firstName: "Tom", match: MATCH, currentResponse: null },
+        { type: "MATCH_AVAILABILITY", licencieId: "tom", firstName: "Tom", match: { ...MATCH, id: "m2" }, currentResponse: null },
+      ],
+    });
+    render(<MatchPage matchId="m1" />);
+    expect(await screen.findByText("Pour ce match")).toBeTruthy();
+    expect(screen.getAllByText("Tom est disponible pour ce match ?")).toHaveLength(1);
+    expect(screen.queryByRole("button", { name: /Ajouter un enfant/ })).toBeNull();
+    cleanup();
+    actionCenter.mockResolvedValue({ ...DTO, actions: [] });
+    const { container } = render(<MatchPage matchId="m1" />);
+    await waitFor(() => expect(actionCenter).toHaveBeenCalled());
+    expect(container.querySelector("#convocation")).toBeNull();
+  });
+});

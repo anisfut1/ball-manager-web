@@ -21,7 +21,7 @@ import { openSession, sealSession, type SessionPayload } from "@/lib/public-sess
  * Session persistante de l'espace public (`/public/{slug}/session`).
  *
  * Le lien personnel (`?token=`) reste l'unique identifiant : ce endpoint le
- * valide auprès de club-manager-api puis le range dans un cookie `HttpOnly`,
+ * valide auprès de ball-manager-back puis le range dans un cookie `HttpOnly`,
  * `Secure`, `SameSite=Lax`, chiffré, limité au chemin du club. Il remplace le
  * `localStorage` (effacé par Safari après 7 jours sans visite, et non copié
  * dans la PWA iOS) comme mémoire longue durée.

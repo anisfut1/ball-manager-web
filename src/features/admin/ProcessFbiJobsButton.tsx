@@ -11,7 +11,7 @@ import { ActionStatus } from "@/components/ui/ActionStatus";
 /**
  * "je ne veux pas avoir à appuyer 200 fois" (§10 de la demande) : chaque
  * appel ne traite qu'un petit lot (`CLUB_JOB_BATCH_SIZE`, côté
- * club-manager-api) — tant que le lot renvoyé est plein (`claimed > 0`),
+ * ball-manager-back) — tant que le lot renvoyé est plein (`claimed > 0`),
  * il en reste probablement d'autres, donc on relance automatiquement DANS
  * CE MÊME clic, sans que l'admin ait à recliquer. Un seul clic vide toute
  * la file, tant que l'onglet reste ouvert (le fetch continue même en
@@ -26,7 +26,7 @@ import { ActionStatus } from "@/components/ui/ActionStatus";
  * `fbi_integration_status.last_error` est passé de "Connecté ✅" à
  * "Formulaire de connexion FBI non reconnu" en cours de route, chaque job
  * étant alors marqué en échec PERMANENT (`AUTH_FLOW_CHANGED`, jamais
- * retried, voir errors.ts côté club-manager-api) — signature cohérente
+ * retried, voir errors.ts côté ball-manager-back) — signature cohérente
  * avec un blocage anti-bot FBI déclenché par le rythme, jamais observé
  * avant cette boucle malgré des dizaines de connexions manuelles
  * (espacées naturellement par le temps de clic de l'admin). Arrêté côté
@@ -56,7 +56,7 @@ type Status = { kind: "pending" | "success" | "error"; text: string };
  * "FBI connecté" ne récupère rien tout seul : la connexion réussie prouve
  * juste que les identifiants sont valides, la récupération réelle des
  * documents e-Marque tourne comme des jobs `discover_emarque` en arrière-plan
- * (voir docs/FBI.md côté club-manager-api). Ces jobs dépendaient jusqu'ici
+ * (voir docs/FBI.md côté ball-manager-back). Ces jobs dépendaient jusqu'ici
  * uniquement de `/internal/cron/fbi-jobs` (une fois par jour) — ce bouton
  * appelle `POST .../fbi/process-jobs`, qui traite un petit lot des jobs de
  * CE club DANS LA REQUÊTE, sans dépendre du cron ni du dashboard Vercel.

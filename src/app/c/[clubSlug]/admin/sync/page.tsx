@@ -53,7 +53,7 @@ export default async function SyncDashboardPage({ params }: { params: Promise<{ 
       <PageHeader
         eyebrow="Administration"
         title="Synchronisation"
-        description={`Suivi des dernières exécutions automatiques pour ${club.name}. Tableau de bord de lecture — les jobs tournent seuls (cron côté club-manager-api), sans intervention nécessaire ici.`}
+        description={`Suivi des dernières exécutions automatiques pour ${club.name}. Tableau de bord de lecture — les jobs tournent seuls (cron côté ball-manager-back), sans intervention nécessaire ici.`}
         meta={
           lastRun ? (
             <StatusBadge tone={RUN_STATUS[lastRun.status]?.tone ?? "neutral"} icon={RUN_STATUS[lastRun.status]?.icon}>

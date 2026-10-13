@@ -18,7 +18,7 @@ import { TablesBoard } from "@/features/tables/TablesBoard";
  * weekend)"). Matchs à domicile uniquement (§4/§36 — un match extérieur ne
  * sert qu'à calculer l'indisponibilité, jamais affiché ici), chaque match =
  * une card avec ses postes. Accessible à club_admin ET responsable_tables
- * (§31, même porte que club-manager-api — voir `requireAnyClubRole` côté API).
+ * (§31, même porte que ball-manager-back — voir `requireAnyClubRole` côté API).
  */
 export default async function TablesPage({
   params,

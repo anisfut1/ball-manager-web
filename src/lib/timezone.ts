@@ -5,7 +5,7 @@
  * pas un seul jour calendaire ; retour du club, 2026-09-28 : "au lieu de
  * fonctionner par jour, fonctionne par journée (1 journée = semaine
  * weekend)"). Même technique DST-safe (double conversion) que
- * `computeDayRange`/`zonedWallTimeToUtc` côté club-manager-api
+ * `computeDayRange`/`zonedWallTimeToUtc` côté ball-manager-back
  * (src/util/timezone.ts) — jamais une approximation en UTC pur ni un
  * `+24h`/`+48h` codé en dur.
  */

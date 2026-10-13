@@ -1,4 +1,4 @@
-# Migration Front → Back (SCSB)
+# Migration Front → Back (ball-manager-web)
 
 **Objectif** : le front (Next.js) se limite à affichage, état d'UI, interactions, validation de confort. Logique métier, calculs, secrets et agrégations vivent dans le back.
 
@@ -9,8 +9,8 @@
 **Branche de travail** : `refactor/migration-back` (issue de `claude/sete-basket-app-architecture-c3hlxx`).
 
 ## Contexte découvert en Phase 0
-- Le front a **déjà** été migré une première fois de Supabase direct vers un back externe `club-manager-api` (voir [../MIGRATION_TO_API.md](../MIGRATION_TO_API.md)). Ce chantier est donc une **seconde passe** : traitements restants côté front.
-- Le back `club-manager-api` (GitHub `anisfut1/club-manager-api`) n'est **pas** présent localement. `../captain-sugar-back` (Python/FastAPI) est un projet sans rapport (app diabète). Voir [09-questions-ouvertes.md](09-questions-ouvertes.md).
+- Le front a **déjà** été migré une première fois de Supabase direct vers un back externe `ball-manager-back` (voir [../MIGRATION_TO_API.md](../MIGRATION_TO_API.md)). Ce chantier est donc une **seconde passe** : traitements restants côté front.
+- Le back `ball-manager-back` (GitHub `anisfut1/ball-manager-back`) n'est **pas** présent localement. `../captain-sugar-back` (Python/FastAPI) est un projet sans rapport (app diabète). Voir [09-questions-ouvertes.md](09-questions-ouvertes.md).
 
 ## Sommaire
 - 06-adr

@@ -2943,8 +2943,8 @@ export interface paths {
         };
         get: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -3014,8 +3014,8 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -3095,8 +3095,8 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -3174,8 +3174,8 @@ export interface paths {
         };
         get: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -3232,8 +3232,8 @@ export interface paths {
         };
         get: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    token?: string;
                     from?: string;
                     to?: string;
                 };
@@ -3293,8 +3293,8 @@ export interface paths {
         get?: never;
         put: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -3370,8 +3370,8 @@ export interface paths {
         post?: never;
         delete: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -3449,7 +3449,7 @@ export interface paths {
         get: {
             parameters: {
                 query: {
-                    token: string;
+                    token?: string;
                     role: components["schemas"]["TableAssignmentRole"];
                 };
                 header?: never;
@@ -3527,8 +3527,8 @@ export interface paths {
         get?: never;
         put: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -10716,6 +10716,502 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/public/clubs": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Clubs actifs (nom, slug, logo) — choix du club dans l'app */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PublicClubListDto"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/clubs/{clubSlug}/auth/device-sessions": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["CreateDeviceSessionDto"];
+                };
+            };
+            responses: {
+                /** @description Session d'appareil (secret affiché une seule fois) */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["DeviceSessionDto"];
+                    };
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/clubs/{clubSlug}/auth/session": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Personnes de la session d'appareil */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SessionInfoDto"];
+                    };
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Session révoquée */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/clubs/{clubSlug}/auth/session/people": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["AddSessionPeopleDto"];
+                };
+            };
+            responses: {
+                /** @description Personne ajoutée à l'appareil */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["SessionInfoDto"];
+                    };
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/clubs/{clubSlug}/auth/session/people/{licencieId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                    licencieId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Personne retirée de l'appareil */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/clubs/{clubSlug}/auth/codes": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["CreateAuthCodeDto"];
+                };
+            };
+            responses: {
+                /** @description Code d'autorisation (5 min, usage unique, lié au PKCE) */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AuthCodeDto"];
+                    };
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/clubs/{clubSlug}/auth/token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["ExchangeAuthCodeDto"];
+                };
+            };
+            responses: {
+                /** @description Liens personnels pour la session web (web, lien de connexion) */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["WebExchangeDto"];
+                    };
+                };
+                /** @description Session d'appareil (ios) */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["DeviceSessionDto"];
+                    };
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/clubs/{clubId}/team-life/teams/{teamId}/overview": {
         parameters: {
             query?: never;
@@ -13416,6 +13912,63 @@ export interface components {
             }[];
             unavailableSelected: string[];
             blockers: string[];
+        };
+        PublicClubListDto: {
+            clubs: {
+                slug: string;
+                name: string;
+                logoUrl: string | null;
+            }[];
+        };
+        DeviceSessionDto: {
+            sessionSecret: string;
+            expiresAt: string;
+            people: components["schemas"]["SessionPersonDto"][];
+            redirectPath: string | null;
+        };
+        SessionPersonDto: {
+            licencieId: string;
+            firstName: string;
+            lastName: string;
+            teamId: string | null;
+        };
+        CreateDeviceSessionDto: {
+            tokens: string[];
+            /** @enum {string} */
+            platform: "ios";
+            appVersion?: string;
+            deviceLabel?: string;
+        };
+        SessionInfoDto: {
+            /** @enum {string} */
+            platform: "ios" | "web";
+            people: components["schemas"]["SessionPersonDto"][];
+        };
+        AddSessionPeopleDto: {
+            tokens: string[];
+        };
+        AuthCodeDto: {
+            code: string;
+            expiresAt: string;
+        };
+        CreateAuthCodeDto: {
+            tokens: string[];
+            codeChallenge: string;
+            /** @enum {string} */
+            codeChallengeMethod: "S256";
+            redirectPath?: string;
+        };
+        WebExchangeDto: {
+            tokens: string[];
+            redirectPath: string | null;
+        };
+        ExchangeAuthCodeDto: {
+            code: string;
+            codeVerifier?: string;
+            /** @enum {string} */
+            platform: "ios" | "web";
+            appVersion?: string;
+            deviceLabel?: string;
         };
         TeamOverviewDto: {
             team: {

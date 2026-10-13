@@ -29,7 +29,7 @@ beforeEach(() => {
 });
 
 /**
- * Régression production (2026-09-25) : un 401 club-manager-api ("Jeton
+ * Régression production (2026-09-25) : un 401 ball-manager-back ("Jeton
  * invalide ou expiré") remontait BRUT depuis un Server Component jusqu'au
  * error boundary de Next.js ("Une erreur est survenue") — serverFetcher
  * n'avait aucune gestion du 401, contrairement à browserFetcher qui

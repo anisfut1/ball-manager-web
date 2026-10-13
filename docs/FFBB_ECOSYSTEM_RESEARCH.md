@@ -2,7 +2,7 @@
 
 > Statut : recherche technique (spike), historique — conservé tel quel.
 > L'intégration FFBB réelle vit désormais dans
-> [club-manager-api](https://github.com/anisfut1/club-manager-api)
+> [ball-manager-back](https://github.com/anisfut1/ball-manager-back)
 > (`integrations/ffbb/`, voir son `docs/FFBB.md`), pas dans ce repository —
 > voir `docs/MIGRATION_TO_API.md`.
 > Club : SC Sète Basket — identifiant FFBB `OCC0034008`.

@@ -4,7 +4,7 @@ import type { components } from "./generated/schema";
 /**
  * Demandes de dérogation INTERNES (coach → coordinateur) — retour du club,
  * 2026-10-01. Workflow interne : rien ici n'écrit sur FFBB/FBI (voir
- * club-manager-api/docs/DEROGATION_REQUESTS.md). Distinct de `./derogations.ts`
+ * ball-manager-back/docs/DEROGATION_REQUESTS.md). Distinct de `./derogations.ts`
  * (dérogations OFFICIELLES lues sur FBI).
  */
 export type DerogationRequestStatus = components["schemas"]["DerogationRequestStatus"];

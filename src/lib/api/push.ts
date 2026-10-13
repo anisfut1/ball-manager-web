@@ -2,7 +2,7 @@ import { publicFetch } from "./publicTokenTransport";
 import type { PushSubscriptionPayload } from "@/lib/push/client";
 
 /**
- * CONTRAT PROPOSÉ pour club-manager-api (Web Push, voir docs/PWA_PUSH.md) —
+ * CONTRAT PROPOSÉ pour ball-manager-back (Web Push, voir docs/PWA_PUSH.md) —
  * ces endpoints n'existent pas encore : aucun composant n'appelle ces fonctions
  * tant que `pushEnabled()` est faux. Authentification = jeton personnel du
  * licencié (même transport que le reste de l'espace public) ; l'abonnement est

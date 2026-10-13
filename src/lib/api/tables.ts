@@ -3,11 +3,11 @@ import type { components } from "./generated/schema";
 
 /**
  * Module Tables de marque (demande du club, 2026-09-28) — voir
- * club-manager-api/docs/TABLE_ASSIGNMENTS.md pour la logique métier
+ * ball-manager-back/docs/TABLE_ASSIGNMENTS.md pour la logique métier
  * complète (120 min, chevauchement strict, rangs, équité). Ce fichier ne
  * fait qu'exposer des fonctions ergonomiques typées vers les 4 routes déjà
- * exposées par club-manager-api — aucun `fetch()` en dur, aucune requête
- * Supabase directe (§6/§93 : SCSB → club-manager-api → Supabase, jamais
+ * exposées par ball-manager-back — aucun `fetch()` en dur, aucune requête
+ * Supabase directe (§6/§93 : ball-manager-web → ball-manager-back → Supabase, jamais
  * l'inverse).
  */
 
@@ -54,7 +54,7 @@ export interface TableAssignmentsForMatchDto {
 }
 
 export interface ListTableAssignmentsParams {
-  /** Filtre `match_datetime >= from` (ISO 8601). Sans bornes, l'API renvoie les prochains matchs à domicile (voir routes.ts côté club-manager-api). */
+  /** Filtre `match_datetime >= from` (ISO 8601). Sans bornes, l'API renvoie les prochains matchs à domicile (voir routes.ts côté ball-manager-back). */
   from?: string;
   to?: string;
 }
@@ -88,7 +88,7 @@ export async function getTableSuggestions(fetcher: ApiFetcher, clubId: string, m
  * PUT /v1/clubs/:clubId/matches/:matchId/table-assignments/:role — la
  * SEULE action qui transforme une suggestion en affectation réelle (§40),
  * toujours déclenchée par un clic explicite ("Choisir"), jamais par un
- * automatisme. club-manager-api revalide les conflits au moment de
+ * automatisme. ball-manager-back revalide les conflits au moment de
  * l'écriture (§42) : un 409 `TABLE_ASSIGNMENT_CONFLICT` /
  * `ALREADY_ASSIGNED_ON_MATCH` est attendu et normal si le candidat n'est
  * plus disponible entre l'affichage des suggestions et le clic.
@@ -109,7 +109,7 @@ export async function deleteTableAssignment(fetcher: ApiFetcher, clubId: string,
  * PUT /v1/clubs/:clubId/matches/:matchId/referee-status — retour du club,
  * 2026-09-28 : bascule "pas besoin d'arbitre" (arbitre officiel FFBB déjà
  * désigné, hors de ce club). N'affecte JAMAIS aucun licencié — distinct
- * d'une affectation, voir club-manager-api/docs/TABLE_ASSIGNMENTS.md.
+ * d'une affectation, voir ball-manager-back/docs/TABLE_ASSIGNMENTS.md.
  */
 export async function setRefereeStatus(fetcher: ApiFetcher, clubId: string, matchId: string, noRefereeNeeded: boolean): Promise<RefereeStatusResultDto> {
   return fetcher<RefereeStatusResultDto>(`/v1/clubs/${clubId}/matches/${matchId}/referee-status`, {
@@ -133,7 +133,7 @@ export async function listPublicAccess(fetcher: ApiFetcher, clubId: string): Pro
  * POST /v1/clubs/:clubId/table-assignments/public-access/:licencieId/reset
  * — révoque le jeton actif du licencié (lien perdu, etc.) : le nom
  * redevient choisissable, les affectations déjà existantes ne sont
- * jamais touchées (voir club-manager-api/docs/PUBLIC_TABLE_ACCESS.md).
+ * jamais touchées (voir ball-manager-back/docs/PUBLIC_TABLE_ACCESS.md).
  */
 export async function resetPublicAccess(fetcher: ApiFetcher, clubId: string, licencieId: string): Promise<void> {
   await fetcher<{ reset: true }>(`/v1/clubs/${clubId}/table-assignments/public-access/${licencieId}/reset`, { method: "POST" });

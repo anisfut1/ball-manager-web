@@ -43,7 +43,7 @@ type Status = { kind: "success" | "error" | "warning"; text: string } | null;
  * connu), jamais une recherche manuelle ici.
  *
  * Champs REELS confirmés par le formulaire de création FBI (voir
- * club-manager-api/docs/FBI.md) : modifier date/horaire (chacun affiche son
+ * ball-manager-back/docs/FBI.md) : modifier date/horaire (chacun affiche son
  * propre champ, comme sur FBI), inverser la rencontre / inverser seulement
  * les équipes (mutuellement exclusives, même règle que le JS réel de la
  * page), motif obligatoire. La modification de SALLE n'est volontairement

@@ -16,7 +16,7 @@ describe("parsePublicEnv", () => {
     });
   });
 
-  it("accepte une URL localhost pour club-manager-api (développement)", () => {
+  it("accepte une URL localhost pour ball-manager-back (développement)", () => {
     const env = parsePublicEnv({
       NEXT_PUBLIC_SUPABASE_URL: "https://xxxx.supabase.co",
       NEXT_PUBLIC_SUPABASE_ANON_KEY: "anon-key",
@@ -46,7 +46,7 @@ describe("parsePublicEnv", () => {
     ).toThrow(/NEXT_PUBLIC_SUPABASE_ANON_KEY/);
   });
 
-  it("rejette une URL club-manager-api manquante ou invalide", () => {
+  it("rejette une URL ball-manager-back manquante ou invalide", () => {
     expect(() =>
       parsePublicEnv({
         NEXT_PUBLIC_SUPABASE_URL: "https://xxxx.supabase.co",

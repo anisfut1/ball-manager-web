@@ -769,7 +769,7 @@ export interface Database {
       release_sync_lock: Fn<{ p_club_id: string; p_integration: SyncProvider }, void>;
       // claim_next_fbi_job (service_role uniquement) retirée : ce frontend
       // n'a plus aucune raison de connaître cette fonction, désormais
-      // exclusivement appelée par club-manager-api (voir
+      // exclusivement appelée par ball-manager-back (voir
       // docs/MIGRATION_TO_API.md, §59 de la demande de migration).
     };
     Enums: {

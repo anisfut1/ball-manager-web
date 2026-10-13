@@ -5,7 +5,7 @@ import { TeamsManager } from "@/features/admin/TeamsManager";
 
 /**
  * Gestion des équipes (demande du club, voir docs/TEAMS.md côté
- * club-manager-api) : créer/renommer/reclasser/activer une équipe AVANT
+ * ball-manager-back) : créer/renommer/reclasser/activer une équipe AVANT
  * même tout engagement FFBB confirmé (catégories encore en phase de
  * brassage en 2026-2027).
  */

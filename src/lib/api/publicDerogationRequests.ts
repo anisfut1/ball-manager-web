@@ -18,7 +18,7 @@ import type {
  * (retour du club, 2026-10-01 : coachs et coordinateurs désignés depuis
  * /joueurs). Identité = lien personnel (transport : `publicTokenTransport.ts`), jamais un jeton
  * Supabase : `apiFetch` direct, comme `publicTables.ts`. Mêmes réponses que
- * l'espace club (club-manager-api réutilise les mêmes handlers).
+ * l'espace club (ball-manager-back réutilise les mêmes handlers).
  */
 const base = (clubSlug: string) => `/v1/public/clubs/${encodeURIComponent(clubSlug)}/derogation-requests`;
 

@@ -17,7 +17,7 @@ export interface ClubSettingsActionResult {
  * Met à jour le branding léger du club (§17/§42 du brief SaaS) : nom,
  * nom court, fuseau horaire. Passe par `PATCH /v1/clubs/:clubId`
  * (`api.clubs.update`) : ce frontend n'écrit plus jamais dans la base
- * (LOT-04). Le droit d'écriture est porté par club-manager-api ; le
+ * (LOT-04). Le droit d'écriture est porté par ball-manager-back ; le
  * `requireClubAdminContext` ci-dessous n'est que la première barrière (UX).
  *
  * Le fuseau reste validé ICI en plus du back (D-1) : le comportement du

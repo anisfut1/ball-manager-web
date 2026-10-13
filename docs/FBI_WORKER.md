@@ -4,12 +4,12 @@
 > décrit une architecture (worker Playwright séparé, type Railway/Docker)
 > qui n'a **jamais été déployée en production sous cette forme** et qui,
 > depuis la migration vers
-> [club-manager-api](https://github.com/anisfut1/club-manager-api) (voir
+> [ball-manager-back](https://github.com/anisfut1/ball-manager-back) (voir
 > `docs/MIGRATION_TO_API.md`), n'existe plus du tout dans ce repository —
 > `src/app/api/internal/*` a été supprimé. L'architecture RÉELLEMENT
 > implémentée (sans worker séparé, sans Railway/Render/Fly.io : trois
 > phases cron sur des Vercel Functions) est documentée dans
-> `docs/JOBS.md` et `docs/FBI.md` **côté club-manager-api**. Le reste de ce
+> `docs/JOBS.md` et `docs/FBI.md` **côté ball-manager-back**. Le reste de ce
 > document est conservé tel quel pour la trace de la décision de
 > conception d'origine, jamais comme référence à jour.
 

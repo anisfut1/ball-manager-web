@@ -14,7 +14,7 @@ export const PLATFORM_NAME = "Ball Manager";
  */
 /**
  * `/public` (retour du club, 2026-09-29) : accès sans compte aux Tables de
- * marque, voir club-manager-api/docs/PUBLIC_TABLE_ACCESS.md — l'identité
+ * marque, voir ball-manager-back/docs/PUBLIC_TABLE_ACCESS.md — l'identité
  * vient d'un jeton personnel, jamais d'une session Supabase.
  */
-export const PUBLIC_PATHS = ["/login", "/public", "/bienvenue", "/mot-de-passe-oublie"];
+export const PUBLIC_PATHS = ["/login", "/public", "/bienvenue", "/mot-de-passe-oublie", "/.well-known", "/api/aasa", "/confidentialite", "/support"];

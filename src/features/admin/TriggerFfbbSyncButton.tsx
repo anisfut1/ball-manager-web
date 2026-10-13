@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/Button";
 import { ActionStatus } from "@/components/ui/ActionStatus";
 
 /**
- * §9/§22 de la demande : Client Component → club-manager-api directement
+ * §9/§22 de la demande : Client Component → ball-manager-back directement
  * (JWT Supabase), jamais un Server Action qui reproduirait un mini-backend
  * Next.js. `router.refresh()` recharge les Server Components de la page
  * (dernière synchro affichée) après l'appel, sans navigation complète.

@@ -9,7 +9,7 @@ import { ClaimRequestsPanel } from "@/features/tables/ClaimRequestsPanel";
  * Vue admin des accès publics sans compte (retour du club, 2026-09-29) : qui
  * a déjà revendiqué son lien personnel sur le lien commun. `club_admin`
  * uniquement — la gestion d'identité/accès est plus sensible que la simple
- * gestion des postes (voir club-manager-api/docs/PUBLIC_TABLE_ACCESS.md).
+ * gestion des postes (voir ball-manager-back/docs/PUBLIC_TABLE_ACCESS.md).
  */
 export default async function PublicAccessPage({ params }: { params: Promise<{ clubSlug: string }> }) {
   const { clubSlug } = await params;

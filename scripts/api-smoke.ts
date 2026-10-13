@@ -23,6 +23,6 @@ async function main(): Promise<void> {
 }
 
 main().catch((error: unknown) => {
-  console.error("[api:smoke] club-manager-api est injoignable :", error);
+  console.error("[api:smoke] ball-manager-back est injoignable :", error);
   process.exit(1);
 });

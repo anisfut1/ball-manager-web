@@ -1,7 +1,7 @@
-# Migration vers club-manager-api — audit et suivi
+# Migration vers ball-manager-back — audit et suivi
 
-Ce document trace la reconnexion de SCSB (frontend) à
-[club-manager-api](https://github.com/anisfut1/club-manager-api) (commit de
+Ce document trace la reconnexion de ball-manager-web (frontend) à
+[ball-manager-back](https://github.com/anisfut1/ball-manager-back) (commit de
 référence `ae29566`), en remplacement de l'accès direct à Supabase pour
 toute donnée métier. Il complète `README.md`/`ARCHITECTURE.md` — en cas de
 divergence, ce document fait foi sur l'état de la migration elle-même.
@@ -9,8 +9,8 @@ divergence, ce document fait foi sur l'état de la migration elle-même.
 ## Architecture cible
 
 ```
-Utilisateur → SCSB (Next.js/Vercel) → Supabase Auth (JWT)
-                                    → club-manager-api (Vercel)
+Utilisateur → ball-manager-web (Next.js/Vercel) → Supabase Auth (JWT)
+                                    → ball-manager-back (Vercel)
                                          → Supabase PostgreSQL/Storage
                                          → FFBB / FBI / e-Marque
 ```
@@ -29,7 +29,7 @@ session Supabase, club switcher, `src/components/**`, `src/lib/auth/session.ts`
 (types du schéma PostgreSQL — encore nécessaires pour typer le client
 Supabase Auth et l'écriture directe restante en catégorie D).
 
-## B. Remplacé par des appels à club-manager-api
+## B. Remplacé par des appels à ball-manager-back
 
 | Ancien | Nouveau |
 |---|---|
@@ -46,7 +46,7 @@ Toutes ces routes utilisent le client central `src/lib/api/` (voir
 `docs/API_CLIENT.md`), jamais un `fetch()` dispersé ni une deuxième
 implémentation de la logique métier côté Next.js (§9 de la demande).
 
-## C. Supprimé après migration (plus aucune trace dans SCSB)
+## C. Supprimé après migration (plus aucune trace dans ball-manager-web)
 
 - `src/lib/ffbb/**` (client Directus, `FfbbPublicProvider`)
 - `src/lib/fbi/**` (`HttpFbiClient`, cookie jar, magasin d'identifiants,
@@ -66,15 +66,15 @@ implémentation de la logique métier côté Next.js (§9 de la demande).
 - `src/config/env.server.ts` (validation `SUPABASE_SERVICE_ROLE_KEY`,
   `CRON_SECRET`, `FBI_CREDENTIALS_ENCRYPTION_KEY`)
 - `vercel.json` (crons FFBB/FBI/e-Marque — appartiennent désormais
-  exclusivement à club-manager-api)
+  exclusivement à ball-manager-back)
 - `supabase/migrations/`, `supabase/tests/` (34 fichiers de migration
-  vérifiés **identiques octet pour octet** avec club-manager-api avant
+  vérifiés **identiques octet pour octet** avec ball-manager-back avant
   suppression — seul `supabase/tests/README.md` différait, par une
   correction de formulation sans rapport avec le schéma ; voir
-  `docs/DEPLOYMENT.md` côté club-manager-api pour l'application des
+  `docs/DEPLOYMENT.md` côté ball-manager-back pour l'application des
   migrations)
 - `scripts/seed.ts` (nécessitait la service role, désormais interdite ici —
-  cette capacité de seed appartient maintenant à club-manager-api, pas
+  cette capacité de seed appartient maintenant à ball-manager-back, pas
   encore réimplémentée là-bas : à traiter dans une phase ultérieure, pas
   cette migration)
 - Dépendances devenues inutiles : `jszip`, `pdfjs-dist`, `tesseract.js`,
@@ -91,14 +91,14 @@ demande). Un seul point restant :
   via un client Supabase lié à la session (RLS, **pas** service role).
   Aucun secret ni privilège élevé n'est utilisé ; c'est une dérogation
   d'architecture documentée, pas une faille de sécurité. Bloqué par
-  l'absence d'une route `PATCH /v1/clubs/:clubId` côté club-manager-api
+  l'absence d'une route `PATCH /v1/clubs/:clubId` côté ball-manager-back
   (voir gap ci-dessous).
 
-## BACKEND_API_GAP — manques identifiés côté club-manager-api
+## BACKEND_API_GAP — manques identifiés côté ball-manager-back
 
 Aucun de ces manques n'a été contourné : les fonctionnalités correspondantes
 sont soit retirées de l'UI avec une note explicite, soit simplifiées, en
-attendant que club-manager-api expose la route nécessaire (§56 de la
+attendant que ball-manager-back expose la route nécessaire (§56 de la
 demande).
 
 1. **`PATCH /v1/clubs/:clubId`** — absent. Bloque le retrait complet de
@@ -107,7 +107,7 @@ demande).
    `PlatformClubDto`, réservé platform_admin) — le code FFBB du club n'est
    plus affiché sur `/admin/integrations` ni `/admin/settings`.
 3. **`GET /v1/me` n'expose pas de nom d'affichage** (`profiles.display_name`
-   côté SCSB) — l'email sert de nom d'affichage dans l'en-tête.
+   côté ball-manager-web) — l'email sert de nom d'affichage dans l'en-tête.
 4. **Pas de route pour activer/désactiver `fbi_integration_status.auto_import_emarque`**
    — côté backend, seule l'écriture service role le permet (aucune policy
    RLS `authenticated` en écriture sur cette colonne). Le bouton a été
@@ -133,4 +133,4 @@ demande).
 **Nulle côté logique backend.** Le seul reliquat est l'écriture directe
 `clubs` du point D ci-dessus (RLS, sans secret) — tout le reste (FFBB, FBI,
 e-Marque, jobs, chiffrement, parsing) n'existe plus qu'une fois, dans
-club-manager-api.
+ball-manager-back.

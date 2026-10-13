@@ -6,7 +6,7 @@ import type { components } from "./generated/schema";
 /**
  * Vie d'équipe — Lot 1 (retour du club, 2026-10-09) : entraînements,
  * planning, réponses Présent / Absent / Incertain, Home « À faire ». Voir
- * club-manager-api/docs/TEAM_LIFE.md. Espace club (compte, `fetcher`) et
+ * ball-manager-back/docs/TEAM_LIFE.md. Espace club (compte, `fetcher`) et
  * espace public (lien personnel) : mêmes routes sous `/team-life`.
  */
 

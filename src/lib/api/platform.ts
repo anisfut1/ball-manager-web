@@ -23,7 +23,7 @@ export async function createClub(fetcher: ApiFetcher, body: CreateClubDto): Prom
  * 2026-09-29 : "je veux juste l'interpréter... pas la stocker", appliqué
  * rétroactivement à tout document déjà stocké. Idempotente, jamais
  * destructive pour les stats déjà en base (voir docs/EMARQUE.md côté
- * club-manager-api).
+ * ball-manager-back).
  */
 export async function purgeEmarqueDocuments(fetcher: ApiFetcher): Promise<PurgeEmarqueDocumentsResultDto> {
   return fetcher(`/v1/platform/maintenance/purge-emarque-documents`, { method: "POST" });
@@ -45,7 +45,7 @@ export async function deleteOldSeasons(fetcher: ApiFetcher, clubId: string): Pro
  * club, 2026-09-29 : "faut que ce soit fait sur tous les matchs, sans bug,
  * sans interruption". Relance les matchs e-Marque restés en erreur en
  * réutilisant le fichier déjà téléchargé (jamais un nouveau login FBI) —
- * voir docs/EMARQUE.md côté club-manager-api. Sans effet sur les matchs
+ * voir docs/EMARQUE.md côté ball-manager-back. Sans effet sur les matchs
  * `needs_review` (fichier déjà purgé, nécessiterait un nouveau
  * téléchargement).
  */

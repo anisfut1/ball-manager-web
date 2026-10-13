@@ -169,7 +169,7 @@ function LicencieCard({
  * drag & drop, aucune dépendance ajoutée) entre les sections par équipe.
  * `isAdmin` uniquement (même verrou que `PATCH .../profile` côté API,
  * appelé ici pour CHAQUE déplacement — teamId est admin-only en écriture,
- * voir docs/LICENCIES.md côté club-manager-api).
+ * voir docs/LICENCIES.md côté ball-manager-back).
  *
  * Optimiste : la carte change de section IMMÉDIATEMENT au dépôt, annulé
  * (retour à l'état précédent) si l'appel API échoue — jamais un
@@ -280,7 +280,7 @@ export function RosterBoard({
   /**
    * "faut aussi un bouton pour supprimer un licencié" (demande du club,
    * 2026-09-28) — suppression DÉFINITIVE (voir docs/LICENCIES.md côté
-   * club-manager-api : sûre sans condition, jamais de perte d'historique
+   * ball-manager-back : sûre sans condition, jamais de perte d'historique
    * de match). Confirmation obligatoire (voir `LicencieCard`) avant cet
    * appel, jamais un clic unique irréversible.
    */

@@ -12,7 +12,7 @@ type Status = { kind: "success" | "error" | "pending"; text: string };
 
 /**
  * Rapprochement calendrier FFBB/FBI (demande du club, voir docs/FBI.md
- * côté club-manager-api) — FFBB reste la SEULE source du calendrier,
+ * côté ball-manager-back) — FFBB reste la SEULE source du calendrier,
  * cette vérification ne fait que DÉTECTER des anomalies (écarts de date/
  * heure, rencontres visibles d'un seul côté), jamais un remplacement.
  * Empile un job `reconcile_schedule` (file `fbi_jobs` existante) puis

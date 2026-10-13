@@ -22,7 +22,7 @@ function formatMatchDate(value: string | null): string {
   return new Date(value).toLocaleDateString("fr-FR", { timeZone: "Europe/Paris", day: "2-digit", month: "short", year: "numeric" });
 }
 
-/** "fiche joueur" (demande du club) : identité + tous ses matchs + ses statistiques par match, voir docs/LICENCIES.md côté club-manager-api. */
+/** "fiche joueur" (demande du club) : identité + tous ses matchs + ses statistiques par match, voir docs/LICENCIES.md côté ball-manager-back. */
 export default async function LicencieProfilePage({ params }: { params: Promise<{ clubSlug: string; licencieId: string }> }) {
   const { clubSlug, licencieId } = await params;
   const club = await requireClubContext(clubSlug);

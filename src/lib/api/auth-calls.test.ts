@@ -101,7 +101,7 @@ describe("appels Supabase Auth par navigation serveur", () => {
     expect(calls.getUser).toBe(0);
   });
 
-  it("transmet bien le jeton d'accès à club-manager-api sur chaque appel", async () => {
+  it("transmet bien le jeton d'accès à ball-manager-back sur chaque appel", async () => {
     await renderAdminDashboard();
 
     expect(mockApiFetch).toHaveBeenCalledTimes(7);

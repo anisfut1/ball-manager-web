@@ -2,7 +2,7 @@
 
 Bloc demandé par le club le 2026-10-09. Il couvre le planning, les présences prévues, les convocations, le lavage des maillots et la page Équipe. Rien d'autre : pas de covoiturage, de chat, de sondages, de cotisations ni de SMS.
 
-La référence technique détaillée est dans `club-manager-api/docs/TEAM_LIFE.md`. Les écrans sont décrits dans `docs/FONCTIONNALITES.md` (§3.11 à §3.14).
+La référence technique détaillée est dans `ball-manager-back/docs/TEAM_LIFE.md`. Les écrans sont décrits dans `docs/FONCTIONNALITES.md` (§3.11 à §3.14).
 
 Tous les prénoms cités ici sont des exemples fictifs.
 
@@ -24,7 +24,7 @@ Tous les prénoms cités ici sont des exemples fictifs.
 - Une page par équipe.
 
 **Règle d'architecture**
-- Aucune donnée métier n'est lue ou écrite directement depuis SCSB vers Supabase : tout passe par `club-manager-api`.
+- Aucune donnée métier n'est lue ou écrite directement depuis ball-manager-web vers Supabase : tout passe par `ball-manager-back`.
 - Toutes les migrations sont dans l'API.
 
 ## User ↔ licencie model
@@ -252,7 +252,7 @@ Accès dans l'espace public : les joueurs de l'équipe et ceux qui la gèrent (s
 
 ## API routes
 
-Les 18 routes « Vie d'équipe » sont listées dans `club-manager-api/docs/TEAM_LIFE.md` (§ Routes) et dans `docs/API_ROUTES.md` (170 routes au total, 0 écart avec l'OpenAPI).
+Les 18 routes « Vie d'équipe » sont listées dans `ball-manager-back/docs/TEAM_LIFE.md` (§ Routes) et dans `docs/API_ROUTES.md` (170 routes au total, 0 écart avec l'OpenAPI).
 
 Elles existent dans les deux espaces :
 - `/v1/clubs/{clubId}/team-life/…` (compte) ;
@@ -261,7 +261,7 @@ Elles existent dans les deux espaces :
 ## OpenAPI
 
 - Toutes les routes sont enregistrées dans `src/openapi.ts`.
-- Les types SCSB sont régénérés depuis ce schéma (`src/lib/api/generated/schema.ts`).
+- Les types ball-manager-web sont régénérés depuis ce schéma (`src/lib/api/generated/schema.ts`).
 
 ## Mobile
 
@@ -295,14 +295,14 @@ Elles existent dans les deux espaces :
 
 ## Git backend
 
-`anisfut1/club-manager-api`, branche principale :
+`anisfut1/ball-manager-back`, branche principale :
 - `9910741`, `5c0708b` : retours du club ;
 - `e9cf079` : Lot 3 ;
 - `9cb736f` : Lot 4.
 
 ## Git frontend
 
-`anisfut1/SCSB` :
+`anisfut1/ball-manager-web` :
 - `0883812`, `3a00a19`, `22fe2c1`, `a4c6844` : retours du club ;
 - `34c8291` : Lot 3 ;
 - puis le commit du Lot 4.

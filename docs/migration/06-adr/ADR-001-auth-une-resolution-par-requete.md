@@ -22,7 +22,7 @@ Option C : `getServerAuth()` (`src/lib/api/auth.server.ts`) enveloppé dans `cac
 ## Conséquences
 - **Positives** : 9 → au plus 2 appels « réseau possibles » (proxy + rendu), un seul par runtime ; 0 appel réseau dans le cas asymétrique. Mesuré par test : rendu = 1 `getClaims`, 0 `getUser`.
 - **Négatives / sécurité** :
-  - Cas asymétrique : un utilisateur dont la session a été **révoquée** (déconnexion globale, compte supprimé/banni) reste accepté par le proxy et les gardes serveur **jusqu'à l'expiration de son JWT** (durée par défaut Supabase : 1 h, à confirmer). Risque R-011. Atténuation : `club-manager-api` revalide le JWT et porte l'autorisation ; **à confirmer** qu'il ne se contente pas non plus d'une vérification locale (Q-001).
+  - Cas asymétrique : un utilisateur dont la session a été **révoquée** (déconnexion globale, compte supprimé/banni) reste accepté par le proxy et les gardes serveur **jusqu'à l'expiration de son JWT** (durée par défaut Supabase : 1 h, à confirmer). Risque R-011. Atténuation : `ball-manager-back` revalide le JWT et porte l'autorisation ; **à confirmer** qu'il ne se contente pas non plus d'une vérification locale (Q-001).
   - Les routes `/public/*` ne sont pas concernées (pas de session).
 - **À surveiller** : (1) Q-008 — lancer `curl https://<projet>.supabase.co/auth/v1/.well-known/jwks.json` : une liste de clés non vide = asymétrique ; (2) durée de vie du JWT dans les réglages Auth du projet ; (3) si le back expose un endpoint de révocation immédiate, recourir à `getUser()` pour les actions sensibles.
 - **Rollback** : `git revert` du commit LOT-01 (tests de caractérisation inclus).

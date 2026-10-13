@@ -17,7 +17,7 @@ export type CreateDerogationDto = components["schemas"]["CreateDerogationDto"];
 export type CreateDerogationResultDto = components["schemas"]["CreateDerogationResultDto"];
 
 /**
- * `pagination` renvoyé par l'API (voir club-manager-api/src/modules/matches/routes.ts)
+ * `pagination` renvoyé par l'API (voir ball-manager-back/src/modules/matches/routes.ts)
  * mais absent du schéma OpenAPI généré ici — généré avant l'ajout des
  * filtres/pagination côté API (gap 7) et jamais régénéré depuis (ce
  * sandbox ne peut pas joindre l'API déployée pour relancer `npm run
@@ -58,12 +58,12 @@ export function matchesFilterSearchParams(params: ListMatchesParams): URLSearchP
  * Filtre par date CÔTÉ API (`from`/`to`) plutôt que de récupérer tous les
  * matchs du club puis filtrer côté frontend : sans `from`, l'API renvoie
  * par défaut les 50 matchs les PLUS ANCIENS (limite par défaut + tri
- * croissant, voir MatchesQueryDtoSchema côté club-manager-api) — c'est ce
+ * croissant, voir MatchesQueryDtoSchema côté ball-manager-back) — c'est ce
  * qui faisait apparaître uniquement les matchs de 2023 alors que le club a
  * un historique jusqu'à aujourd'hui. Pagine ensuite explicitement
  * (`limit`/`offset`, jamais un seul appel supposé tout ramener) jusqu'à
  * avoir récupéré `pagination.total` résultats — même logique défensive
- * que `FfbbDirectusClient.listAllItems` côté club-manager-api : un club
+ * que `FfbbDirectusClient.listAllItems` côté ball-manager-back : un club
  * avec beaucoup de matchs sur la période demandée ne doit jamais perdre
  * silencieusement les plus récents.
  */
@@ -101,7 +101,7 @@ export async function listMatchDocuments(fetcher: ApiFetcher, clubId: string, ma
 /**
  * GET /v1/clubs/:clubId/matches/:matchId/derogation — dernier état connu
  * de la dérogation FBI de ce match (demande du club, voir docs/FBI.md
- * côté club-manager-api : "faut qu'on gere les derog depuis l'outil",
+ * côté ball-manager-back : "faut qu'on gere les derog depuis l'outil",
  * phase 1 lecture seule). `null` si jamais vérifié ou si la dernière
  * vérification n'a rien trouvé — les deux cas sont normaux.
  */

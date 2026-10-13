@@ -11,7 +11,7 @@ import type { PlatformClubDto } from "@/lib/api/platform";
  * platform_admin : opérateur de la plateforme SaaS, jamais un rôle de club
  * (voir docs/MULTI_TENANCY.md). §24/§28 de la demande : ce module ne lit
  * plus JAMAIS `platform_admins` directement dans Supabase (table métier) —
- * le statut est déterminé par club-manager-api lui-même, qui applique la
+ * le statut est déterminé par ball-manager-back lui-même, qui applique la
  * même RPC `is_platform_admin()` que la RLS (voir docs/AUTH.md côté
  * backend) : un 403 sur `/v1/platform/*` signifie "pas platform_admin".
  *

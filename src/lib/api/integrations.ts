@@ -10,7 +10,7 @@ export interface TestFbiConnectionResult {
   message: string;
   /**
    * Toujours absent depuis le 2026-09-24 (voir docs/FBI.md côté
-   * club-manager-api) : `POST .../fbi/test` répond désormais de façon
+   * ball-manager-back) : `POST .../fbi/test` répond désormais de façon
    * synchrone (le repli navigateur tourne dans la même requête, jamais un
    * job 202 empilé). Champ conservé optionnel pour ne pas casser un appelant
    * qui le lirait encore.
@@ -50,7 +50,7 @@ export async function testFbiConnection(fetcher: ApiFetcher, clubId: string): Pr
  * de diagnostic admin, le cron backend fait déjà tourner ce même service.
  *
  * `timeoutMs` généreux, même raisonnement que `processFbiJobs`/
- * `checkAllDerogations` : `syncFfbb` (club-manager-api) traite chaque match
+ * `checkAllDerogations` : `syncFfbb` (ball-manager-back) traite chaque match
  * du club un par un (lecture + upsert + historique), ce qui dépasse
  * largement les 20s par défaut dès que le club a plusieurs centaines de
  * matchs sur la saison — constaté en production, 2026-09-28 : "Relancer
@@ -58,7 +58,7 @@ export async function testFbiConnection(fetcher: ApiFetcher, clubId: string): Pr
  * client) pendant que la synchro continuait de réussir côté serveur
  * (`sync_runs.status = 'success'`), même classe de bug que celle déjà
  * corrigée pour `.../fbi/process-jobs`. `maxDuration: 300` côté
- * club-manager-api (vercel.json) : marge de 20s sous ce plafond.
+ * ball-manager-back (vercel.json) : marge de 20s sous ce plafond.
  */
 export async function triggerFfbbSync(fetcher: ApiFetcher, clubId: string): Promise<{ syncRunId: string; status: string; stats: unknown }> {
   return fetcher(`/v1/clubs/${clubId}/integrations/ffbb/sync`, { method: "POST", timeoutMs: 280_000 });
@@ -68,16 +68,16 @@ export async function triggerFfbbSync(fetcher: ApiFetcher, clubId: string): Prom
  * POST /v1/clubs/:clubId/integrations/fbi/process-jobs — traite un lot des
  * jobs FBI en attente (`discover_emarque`/`test_connection`) DE CE CLUB,
  * DANS LA REQUÊTE, sans dépendre de `/internal/cron/fbi-jobs` (une fois par
- * jour seulement, voir docs/FBI.md côté club-manager-api) ni du déclenchement
+ * jour seulement, voir docs/FBI.md côté ball-manager-back) ni du déclenchement
  * manuel du dashboard Vercel — c'est exactement ce que "FBI connecté" ne
  * faisait pas tout seul (le login réussi ne récupère aucun document e-Marque
  * de lui-même).
  */
 export async function processFbiJobs(fetcher: ApiFetcher, clubId: string): Promise<ProcessFbiJobsResult> {
   // timeoutMs généreux : jusqu'à CLUB_JOB_BATCH_SIZE jobs `discover_emarque`
-  // traités en série côté club-manager-api, chacun pilotant un vrai
+  // traités en série côté ball-manager-back, chacun pilotant un vrai
   // Chromium serverless (~25-30s en pratique, voir docs/FBI.md côté
-  // club-manager-api) — le timeout par défaut de 20s (client.ts) expirait
+  // ball-manager-back) — le timeout par défaut de 20s (client.ts) expirait
   // avant la fin d'un seul job.
   return fetcher<ProcessFbiJobsResult>(`/v1/clubs/${clubId}/integrations/fbi/process-jobs`, { method: "POST", timeoutMs: 280_000 });
 }
@@ -90,7 +90,7 @@ export async function processFbiJobs(fetcher: ApiFetcher, clubId: string): Promi
  * indéfiniment (constaté en production le 2026-09-24 : 14 documents
  * téléchargés, 0 importés — le parsing ne tournait que via le cron
  * quotidien `/internal/cron/emarque-parse`, voir docs/FBI.md côté
- * club-manager-api). Pas de navigateur ici (OCR/PDF seulement) : plus
+ * ball-manager-back). Pas de navigateur ici (OCR/PDF seulement) : plus
  * rapide par document que processFbiJobs, mais le timeout par défaut de
  * 20s reste trop court dès que plusieurs documents sont à traiter.
  */
@@ -101,7 +101,7 @@ export async function parseFbiDocuments(fetcher: ApiFetcher, clubId: string): Pr
 /**
  * POST /v1/clubs/:clubId/integrations/fbi/reconcile-schedule — rapprochement
  * calendrier FFBB/FBI (demande du club, voir docs/FBI.md côté
- * club-manager-api) : "FBI est l'info réelle. si ya une info sur fbi pour
+ * ball-manager-back) : "FBI est l'info réelle. si ya une info sur fbi pour
  * la même rencontre différente de ffbb, c'est une anomalie. si un match est
  * sur fbi, et pas sur ffbb, c'est à alerter aussi." FFBB reste la SEULE
  * source du calendrier — cet appel empile un job de VÉRIFICATION (jamais un
@@ -141,10 +141,10 @@ export async function checkAllDerogations(fetcher: ApiFetcher, clubId: string): 
 /**
  * GET /v1/clubs/:clubId/integrations/sync-runs — la route vit sous
  * `integrationsRouter`, monté à `/v1/clubs/:clubId/integrations` côté
- * club-manager-api (voir `api/v1/index.ts`) : l'URL manquait `/integrations`
+ * ball-manager-back (voir `api/v1/index.ts`) : l'URL manquait `/integrations`
  * ici, causant un 404 "Route introuvable" à chaque chargement de
  * /admin/sync (constaté en production, voir docs/FFBB.md côté
- * club-manager-api).
+ * ball-manager-back).
  */
 export async function listSyncRuns(fetcher: ApiFetcher, clubId: string): Promise<SyncRunDto[]> {
   const { syncRuns } = await fetcher<{ syncRuns: SyncRunDto[] }>(`/v1/clubs/${clubId}/integrations/sync-runs`);

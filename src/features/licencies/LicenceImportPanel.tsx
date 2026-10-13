@@ -53,7 +53,7 @@ type Feedback = { tone: "success" | "info" | "warning" | "danger"; title: string
  *   avec un bouton « Mettre à jour depuis FBI » pour ne pas attendre ;
  * - sinon (ou en secours) : on dépose le fichier Excel FBI tel quel.
  * Rien n'est jamais supprimé ; les noms, emails, équipes et rôles déjà
- * saisis ne sont jamais modifiés (voir club-manager-api docs/LICENCIES.md).
+ * saisis ne sont jamais modifiés (voir ball-manager-back docs/LICENCIES.md).
  */
 export function LicenceImportPanel({ clubId, clubSlug, initialStatus }: { clubId: string; clubSlug: string; initialStatus: LicenceImportStatusDto | null }) {
   const router = useRouter();

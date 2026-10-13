@@ -35,7 +35,7 @@ self.addEventListener("fetch", (event) => {
   const request = event.request;
   if (request.method !== "GET") return;
   const url = new URL(request.url);
-  if (url.origin !== self.location.origin) return; // API club-manager-api, Supabase… : jamais interceptés.
+  if (url.origin !== self.location.origin) return; // API ball-manager-back, Supabase… : jamais interceptés.
 
   if (url.pathname.startsWith("/_next/static/")) {
     event.respondWith(

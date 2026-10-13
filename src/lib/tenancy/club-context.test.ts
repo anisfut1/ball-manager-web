@@ -54,7 +54,7 @@ beforeEach(() => {
 });
 
 describe("getClubContext", () => {
-  it("appelle requireUser() avant tout appel à club-manager-api (barrière avant l'API)", async () => {
+  it("appelle requireUser() avant tout appel à ball-manager-back (barrière avant l'API)", async () => {
     await getClubContext("club-a");
     expect(mockRequireUser).toHaveBeenCalled();
   });

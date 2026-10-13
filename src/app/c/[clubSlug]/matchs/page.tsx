@@ -13,7 +13,7 @@ import { matchesServerFiltersEnabled } from "@/config/flags";
 
 /**
  * Vue "Ce week-end" + filtres (ARCHITECTURE.md §3, Module 1), scopée au
- * club de l'URL. Lecture seule, via club-manager-api (§14 de la demande) —
+ * club de l'URL. Lecture seule, via ball-manager-back (§14 de la demande) —
  * ce frontend n'interroge plus jamais `matches`/`teams` directement.
  *
  * `api.matches.list` filtre déjà sur la saison en cours côté API

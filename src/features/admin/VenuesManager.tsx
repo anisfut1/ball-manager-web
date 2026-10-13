@@ -12,7 +12,7 @@ import { browserApi } from "@/lib/api/browserClient";
 import { ApiError } from "@/lib/api/client";
 import type { ClubVenueAdminDto } from "@/lib/api/members";
 
-/** Gymnases actifs = proposés dans le planning des demandes de dérogation. Tout passe par club-manager-api. */
+/** Gymnases actifs = proposés dans le planning des demandes de dérogation. Tout passe par ball-manager-back. */
 export function VenuesManager({ clubId, clubSlug, initialVenues }: { clubId: string; clubSlug: string; initialVenues: ClubVenueAdminDto[] }) {
   const [venues, setVenues] = useState(initialVenues);
   const [toast, setToast] = useState<string | null>(null);

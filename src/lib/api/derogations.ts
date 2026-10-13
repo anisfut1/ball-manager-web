@@ -23,7 +23,7 @@ export async function listDerogations(fetcher: ApiFetcher, clubId: string): Prom
  * réellement sur FBI/FFBB (accepter/refuser), demande du club, 2026-09-27 :
  * "je veux le faire via loutil". Action réelle et engageante, jamais
  * annulable une fois confirmée par FBI — voir `outcome` ("unknown" n'est
- * jamais un succès, voir club-manager-api/docs/FBI.md).
+ * jamais un succès, voir ball-manager-back/docs/FBI.md).
  *
  * `timeoutMs` généreux — BUG constaté en production le 2026-09-28 (rencontre
  * 9538, "comment savoir si ca a marché ? jai pas eu de confirmation") : le

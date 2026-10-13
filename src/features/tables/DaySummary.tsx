@@ -2,7 +2,7 @@ import type { TableAssignmentsForMatchDto } from "@/lib/api/tables";
 
 /**
  * Fonction pure isolée pour être testable indépendamment du rendu (même
- * principe que le moteur de suggestion côté club-manager-api).
+ * principe que le moteur de suggestion côté ball-manager-back).
  *
  * `refereeNotNeeded` (retour du club, 2026-09-28 : "pas besoin d'arbitre")
  * retire le poste Arbitre du compte pour CE match, dans les deux sens :

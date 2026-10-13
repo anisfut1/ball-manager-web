@@ -14,7 +14,7 @@ function safeNext(value: string | undefined): string {
 
 /**
  * Arrivée depuis un email Ball Manager (invitation ou mot de passe oublié,
- * voir club-manager-api `src/auth/account-invites.ts`) : la personne choisit
+ * voir ball-manager-back `src/auth/account-invites.ts`) : la personne choisit
  * son mot de passe et entre directement dans son espace.
  */
 export default async function WelcomePage({ searchParams }: { searchParams: Promise<Record<string, string | string[] | undefined>> }) {

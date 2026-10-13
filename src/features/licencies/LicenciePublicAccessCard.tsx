@@ -94,7 +94,7 @@ export function LicenciePublicAccessCard({
 
   const claimed = entry?.claimed === true;
   const since = formatDate(entry?.claimedAt ?? null);
-  // Adresse à laquelle partira le prochain lien : celle de la fiche en priorité, sinon celle du lien actif (même règle que club-manager-api).
+  // Adresse à laquelle partira le prochain lien : celle de la fiche en priorité, sinon celle du lien actif (même règle que ball-manager-back).
   const sendTo = licencieEmail ?? entry?.email ?? null;
 
   async function reset() {

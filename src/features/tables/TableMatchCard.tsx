@@ -64,7 +64,7 @@ export function TableMatchCard({ client, match, onChanged }: { client: TablesCli
    * Retour du club, 2026-09-28 : "il est possible qu'un arbitre officiel
    * soit désigné, donc avoir la possibilité de cocher un truc style pas
    * besoin d'arbitre". N'affecte jamais aucun licencié — voir
-   * club-manager-api/docs/TABLE_ASSIGNMENTS.md, match_referee_overrides.
+   * ball-manager-back/docs/TABLE_ASSIGNMENTS.md, match_referee_overrides.
    */
   async function handleToggleRefereeNotNeeded(noRefereeNeeded: boolean) {
     setTogglingReferee(true);

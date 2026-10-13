@@ -58,8 +58,8 @@ function resolveDemandeurTeam(derogation: Pick<DerogationListItemDto, "demandeur
 /**
  * "sur la page dérogation met moi un filtre avec des boutons pour choisir
  * par état" — les boutons sont générés DYNAMIQUEMENT à partir des `etat`
- * réellement présents dans la liste reçue de club-manager-api (jamais un
- * libellé FBI deviné/codé en dur : voir docs/FBI.md côté club-manager-api,
+ * réellement présents dans la liste reçue de ball-manager-back (jamais un
+ * libellé FBI deviné/codé en dur : voir docs/FBI.md côté ball-manager-back,
  * les vraies valeurs — "En Cours", "Acceptée par...", "Refusée" — ne sont
  * connues qu'à l'exécution). Filtre 100% client (la liste complète est déjà
  * chargée), aucun aller-retour serveur par clic.

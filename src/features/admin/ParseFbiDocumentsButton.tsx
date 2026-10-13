@@ -18,7 +18,7 @@ type Status = { kind: "pending" | "success" | "error"; text: string };
  * document e-Marque ne le transforme pas en composition/stats/officiels
  * affichables — il faut le parser (OCR/PDF). Sans ce bouton, un document
  * reste "Téléchargé" indéfiniment, en attendant le cron quotidien
- * `/internal/cron/emarque-parse` (voir docs/FBI.md côté club-manager-api).
+ * `/internal/cron/emarque-parse` (voir docs/FBI.md côté ball-manager-back).
  *
  * Relance automatiquement tant que le lot renvoyé est plein (§10 de la
  * demande : "je ne veux pas avoir à appuyer 200 fois") — un seul clic

@@ -19,7 +19,7 @@ import type { PublicAccessEntryDto } from "@/lib/api/tables";
  * "sauf si admin remet à reset son profil"). `club_admin` uniquement (voir
  * la page appelante, `requireClubAdminContext`). La réinitialisation ne
  * touche JAMAIS les affectations déjà existantes du licencié — seul son
- * lien d'accès change (voir club-manager-api/docs/PUBLIC_TABLE_ACCESS.md).
+ * lien d'accès change (voir ball-manager-back/docs/PUBLIC_TABLE_ACCESS.md).
  */
 export function PublicAccessList({ clubId, entries }: { clubId: string; entries: PublicAccessEntryDto[] }) {
   const router = useRouter();

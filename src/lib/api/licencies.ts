@@ -8,7 +8,7 @@ export type UpdateLicencieProfileDto = components["schemas"]["UpdateLicencieProf
 export type ImportLicenciesDto = components["schemas"]["ImportLicenciesDto"];
 /**
  * `ImportLicencieRowDtoSchema` n'est jamais `.openapi(...)`-enregistré
- * séparément côté club-manager-api (il n'existe qu'imbriqué dans
+ * séparément côté ball-manager-back (il n'existe qu'imbriqué dans
  * `ImportLicenciesDto.licencies`, voir contracts/licencies.ts) — dérivé ici
  * par indexation plutôt que par un nom de composant qui n'existe pas
  * réellement dans le contrat OpenAPI généré.
@@ -18,7 +18,7 @@ export type ImportLicenciesResultDto = components["schemas"]["ImportLicenciesRes
 export type AutoAssignTeamsResultDto = components["schemas"]["AutoAssignTeamsResultDto"];
 export type DeleteLicencieResultDto = components["schemas"]["DeleteLicencieResultDto"];
 
-/** GET /v1/clubs/:clubId/licencies — roster du club (tri par nom, voir docs/LICENCIES.md côté club-manager-api). */
+/** GET /v1/clubs/:clubId/licencies — roster du club (tri par nom, voir docs/LICENCIES.md côté ball-manager-back). */
 export async function listLicencies(fetcher: ApiFetcher, clubId: string): Promise<LicencieDto[]> {
   const { licencies } = await fetcher<{ licencies: LicencieDto[] }>(`/v1/clubs/${clubId}/licencies`);
   return licencies;
@@ -33,7 +33,7 @@ export async function getLicencieProfile(fetcher: ApiFetcher, clubId: string, li
  * PATCH /v1/clubs/:clubId/licencies/:licencieId/profile — le serveur
  * applique la restriction de champs (admin vs licencié lui-même) et
  * rejette (400) tout champ hors de la population autorisée pour
- * l'appelant, voir docs/LICENCIES.md côté club-manager-api.
+ * l'appelant, voir docs/LICENCIES.md côté ball-manager-back.
  */
 export async function updateLicencieProfile(fetcher: ApiFetcher, clubId: string, licencieId: string, body: UpdateLicencieProfileDto): Promise<LicencieDto> {
   return fetcher<LicencieDto>(`/v1/clubs/${clubId}/licencies/${licencieId}/profile`, { method: "PATCH", body });
@@ -45,7 +45,7 @@ export async function updateLicencieProfile(fetcher: ApiFetcher, clubId: string,
  * ajoute les tous stp, a lavenir yen aura dautres, faudra ignorer les
  * doublons dans les exports", demande du club, 2026-09-28). Dédoublonné
  * côté serveur par `ffbbLicenceId` ("N° national") — voir docs/LICENCIES.md
- * côté club-manager-api. `timeoutMs` généreux : un import peut porter sur
+ * côté ball-manager-back. `timeoutMs` généreux : un import peut porter sur
  * plusieurs centaines de lignes.
  */
 export async function importLicencies(fetcher: ApiFetcher, clubId: string, body: ImportLicenciesDto): Promise<ImportLicenciesResultDto> {
@@ -82,7 +82,7 @@ export async function getLicenceImportStatus(fetcher: ApiFetcher, clubId: string
  * a les mettre dans les équipes, si ya 2 equipes pour 1 catégorie, met
  * tous dans 1 seule pour linstant", demande du club, 2026-09-28). Reste un
  * point de départ, jamais une vérité définitive — voir docs/LICENCIES.md
- * côté club-manager-api.
+ * côté ball-manager-back.
  */
 export async function autoAssignTeams(fetcher: ApiFetcher, clubId: string): Promise<AutoAssignTeamsResultDto> {
   return fetcher<AutoAssignTeamsResultDto>(`/v1/clubs/${clubId}/licencies/auto-assign-teams`, { method: "POST", timeoutMs: 30_000 });
@@ -92,7 +92,7 @@ export async function autoAssignTeams(fetcher: ApiFetcher, clubId: string): Prom
  * DELETE /v1/clubs/:clubId/licencies/:licencieId (club_admin) — supprime
  * DÉFINITIVEMENT la fiche ("faut aussi un bouton pour supprimer un
  * licencié", demande du club, 2026-09-28). Sûre sans condition — voir
- * docs/LICENCIES.md côté club-manager-api (l'historique de match n'est
+ * docs/LICENCIES.md côté ball-manager-back (l'historique de match n'est
  * jamais perdu). Pour archiver un·e licencié·e qui a quitté le club sans
  * perdre sa fiche, `updateLicencieProfile(..., { active: false })` reste
  * le bon geste.

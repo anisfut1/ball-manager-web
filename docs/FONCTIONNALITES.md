@@ -1,14 +1,14 @@
 # Ball Manager — Référentiel des fonctionnalités
 
-**Dernière mise à jour : 2026-10-08.** État constaté dans le code (`SCSB` branche `claude/sete-basket-app-architecture-c3hlxx`, `club-manager-api` branche `main`) et dans la base Supabase de production.
+**Dernière mise à jour : 2026-10-08.** État constaté dans le code (`ball-manager-web` branche `claude/sete-basket-app-architecture-c3hlxx`, `ball-manager-back` branche `main`) et dans la base Supabase de production.
 
 Ce document est la **référence fonctionnelle** : ce que fait l'application, pour qui, avec quels écrans, quels appels API, quelles données et quelles tâches automatiques. Il complète, sans les remplacer :
 
 | Document | Rôle |
 |---|---|
-| [`club-manager-api/docs/API_ROUTES.md`](https://github.com/anisfut1/club-manager-api/blob/main/docs/API_ROUTES.md) | Inventaire **généré** des 117 routes de l'API (`npm run docs:routes`), écarts code/contrat inclus |
+| [`ball-manager-back/docs/API_ROUTES.md`](https://github.com/anisfut1/ball-manager-back/blob/main/docs/API_ROUTES.md) | Inventaire **généré** des 117 routes de l'API (`npm run docs:routes`), écarts code/contrat inclus |
 | [`docs/migration/`](migration/README.md) | Chantier de migration front → back (lots, décisions, risques, architecture cible) |
-| `club-manager-api/docs/*.md` | Détail par domaine : FBI, FFBB, e-Marque, tables, dérogations, multi-clubs, auth |
+| `ball-manager-back/docs/*.md` | Détail par domaine : FBI, FFBB, e-Marque, tables, dérogations, multi-clubs, auth |
 
 Sommaire :
 1. [Architecture](#1-architecture)
@@ -29,8 +29,8 @@ Sommaire :
 
 | Brique | Techno | Hébergement | Rôle |
 |---|---|---|---|
-| Site (`SCSB`) | Next.js 16, React 19 | Vercel, région `dub1` (Dublin) | Affichage, formulaires. Aucune règle métier, aucune requête métier Supabase (seule l'authentification passe par Supabase Auth) |
-| API (`club-manager-api`) | Hono, TypeScript | Vercel, région `dub1` | Toute la logique métier, les droits, les intégrations |
+| Site (`ball-manager-web`) | Next.js 16, React 19 | Vercel, région `dub1` (Dublin) | Affichage, formulaires. Aucune règle métier, aucune requête métier Supabase (seule l'authentification passe par Supabase Auth) |
+| API (`ball-manager-back`) | Hono, TypeScript | Vercel, région `dub1` | Toute la logique métier, les droits, les intégrations |
 | Base de données | Supabase Postgres 17 | `eu-west-1` (Irlande) | 46 tables, RLS activée partout ; photos dans le stockage `licencie-photos` |
 | Worker FBI local | Node + Chromium (Playwright) | Mac du club (`ops/fbi-local-worker`) | Connexion FBI depuis une IP acceptée par la FFBB : feuilles e-Marque, dérogations, calendrier |
 | Emails | Resend | Domaine `ball-manager.fr` (SPF, DKIM, DMARC) | Liens personnels, invitations, mot de passe oublié |
@@ -144,7 +144,7 @@ Deux circuits distincts :
 - **Mon agenda** (accueil public) : les matchs à coacher / à jouer ET les entraînements, dans une seule liste par jour (badges « Tu coaches » / « Ton équipe », prénom de l'enfant concerné).
 - **Planning complet** (depuis « Mon agenda ») : matchs FFBB + entraînements, semaine par semaine, filtres Tout / Matchs / Entraînements (et équipe dans l'espace club).
 - Écrans : `/c/{club}/planning`, `/c/{club}/entrainements`, `/public/{club}/planning`, `/public/{club}/entrainements` (coach / admin), bloc « À faire » de `/public/{club}/accueil`.
-- API (préfixe `…/team-life`) : `GET|POST /teams/{teamId}/training-series`, `PATCH|DELETE /training-series/{id}`, `GET /trainings`, `GET|PATCH /trainings/{id}`, `POST /trainings/{id}/cancel|restore`, `GET /planning` ; public : mêmes routes `?token=`, `GET /teams/{teamId}/trainings`, `PUT /trainings/{id}/response`, `POST /action-center`, `POST /planning`. Détail : `club-manager-api/docs/TEAM_LIFE.md`.
+- API (préfixe `…/team-life`) : `GET|POST /teams/{teamId}/training-series`, `PATCH|DELETE /training-series/{id}`, `GET /trainings`, `GET|PATCH /trainings/{id}`, `POST /trainings/{id}/cancel|restore`, `GET /planning` ; public : mêmes routes `?token=`, `GET /teams/{teamId}/trainings`, `PUT /trainings/{id}/response`, `POST /action-center`, `POST /planning`. Détail : `ball-manager-back/docs/TEAM_LIFE.md`.
 
 ### 3.12 Vie d'équipe — disponibilités des matchs et convocations (Lot 2)
 - Trois étapes distinctes : **disponible** (« je peux venir »), **convoqué** (« le coach m'a choisi »), **confirmé** (« je confirme »).
@@ -263,7 +263,7 @@ Types de jobs FBI (`src/jobs/`) : découverte/téléchargement e-Marque, vérifi
 
 ## 6. Données
 
-46 tables (schéma `public`, RLS partout), 78 migrations (`club-manager-api/supabase/migrations`). Volumes approximatifs au 2026-10-08.
+46 tables (schéma `public`, RLS partout), 78 migrations (`ball-manager-back/supabase/migrations`). Volumes approximatifs au 2026-10-08.
 
 | Domaine | Tables |
 |---|---|
@@ -381,7 +381,7 @@ Les plus récentes d'abord. Historique complet : `git log` des deux dépôts et 
 
 ## 11. Tenir ce document à jour
 
-- **Nouvelle route API** : `npm run docs:routes` dans `club-manager-api` (régénère `docs/API_ROUTES.md` et liste les écarts code/contrat), puis régénérer les types du site (`scripts/generate-api-types.ts`).
+- **Nouvelle route API** : `npm run docs:routes` dans `ball-manager-back` (régénère `docs/API_ROUTES.md` et liste les écarts code/contrat), puis régénérer les types du site (`scripts/generate-api-types.ts`).
 - **Nouvelle page ou fonctionnalité** : ajouter une ligne en §3 et §4, une entrée datée en §10.
 - **Décision ou dette** : §8 (constat) puis §9 (feuille de route) ; pour la migration front → back, `docs/migration/`.
 - Ne jamais écrire de secret, d'adresse email ou de donnée de licencié dans ces documents : le dépôt de l'API est public.

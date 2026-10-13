@@ -30,7 +30,7 @@ export async function getClubCapabilities(fetcher: ApiFetcher, clubId: string): 
   return fetcher<ClubCapabilities>(`/v1/clubs/${clubId}/capabilities`);
 }
 
-/** GET /v1/clubs/:clubId/teams — TOUTES les équipes, y compris sans engagement FFBB (brassage), voir docs/TEAMS.md côté club-manager-api. */
+/** GET /v1/clubs/:clubId/teams — TOUTES les équipes, y compris sans engagement FFBB (brassage), voir docs/TEAMS.md côté ball-manager-back. */
 export async function listTeams(fetcher: ApiFetcher, clubId: string): Promise<TeamDto[]> {
   const { teams } = await fetcher<{ teams: TeamDto[] }>(`/v1/clubs/${clubId}/teams`);
   return teams;

@@ -39,7 +39,7 @@
 | D-1 validation serveur du fuseau (TRT-011) | ✅ | `cb085e1` |
 | TRT-001 annuaire public | **R-013 accepté** (D-3 = B). **L'acceptation expire à la livraison du LOT-02** ; elle ne se referme que si l'ancien endpoint est fermé (critère vérifiable, `11` §7.7 — action du propriétaire) | `2f35699` |
 | R-015 troncature de la vue publique | ✅ corrigé côté front (reste à vérifier la sémantique de l'API, Q-014 T6) | `1595e53` |
-| R-014 jeton en query string | **Front prêt** (`4570207`) : lit `#token=` (prioritaire) et `?token=`, nettoie l'URL dès la lecture, transport isolé derrière `NEXT_PUBLIC_PUBLIC_TOKEN_HEADER` (défaut **off**). **Reste ouvert** : lien en fragment + en-tête côté `club-manager-api` (propriétaire) | `4570207` |
+| R-014 jeton en query string | **Front prêt** (`4570207`) : lit `#token=` (prioritaire) et `?token=`, nettoie l'URL dès la lecture, transport isolé derrière `NEXT_PUBLIC_PUBLIC_TOKEN_HEADER` (défaut **off**). **Reste ouvert** : lien en fragment + en-tête côté `ball-manager-back` (propriétaire) | `4570207` |
 | R-018 revendication de fiche | **Traité en P1 dans le LOT-02** (spec `11` §7.9) ; **ouvert sur l'existant**, non vérifié (procédure `11` §7.9.7, propriétaire) | `b0c7b45` |
 | X-Frame-Options / frame-ancestors | ✅ appliqués (Q-021) | `f2841a7` |
 

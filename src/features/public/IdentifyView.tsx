@@ -33,7 +33,7 @@ function looksLikeFullName(value: string): boolean {
  * Identification de l'espace public sans compte (retour du club,
  * 2026-10-01 : "il va chercher son nom, il va mettre son mail... un bouton
  * qui renvoie vers son lien avec token"). Le lien personnel n'est JAMAIS
- * affiché ici : il part uniquement par email (club-manager-api, Resend).
+ * affiché ici : il part uniquement par email (ball-manager-back, Resend).
  * Un nom déjà inscrit reste sélectionnable — c'est le « lien perdu ? » :
  * le nouveau lien repart à l'adresse déjà enregistrée, jamais ailleurs.
  *

@@ -28,6 +28,11 @@ const nextConfig: NextConfig = {
 
   // LOT-14 : en-têtes de sécurité ; la CSP est en Report-Only UNIQUEMENT
   // (src/config/security-headers.ts, docs/migration/12-csp-report-only.md).
+  // App iOS : fichier AASA à l'URL exigée par Apple, sans redirection (réécriture interne).
+  async rewrites() {
+    return [{ source: "/.well-known/apple-app-site-association", destination: "/api/aasa" }];
+  },
+
   async headers() {
     return [
       // PWA : le Service Worker et le manifeste ne doivent jamais rester en cache HTTP (sinon une mise à jour n'arrive pas).

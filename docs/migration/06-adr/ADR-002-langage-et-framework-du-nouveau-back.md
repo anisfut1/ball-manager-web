@@ -22,7 +22,7 @@ Besoins issus de la Phase 2 et du contrat (`04-contrats-api.md`) :
 | Coût d'exploitation (image/mémoire Railway) | image Node ~150-250 Mo (estimé) | idem | idem | image minimale |
 
 ## Décision (proposée)
-**Option A : TypeScript + Hono sur Node 24**, avec `@hono/zod-openapi` (OpenAPI généré depuis les schémas Zod, source unique de vérité — corrige E-6). Motifs : (1) types et schémas partagés avec le front, (2) continuité probable avec `club-manager-api`, (3) charge faible : l'ergonomie prime sur la vitesse, (4) aucun besoin mesuré qui justifie un autre langage.
+**Option A : TypeScript + Hono sur Node 24**, avec `@hono/zod-openapi` (OpenAPI généré depuis les schémas Zod, source unique de vérité — corrige E-6). Motifs : (1) types et schémas partagés avec le front, (2) continuité probable avec `ball-manager-back`, (3) charge faible : l'ergonomie prime sur la vitesse, (4) aucun besoin mesuré qui justifie un autre langage.
 **Bascule vers B** si Q-012 révèle une préférence Fastify ou si un besoin de plugins matures (rate-limit distribué, hooks) s'impose ; **vers C** seulement si l'équipe est majoritairement Python **et** que le pipeline e-Marque (OCR/PDF) est réécrit dans le nouveau back (aujourd'hui hors périmètre, Q-011).
 
 ## Conséquences

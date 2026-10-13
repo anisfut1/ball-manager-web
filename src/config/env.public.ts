@@ -16,9 +16,9 @@ export const publicEnvSchema = z.object({
     message: "NEXT_PUBLIC_SUPABASE_ANON_KEY est requis",
   }),
   /**
-   * URL du backend club-manager-api (jamais d'URL en dur dans le code, voir
+   * URL du backend ball-manager-back (jamais d'URL en dur dans le code, voir
    * src/lib/api/config.ts). En développement, http://localhost:3001 (le
-   * port par défaut de `npm run dev` dans club-manager-api) est une valeur
+   * port par défaut de `npm run dev` dans ball-manager-back) est une valeur
    * valide.
    */
   NEXT_PUBLIC_CLUB_MANAGER_API_URL: z.string().url({
