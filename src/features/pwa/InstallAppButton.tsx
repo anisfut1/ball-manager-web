@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Download, ExternalLink, MoreVertical, PlusSquare, Share } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
@@ -8,6 +9,7 @@ import { Sheet } from "@/components/ui/Sheet";
 import { iosNeedsSafari, readInstallEnvironment, type InstallEnvironment } from "@/lib/pwa/platform";
 import { promptInstall, useNativeInstall } from "./install-prompt";
 import { appStoreId } from "@/config/ios-app";
+import { shouldShowInstall } from "./should-show-install";
 
 function Step({ n, icon, children }: { n: number; icon?: React.ReactNode; children: React.ReactNode }) {
   return (
@@ -83,6 +85,7 @@ export function InstallAppButton({ className }: { className?: string }) {
   const { canPrompt, installed } = useNativeInstall();
   const [env, setEnv] = useState<InstallEnvironment | null>(null);
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     // Lecture du navigateur après l'hydratation (jamais pendant le rendu serveur).
@@ -90,9 +93,9 @@ export function InstallAppButton({ className }: { className?: string }) {
     setEnv(readInstallEnvironment());
   }, []);
 
-  if (!env || env.standalone || installed || env.os === "other") return null;
   // App iOS publiée : sur iPhone, c'est la bannière Safari (Smart App Banner) qui propose l'app — jamais deux invitations à la fois.
-  if (env.os === "ios" && appStoreId()) return null;
+  // Pages de connexion (/auth/…, /connexion…) : jamais d'invite, voir shouldShowInstall.
+  if (!env || !shouldShowInstall({ os: env.os, standalone: env.standalone || installed, appStoreId: appStoreId(), pathname })) return null;
 
   async function onClick() {
     if (canPrompt && (await promptInstall()) !== "unavailable") return;
