@@ -27,7 +27,12 @@ export function AppSignInApp({ clubSlug, clubName, request }: { clubSlug: string
   if (!request) return <Notice tone="danger" title="Demande de connexion invalide">Ferme cette fenêtre et réessaie depuis l&apos;application Ball Manager.</Notice>;
   if (identity === undefined) return <ListSkeleton rows={3} />;
   if (identity === null) {
-    return <PublicLoginPanel returnTo="accueil" title="Se connecter à l'application" lead={`Ce navigateur ne te connaît pas encore pour ${clubName}. Retrouve ton nom pour recevoir ton lien par email : il ouvrira directement l'application Ball Manager.`} />;
+    return (
+      <div className="mx-auto flex w-full max-w-lg flex-col gap-4">
+        <Notice tone="info">Ouvre le lien reçu par e-mail sur ce téléphone : l&apos;application se connectera toute seule.</Notice>
+        <PublicLoginPanel returnTo="accueil" title="Se connecter à l'application" lead={`Ce navigateur ne te connaît pas encore pour ${clubName}. Retrouve ton nom pour recevoir ton lien par email : il ouvrira directement l'application Ball Manager.`} />
+      </div>
+    );
   }
 
   async function confirm() {
