@@ -16,6 +16,13 @@ afterEach(() => {
 });
 
 describe("InstallAppButton", () => {
+  it("affiche « Ajouter à l'écran d'accueil » et plus « Installer »", () => {
+    render(<InstallAppButton />);
+    const button = screen.getByRole("button");
+    expect(button.textContent).toContain("Ajouter à l'écran d'accueil");
+    expect(button.textContent).not.toMatch(/Installer/);
+  });
+
   it("n'affiche rien sur /connexion ni sur /auth/app", () => {
     for (const p of ["/public/sc-sete-basket/connexion", "/public/sc-sete-basket/auth/app"]) {
       pathname = p;

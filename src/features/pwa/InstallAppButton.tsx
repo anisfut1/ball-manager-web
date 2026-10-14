@@ -76,7 +76,7 @@ function AndroidGuide({ env }: { env: InstallEnvironment }) {
 }
 
 /**
- * Bouton discret « Installer Ball Manager » : invite native quand le navigateur
+ * Bouton discret « Ajouter à l'écran d'accueil » : invite native quand le navigateur
  * la propose (Android/Chrome), sinon tutoriel adapté (iPhone, Android sans
  * invite, navigateurs intégrés). Invisible quand l'application tourne déjà en
  * mode standalone.
@@ -105,10 +105,9 @@ export function InstallAppButton({ className }: { className?: string }) {
   return (
     <>
       <Button size="sm" variant="ghost" icon={<Download aria-hidden />} onClick={onClick} className={className}>
-        <span className="hidden sm:inline">Installer Ball Manager</span>
-        <span className="sm:hidden">Installer</span>
+        Ajouter à l&apos;écran d&apos;accueil
       </Button>
-      <Sheet open={open} onClose={() => setOpen(false)} side="bottom" title="Installer Ball Manager" description="Ouvrez le club d'un seul geste depuis votre écran d'accueil, sans navigateur.">
+      <Sheet open={open} onClose={() => setOpen(false)} side="bottom" title="Ajouter à l'écran d'accueil" description="Ouvrez le club d'un seul geste depuis votre écran d'accueil, sans navigateur.">
         {env.os === "ios" ? <IosGuide env={env} /> : <AndroidGuide env={env} />}
         <p className="type-meta mt-4 flex items-center gap-1.5">
           <ExternalLink aria-hidden className="size-3.5" />
