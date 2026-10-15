@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Film produit Remotion : projet autonome (video/package.json), hors build Next.
+    "video/**",
   ]),
 ]);
 
