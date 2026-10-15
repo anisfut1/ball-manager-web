@@ -42,7 +42,7 @@ git remote add origin https://github.com/anisfut1/ball-manager-app.git
 
 | Dépôt | Branche par défaut | Travail mobile |
 |---|---|---|
-| `ball-manager-web` | `claude/sete-basket-app-architecture-c3hlxx` (production) | `claude/mobile-support` (support web de l'app : AASA, connexion Safari, pages légales) |
+| `ball-manager-web` | `main` (production) | `claude/mobile-support` (support web de l'app : AASA, connexion Safari, pages légales) |
 | `ball-manager-back` | `main` | `claude/mobile-support` (sessions d'appareil, push) |
 | `ball-manager-app` | `main` | `claude/expo-app` |
 
