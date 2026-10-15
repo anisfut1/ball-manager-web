@@ -1,6 +1,6 @@
 # Ball Manager — Référentiel des fonctionnalités
 
-**Dernière mise à jour : 2026-10-08.** État constaté dans le code (`ball-manager-web` branche `claude/sete-basket-app-architecture-c3hlxx`, `ball-manager-back` branche `main`) et dans la base Supabase de production.
+**Dernière mise à jour : 2026-10-08.** État constaté dans le code (`ball-manager-web` branche `main`, `ball-manager-back` branche `main`) et dans la base Supabase de production.
 
 Ce document est la **référence fonctionnelle** : ce que fait l'application, pour qui, avec quels écrans, quels appels API, quelles données et quelles tâches automatiques. Il complète, sans les remplacer :
 
