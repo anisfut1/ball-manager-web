@@ -51,7 +51,7 @@ Prérequis : preview HTTPS avec `SESSION_SECRET`. Lien personnel de test dans l'
 **iPhone (iOS ≥ 17.2)**
 1. WhatsApp → toucher le lien → « Ouvrir dans Safari » (l'ouvrir dans WhatsApp = cas dégradé, voir 6).
 2. L'accueil s'affiche, **l'URL ne contient plus `token`**. Fermer Safari complètement, ouvrir `…/public/sc-sete-basket/accueil` : reconnu.
-3. Bouton « Installer Ball Manager » → tutoriel ; Partager → « Sur l'écran d'accueil » → Ajouter.
+3. Bouton « Ajouter à l'écran d'accueil » → tutoriel ; Partager → « Sur l'écran d'accueil » → Ajouter.
 4. Lancer l'icône : ouverture directe sur l'accueil du club, sans barre Safari, barre du bas non coupée par la barre d'accueil. Reconnu sans action = copie de cookies OK.
 5. Réouvrir la PWA 2–3 jours plus tard (et Safari après > 7 jours) : toujours reconnu.
 6. Cas dégradé (lien ouvert dans WhatsApp, ou iOS < 17.2) : la PWA affiche « Me reconnaître » → nom → e-mail → lien à ouvrir **dans la PWA**.
@@ -60,7 +60,7 @@ Prérequis : preview HTTPS avec `SESSION_SECRET`. Lien personnel de test dans l'
 9. Appareil partagé : oublier, puis ouvrir le lien d'une autre personne : c'est ce profil qui s'affiche, pas le précédent.
 
 **Android (Chrome)**
-1. Ouvrir le lien, « Installer Ball Manager » → invite native ; installer ; lancer l'icône : reconnu (même profil Chrome).
+1. Ouvrir le lien, « Ajouter à l'écran d'accueil » → invite native ; installer ; lancer l'icône : reconnu (même profil Chrome).
 2. Tester depuis le navigateur intégré d'une app (Instagram/WhatsApp) : consigne « Ouvrir dans Chrome ».
 3. Même scénarios hors ligne / déconnexion / révocation (révoquer le lien côté club → à la prochaine ouverture, retour à « Me reconnaître »).
 

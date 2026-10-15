@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
 import { Download, ExternalLink, MoreVertical, PlusSquare, Share } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Notice } from "@/components/ui/Notice";
@@ -8,6 +9,7 @@ import { Sheet } from "@/components/ui/Sheet";
 import { iosNeedsSafari, readInstallEnvironment, type InstallEnvironment } from "@/lib/pwa/platform";
 import { promptInstall, useNativeInstall } from "./install-prompt";
 import { appStoreId } from "@/config/ios-app";
+import { shouldShowInstall } from "./should-show-install";
 
 function Step({ n, icon, children }: { n: number; icon?: React.ReactNode; children: React.ReactNode }) {
   return (
@@ -74,7 +76,7 @@ function AndroidGuide({ env }: { env: InstallEnvironment }) {
 }
 
 /**
- * Bouton discret « Installer Ball Manager » : invite native quand le navigateur
+ * Bouton discret « Ajouter à l'écran d'accueil » : invite native quand le navigateur
  * la propose (Android/Chrome), sinon tutoriel adapté (iPhone, Android sans
  * invite, navigateurs intégrés). Invisible quand l'application tourne déjà en
  * mode standalone.
@@ -83,6 +85,7 @@ export function InstallAppButton({ className }: { className?: string }) {
   const { canPrompt, installed } = useNativeInstall();
   const [env, setEnv] = useState<InstallEnvironment | null>(null);
   const [open, setOpen] = useState(false);
+  const pathname = usePathname();
 
   useEffect(() => {
     // Lecture du navigateur après l'hydratation (jamais pendant le rendu serveur).
@@ -90,9 +93,9 @@ export function InstallAppButton({ className }: { className?: string }) {
     setEnv(readInstallEnvironment());
   }, []);
 
-  if (!env || env.standalone || installed || env.os === "other") return null;
   // App iOS publiée : sur iPhone, c'est la bannière Safari (Smart App Banner) qui propose l'app — jamais deux invitations à la fois.
-  if (env.os === "ios" && appStoreId()) return null;
+  // Pages de connexion (/auth/…, /connexion…) : jamais d'invite, voir shouldShowInstall.
+  if (!env || !shouldShowInstall({ os: env.os, standalone: env.standalone || installed, appStoreId: appStoreId(), pathname })) return null;
 
   async function onClick() {
     if (canPrompt && (await promptInstall()) !== "unavailable") return;
@@ -102,10 +105,9 @@ export function InstallAppButton({ className }: { className?: string }) {
   return (
     <>
       <Button size="sm" variant="ghost" icon={<Download aria-hidden />} onClick={onClick} className={className}>
-        <span className="hidden sm:inline">Installer Ball Manager</span>
-        <span className="sm:hidden">Installer</span>
+        Ajouter à l&apos;écran d&apos;accueil
       </Button>
-      <Sheet open={open} onClose={() => setOpen(false)} side="bottom" title="Installer Ball Manager" description="Ouvrez le club d'un seul geste depuis votre écran d'accueil, sans navigateur.">
+      <Sheet open={open} onClose={() => setOpen(false)} side="bottom" title="Ajouter à l'écran d'accueil" description="Ouvrez le club d'un seul geste depuis votre écran d'accueil, sans navigateur.">
         {env.os === "ios" ? <IosGuide env={env} /> : <AndroidGuide env={env} />}
         <p className="type-meta mt-4 flex items-center gap-1.5">
           <ExternalLink aria-hidden className="size-3.5" />

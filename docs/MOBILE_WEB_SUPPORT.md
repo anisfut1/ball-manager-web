@@ -9,7 +9,7 @@ L'**unique** application mobile de Ball Manager est **`ball-manager-app`** (Expo
 | Lien de connexion ouvert dans le navigateur | `/public/{slug}/connexion/code/{code}` (`LoginCodeApp.tsx`) | Si l'app est installée, le Universal Link l'ouvre directement ; sinon, connexion web |
 | Destinations des liens | pages `/public/{slug}/…` | Repli web des Universal Links et des notifications (mêmes chemins que l'app) |
 | Pages légales | `/confidentialite`, `/support` | URL de confidentialité et d'assistance de la fiche App Store |
-| Smart App Banner | `src/app/public/[clubSlug]/layout.tsx` | Actif quand `NEXT_PUBLIC_APP_STORE_ID` est défini ; masque alors le bouton « Installer » (PWA) sur iPhone |
+| Smart App Banner | `src/app/public/[clubSlug]/layout.tsx` | Actif quand `NEXT_PUBLIC_APP_STORE_ID` est défini ; masque alors le bouton « Ajouter à l'écran d'accueil » (PWA) sur iPhone |
 | Client de l'auth mobile côté web | `src/lib/api/deviceAuth.ts` | Les deux seuls appels faits par le web : `createSsoCode`, `exchangeForWeb` |
 
 Contrats serveur (sessions d'appareil, codes PKCE, échange, jetons push, APNs) : `ball-manager-back/docs/MOBILE_AUTH.md` et `docs/IOS_PUSH.md`. Sécurité : `docs/IOS_SECURITY.md`. Fiche App Store, étapes Apple/EAS et tests sur iPhone : `ball-manager-app/docs/APP_STORE.md`, `ball-manager-app/MANUAL_STEPS.md`, `ball-manager-app/docs/IOS_TEST_MATRIX.md`.
