@@ -13677,6 +13677,19 @@ export interface components {
             message: string;
             technicalCode: string;
             qualityWarnings: components["schemas"]["QualityWarningDto"][];
+            relatedMatches: {
+                matchId: string;
+                numero: string | null;
+                teamName: string | null;
+                opponentName: string | null;
+                matchDatetime: string;
+                venueLabel: string | null;
+                isHome: boolean | null;
+                coaches: {
+                    name: string;
+                    phone: string | null;
+                }[];
+            }[];
             createdAt: string | null;
             resolvedAt: string | null;
         };
