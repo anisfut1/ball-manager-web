@@ -7,7 +7,7 @@ import { ChevronRight, Megaphone, Shirt } from "lucide-react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ListSkeleton } from "@/components/ui/Skeleton";
 import { EmptyState, ErrorState } from "@/components/ui/States";
-import { PublicLoginPanel } from "@/features/public/PublicLoginApp";
+import { LicensedAccessGate } from "@/features/licensed-access/LicensedAccessGate";
 import { usePublicIdentity } from "@/features/public/PublicIdentityProvider";
 import { getPublicHome } from "@/lib/api/publicHome";
 import { getDeviceTokens } from "@/lib/publicToken";
@@ -60,7 +60,7 @@ export function PublicTeamsApp({ clubSlug, clubName }: { clubSlug: string; clubN
   }, [clubSlug, router, token]);
 
   if (identity === undefined) return <ListSkeleton rows={4} />;
-  if (identity === null) return <PublicLoginPanel returnTo="accueil" title="Équipe" lead="La page de ton équipe (prochain match, entraînements, effectif) : retrouve ton nom pour recevoir ton lien d'accès par email." />;
+  if (identity === null) return <LicensedAccessGate module="team" />;
   if (state.error) return <ErrorState title="Équipes indisponibles" description={state.error} />;
   if (!state.teams || state.teams.length === 1) return <ListSkeleton rows={4} />;
 

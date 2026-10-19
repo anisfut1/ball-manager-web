@@ -5,7 +5,7 @@ import { AppSignInApp } from "./AppSignInApp";
 
 let identity: unknown = null;
 vi.mock("@/features/public/PublicIdentityProvider", () => ({ usePublicIdentity: () => ({ identity }) }));
-vi.mock("@/features/public/PublicLoginApp", () => ({ PublicLoginPanel: () => <p>panneau-connexion</p> }));
+vi.mock("@/features/licensed-access/LicensedAccessGate", () => ({ LicensedAccessGate: () => <p>panneau-connexion</p> }));
 vi.mock("@/lib/publicToken", () => ({ getDeviceTokens: () => [] }));
 
 const MESSAGE = "Ouvre le lien reçu par e-mail sur ce téléphone : l'application se connectera toute seule.";

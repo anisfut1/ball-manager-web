@@ -39,7 +39,7 @@ export function PublicShell({ clubSlug, club, children }: { clubSlug: string; cl
           </div>
         </header>
         <PwaReconnectNotice />
-        <main id="main" tabIndex={-1} className="pb-safe-nav flex flex-1 flex-col outline-none lg:pb-0">
+        <main id="main" tabIndex={-1} className="pb-safe-nav flex flex-1 flex-col overflow-x-clip outline-none lg:pb-0">
           {children}
         </main>
         <footer className="hidden border-t border-border lg:block">

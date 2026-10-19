@@ -13,8 +13,8 @@ import { ListSkeleton } from "@/components/ui/Skeleton";
 import { EmptyState, ErrorState } from "@/components/ui/States";
 import { formatShortDateTime } from "@/features/derogation-requests/labels";
 import { MatchCard } from "@/features/matches/MatchCard";
-import { IdentifyView } from "@/features/public/IdentifyView";
-import { PublicLoginPanel } from "@/features/public/PublicLoginApp";
+import { LicensedAccessGate } from "@/features/licensed-access/LicensedAccessGate";
+import { LicensedSearchCard } from "@/features/licensed-access/LicensedSearchCard";
 import { usePublicIdentity, type PublicIdentity } from "@/features/public/PublicIdentityProvider";
 import { TABLE_ROLE_LABELS } from "@/features/tables/role-labels";
 import { ActionCenter, useActionCenter } from "@/features/team-life/ActionCenter";
@@ -43,7 +43,7 @@ export function PublicHomeApp({ clubSlug, club }: { clubSlug: string; club: Home
   const { identity, forget } = usePublicIdentity();
 
   if (identity === undefined) return <ListSkeleton rows={5} />;
-  if (identity === null) return <PublicLoginPanel returnTo="accueil" title="Mon espace" lead="Ton équipe, tes prochains matchs et tes tables de marque au même endroit : retrouve ton nom pour recevoir ton lien d'accès par email." />;
+  if (identity === null) return <LicensedAccessGate module="home" />;
   return <PersonalHome key={identity.token} clubSlug={clubSlug} club={club} identity={identity} onForget={forget} />;
 }
 
@@ -154,7 +154,7 @@ function PersonalHome({ clubSlug, club, identity, onForget }: { clubSlug: string
         description="Un parent avec plusieurs enfants au club : retrouve le nom de l'autre enfant et ouvre son lien sur ce téléphone. Les entraînements de chacun s'afficheront ensemble ici."
         side="bottom"
       >
-        <IdentifyView clubSlug={clubSlug} clubName={club.name} returnTo="accueil" searchFirst header={<span />} />
+        <LicensedSearchCard clubSlug={clubSlug} clubName={club.name} returnTo="accueil" variant="bare" />
       </Sheet>
 
       {home.teams.length === 0 ? (

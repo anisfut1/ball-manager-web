@@ -6,7 +6,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ListSkeleton } from "@/components/ui/Skeleton";
 import { EmptyState, ErrorState } from "@/components/ui/States";
-import { PublicLoginPanel } from "@/features/public/PublicLoginApp";
+import { LicensedAccessGate } from "@/features/licensed-access/LicensedAccessGate";
 import { usePublicIdentity, type PublicIdentity } from "@/features/public/PublicIdentityProvider";
 import { getPublicDerogationContext } from "@/lib/api/publicDerogationRequests";
 import { getPublicHome } from "@/lib/api/publicHome";
@@ -23,7 +23,7 @@ import { publicTeamLifeClient } from "./team-life-client";
 export function PublicTrainingsApp({ clubSlug, club, initialTeamId, initialOccurrenceId }: { clubSlug: string; club: { name: string; timezone: string }; initialTeamId?: string | null; initialOccurrenceId?: string | null }) {
   const { identity } = usePublicIdentity();
   if (identity === undefined) return <ListSkeleton rows={5} />;
-  if (identity === null) return <PublicLoginPanel returnTo="accueil" title="Entraînements" lead="Réservé aux coachs : planifie les entraînements de ton équipe et vois qui vient. Retrouve ton nom pour recevoir ton lien d'accès par email." />;
+  if (identity === null) return <LicensedAccessGate module="trainings" />;
   return <Manager key={identity.token} clubSlug={clubSlug} club={club} identity={identity} initialTeamId={initialTeamId} initialOccurrenceId={initialOccurrenceId} />;
 }
 

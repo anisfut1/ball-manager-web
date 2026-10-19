@@ -3,7 +3,7 @@
 import { useCallback } from "react";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { ListSkeleton } from "@/components/ui/Skeleton";
-import { PublicLoginPanel } from "@/features/public/PublicLoginApp";
+import { LicensedAccessGate } from "@/features/licensed-access/LicensedAccessGate";
 import { usePublicIdentity } from "@/features/public/PublicIdentityProvider";
 import { publicTeamLife } from "@/lib/api/teamLife";
 import { getDeviceTokens } from "@/lib/publicToken";
@@ -22,7 +22,7 @@ export function PublicPlanningApp({ clubSlug, club }: { clubSlug: string; club: 
   );
 
   if (identity === undefined) return <ListSkeleton rows={5} />;
-  if (identity === null) return <PublicLoginPanel returnTo="accueil" title="Planning" lead="Les matchs et entraînements de ton équipe (ou de tes enfants) au même endroit : retrouve ton nom pour recevoir ton lien d'accès par email." />;
+  if (identity === null) return <LicensedAccessGate module="planning" />;
 
   return (
     <div className="flex flex-col gap-6">
