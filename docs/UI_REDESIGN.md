@@ -64,8 +64,8 @@ Légende : **R** = redesign effectué · **M** = largeurs réellement vérifiée
 | Résultats publics | `public/[clubSlug]/resultats/page.tsx` | `ResultsView` (par équipe, `?equipe=`), `StandingsTable` (classement FFBB), MatchCard | [x] | 360 · 390 · 1440 |
 | Matchs publics | `public/[clubSlug]/matchs/page.tsx` | MatchesView, MatchCard | [x] | 390 · 1440 |
 | Détail match public | `public/[clubSlug]/matchs/[id]/page.tsx` | Scoreboard, Tabs | [x] | 390 |
-| Tables publiques | `public/[clubSlug]/tables/page.tsx` | `PublicTablesApp`, `IdentifyView`, `BoardView`, `PublicMatchCard` | [x] | 390 |
-| Dérogations publiques | `public/[clubSlug]/derogations/page.tsx` | `PublicDerogationsApp`, `IdentifyView`, `DerogationsList` (lecture seule) — licenciés admins du club uniquement | [x] | 390 · 1440 |
+| Tables publiques | `public/[clubSlug]/tables/page.tsx` | `PublicTablesApp`, `LicensedAccessGate`, `BoardView`, `PublicMatchCard` | [x] | 390 |
+| Dérogations publiques | `public/[clubSlug]/derogations/page.tsx` | `PublicDerogationsApp`, `LicensedAccessGate`, `DerogationsList` (lecture seule) — licenciés admins du club uniquement | [x] | 390 · 1440 |
 
 ## Composants partagés
 

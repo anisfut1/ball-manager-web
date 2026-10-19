@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { Notice } from "@/components/ui/Notice";
 import { ListSkeleton } from "@/components/ui/Skeleton";
-import { PublicLoginPanel } from "@/features/public/PublicLoginApp";
+import { LicensedAccessGate } from "@/features/licensed-access/LicensedAccessGate";
 import { usePublicIdentity } from "@/features/public/PublicIdentityProvider";
 import { deviceAuth } from "@/lib/api/deviceAuth";
 import { getDeviceTokens } from "@/lib/publicToken";
@@ -30,7 +30,7 @@ export function AppSignInApp({ clubSlug, clubName, request }: { clubSlug: string
     return (
       <div className="mx-auto flex w-full max-w-lg flex-col gap-4">
         <Notice tone="info">Ouvre le lien reçu par e-mail sur ce téléphone : l&apos;application se connectera toute seule.</Notice>
-        <PublicLoginPanel returnTo="accueil" title="Se connecter à l'application" lead={`Ce navigateur ne te connaît pas encore pour ${clubName}. Retrouve ton nom pour recevoir ton lien par email : il ouvrira directement l'application Ball Manager.`} />
+        <LicensedAccessGate module="app" />
       </div>
     );
   }

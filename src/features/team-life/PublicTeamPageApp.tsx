@@ -2,7 +2,7 @@
 
 import { useCallback } from "react";
 import { ListSkeleton } from "@/components/ui/Skeleton";
-import { PublicLoginPanel } from "@/features/public/PublicLoginApp";
+import { LicensedAccessGate } from "@/features/licensed-access/LicensedAccessGate";
 import { usePublicIdentity } from "@/features/public/PublicIdentityProvider";
 import { ApiError } from "@/lib/api/errors";
 import { publicTeamLife } from "@/lib/api/teamLife";
@@ -37,7 +37,7 @@ export function PublicTeamPageApp({ clubSlug, teamId, timezone, tab }: { clubSlu
   );
 
   if (identity === undefined) return <ListSkeleton rows={5} />;
-  if (identity === null) return <PublicLoginPanel returnTo="accueil" title="Équipe" lead="La page de ton équipe (prochain match, entraînements, effectif) : retrouve ton nom pour recevoir ton lien d'accès par email." />;
+  if (identity === null) return <LicensedAccessGate module="team" />;
 
   return (
     <TeamPageView

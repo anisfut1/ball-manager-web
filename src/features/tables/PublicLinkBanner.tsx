@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/Button";
 /**
  * Rappel du lien commun à distribuer (retour du club, 2026-09-29 : "je vais
  * envoyer le lien à tout le monde"). Un seul lien, sans jeton — chacun
- * retrouve ensuite son nom dans la liste (`IdentifyView`) et reçoit son
+ * retrouve ensuite son nom (`LicensedAccessGate`) et reçoit son
  * lien personnel par email (2026-10-01).
  */
 export function PublicLinkBanner({ clubSlug }: { clubSlug: string }) {
