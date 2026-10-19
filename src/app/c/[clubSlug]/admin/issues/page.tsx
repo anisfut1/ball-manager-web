@@ -1,4 +1,5 @@
-import { AlertOctagon, AlertTriangle, CalendarDays, FileWarning, ShieldCheck } from "lucide-react";
+import { AlertOctagon, AlertTriangle, CalendarDays, FileWarning, MapPin, Phone, ShieldCheck, UserRound } from "lucide-react";
+import Link from "next/link";
 import { requireClubAdminContext } from "@/lib/tenancy/club-context";
 import { api } from "@/lib/api/server";
 import type { IssueDto } from "@/lib/api/issues";
@@ -10,6 +11,10 @@ import { ButtonLink } from "@/components/ui/Button";
 import { cn } from "@/components/ui/cn";
 import { ResolveIssueButton } from "@/features/admin/ResolveIssueButton";
 import { DismissIssueButton } from "@/features/admin/DismissIssueButton";
+
+function formatTime(value: string): string {
+  return new Date(value).toLocaleTimeString("fr-FR", { timeZone: "Europe/Paris", hour: "2-digit", minute: "2-digit" });
+}
 
 function formatDateTime(value: string | null | undefined): string {
   return value
@@ -123,7 +128,9 @@ function IssueCard({ issue, clubId, clubSlug }: { issue: IssueDto; clubId: strin
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div className="text-reflow">
               <p className="type-eyebrow">{TYPE_LABELS[issue.type]}</p>
-              <h3 className="type-card mt-1 text-foreground">{`Match n°${issue.numero ?? "?"} — vs ${issue.opponentName ?? "?"}`}</h3>
+              {issue.relatedMatches.length === 0 ? (
+                <h3 className="type-card mt-1 text-foreground">{`Match n°${issue.numero ?? "?"} — vs ${issue.opponentName ?? "?"}`}</h3>
+              ) : null}
             </div>
             <StatusBadge tone={isError ? "danger" : "warning"} icon={isError ? <AlertOctagon /> : <AlertTriangle />} size="sm">
               {isError ? "À corriger" : "À vérifier"}
@@ -137,6 +144,8 @@ function IssueCard({ issue, clubId, clubSlug }: { issue: IssueDto; clubId: strin
 
           <p className="text-sm leading-relaxed text-foreground">{issue.message}</p>
 
+          {issue.relatedMatches.length > 0 ? <RelatedMatches matches={issue.relatedMatches} clubSlug={clubSlug} /> : null}
+
           {issue.qualityWarnings.length > 0 ? (
             <ul className="flex flex-col gap-1.5 rounded-[var(--radius-md)] bg-surface px-3 py-2.5">
               {issue.qualityWarnings.map((warning, warningIndex) => (
@@ -149,7 +158,7 @@ function IssueCard({ issue, clubId, clubSlug }: { issue: IssueDto; clubId: strin
           ) : null}
 
           <div className="flex flex-wrap items-center gap-2 border-t border-border pt-3">
-            {issue.matchId ? (
+            {issue.matchId && issue.relatedMatches.length === 0 ? (
               <ButtonLink href={`/c/${clubSlug}/matchs/${issue.matchId}${issue.integration === "emarque" ? "?tab=emarque" : ""}`} variant="secondary" size="sm">
                 Ouvrir le match
               </ButtonLink>
@@ -160,5 +169,50 @@ function IssueCard({ issue, clubId, clubSlug }: { issue: IssueDto; clubId: strin
         </div>
       </div>
     </Card>
+  );
+}
+
+/** Les rencontres d'un conflit, chacune avec son équipe et ses coachs à contacter. */
+function RelatedMatches({ matches, clubSlug }: { matches: IssueDto["relatedMatches"]; clubSlug: string }) {
+  return (
+    <ul className="grid gap-2 sm:grid-cols-2">
+      {matches.map((match) => (
+        <li key={match.matchId} className="flex flex-col gap-1.5 rounded-[var(--radius-md)] border border-border bg-surface px-3 py-2.5">
+          <p className="text-sm font-semibold text-foreground">
+            {match.teamName ?? "Équipe ?"} <span className="font-normal text-muted">· {formatTime(match.matchDatetime)}</span>
+          </p>
+          <p className="text-[13px] text-muted">
+            {`n°${match.numero ?? "?"} — vs ${match.opponentName ?? "?"}`}
+          </p>
+          {match.venueLabel ? (
+            <p className="flex items-start gap-1.5 text-[13px] text-muted">
+              <MapPin aria-hidden className="mt-0.5 size-3.5 shrink-0 text-subtle" />
+              {match.venueLabel}
+            </p>
+          ) : null}
+          {match.coaches.length > 0 ? (
+            <ul className="flex flex-col gap-1">
+              {match.coaches.map((coach) => (
+                <li key={coach.name} className="flex flex-wrap items-center gap-x-2 gap-y-0.5 text-[13px] text-foreground">
+                  <UserRound aria-hidden className="size-3.5 shrink-0 text-subtle" />
+                  {coach.name}
+                  {coach.phone ? (
+                    <a href={`tel:${coach.phone.replace(/\s+/g, "")}`} className="inline-flex items-center gap-1 text-accent-text underline-offset-2 hover:underline">
+                      <Phone aria-hidden className="size-3" />
+                      {coach.phone}
+                    </a>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-[13px] text-subtle">Aucun coach renseigné pour cette équipe.</p>
+          )}
+          <Link href={`/c/${clubSlug}/matchs/${match.matchId}`} className="mt-0.5 text-[13px] font-medium text-accent-text underline-offset-2 hover:underline">
+            Ouvrir le match
+          </Link>
+        </li>
+      ))}
+    </ul>
   );
 }
