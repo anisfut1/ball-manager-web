@@ -1,7 +1,7 @@
 /**
  * AUTO-GENERATED — DO NOT EDIT.
  *
- * Généré depuis le contrat OpenAPI de club-manager-api via
+ * Généré depuis le contrat OpenAPI de ball-manager-back via
  * `npm run api:generate`. Toute modification manuelle sera perdue à la
  * prochaine génération. Voir docs/API_CLIENT.md.
  */
@@ -5664,6 +5664,80 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/clubs/{clubId}/issues/dismiss": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description UUID ou slug du club */
+                    clubId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": {
+                        key: string;
+                    };
+                };
+            };
+            responses: {
+                /** @description Anomalie retirée de la liste */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @enum {boolean} */
+                            dismissed: true;
+                        };
+                    };
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/jobs/{jobId}": {
         parameters: {
             query?: never;
@@ -7105,8 +7179,9 @@ export interface paths {
         };
         get: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -7181,14 +7256,15 @@ export interface paths {
         };
         get: {
             parameters: {
-                query: {
+                query?: {
                     status?: components["schemas"]["DerogationRequestStatus"];
                     teamId?: string;
                     matchId?: string;
                     createdByMe?: "true" | "false";
                     limit?: number;
                     offset?: number | null;
-                    token: string;
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -7249,8 +7325,9 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -7338,7 +7415,8 @@ export interface paths {
             parameters: {
                 query: {
                     date: string;
-                    token: string;
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                     matchId: string;
                 };
                 header?: never;
@@ -7417,7 +7495,8 @@ export interface paths {
                 query: {
                     startAt: string;
                     venueId?: string;
-                    token: string;
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                     matchId: string;
                 };
                 header?: never;
@@ -7493,8 +7572,9 @@ export interface paths {
         };
         get: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -7557,8 +7637,9 @@ export interface paths {
         post?: never;
         delete: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -7633,8 +7714,9 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -7714,8 +7796,9 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -7804,8 +7887,9 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -7883,8 +7967,9 @@ export interface paths {
         };
         get: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -8040,8 +8125,9 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -9143,8 +9229,9 @@ export interface paths {
         };
         get: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -9197,8 +9284,9 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -9288,8 +9376,9 @@ export interface paths {
         post?: never;
         delete: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                     from?: string;
                 };
                 header?: never;
@@ -9344,8 +9433,9 @@ export interface paths {
         head?: never;
         patch: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -9428,8 +9518,9 @@ export interface paths {
         };
         get: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -9486,8 +9577,9 @@ export interface paths {
         head?: never;
         patch: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -9572,8 +9664,9 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -9644,8 +9737,9 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -9711,8 +9805,9 @@ export interface paths {
         get?: never;
         put: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -10259,8 +10354,9 @@ export interface paths {
         };
         get: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -10329,8 +10425,9 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -10415,8 +10512,9 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -10482,8 +10580,9 @@ export interface paths {
         get?: never;
         put: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -10573,8 +10672,9 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -10641,8 +10741,9 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -10932,6 +11033,69 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/public/clubs/{clubSlug}/auth/me": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Accès supprimé pour toutes les personnes de la session (fiches sportives conservées) */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/public/clubs/{clubSlug}/auth/session/people": {
         parameters: {
             query?: never;
@@ -11060,6 +11224,203 @@ export interface paths {
                 };
             };
         };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/clubs/{clubSlug}/auth/session/push-token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["PutPushTokenDto"];
+                };
+            };
+            responses: {
+                /** @description Jeton APNs enregistré pour cette session */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Requête invalide */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Conflit métier */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Plus de notifications de ce club sur cet appareil */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/clubs/{clubSlug}/auth/session/push-test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Notification de test vers cet iPhone seulement (sent / not_configured / no_token / failed) */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PushTestResultDto"];
+                    };
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
         options?: never;
         head?: never;
         patch?: never;
@@ -11287,8 +11648,9 @@ export interface paths {
         };
         get: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -11559,8 +11921,9 @@ export interface paths {
         };
         get: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -11628,8 +11991,9 @@ export interface paths {
         get?: never;
         put: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -11704,8 +12068,9 @@ export interface paths {
         post?: never;
         delete: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -11771,8 +12136,9 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -11841,8 +12207,9 @@ export interface paths {
         get?: never;
         put: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -11931,8 +12298,9 @@ export interface paths {
         get?: never;
         put: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -12195,8 +12563,9 @@ export interface paths {
         };
         get: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                     from?: string;
                     to?: string;
                 };
@@ -12284,8 +12653,9 @@ export interface paths {
         get?: never;
         put: {
             parameters: {
-                query: {
-                    token: string;
+                query?: {
+                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
+                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -13290,6 +13660,7 @@ export interface components {
             deleted: true;
         };
         IssueDto: {
+            key: string;
             /** Format: uuid */
             matchId: string | null;
             numero: string | null;
@@ -13298,7 +13669,7 @@ export interface components {
             /** @enum {string} */
             integration: "emarque" | "fbi_schedule" | "scheduling";
             /** @enum {string} */
-            type: "emarque_import_error" | "emarque_needs_review" | "fbi_schedule_mismatch" | "fbi_schedule_missing_in_ffbb" | "fbi_schedule_missing_in_fbi" | "venue_time_conflict";
+            type: "emarque_import_error" | "emarque_needs_review" | "fbi_schedule_mismatch" | "fbi_schedule_missing_in_ffbb" | "fbi_schedule_missing_in_fbi" | "venue_time_conflict" | "team_double_booking";
             /** @enum {string} */
             severity: "warning" | "error";
             /** @enum {string} */
@@ -13946,6 +14317,17 @@ export interface components {
         };
         AddSessionPeopleDto: {
             tokens: string[];
+        };
+        PutPushTokenDto: {
+            token: string;
+            /** @enum {string} */
+            environment: "development" | "production";
+            appVersion?: string;
+        };
+        PushTestResultDto: {
+            /** @enum {string} */
+            status: "sent" | "not_configured" | "no_token" | "failed";
+            reason: string | null;
         };
         AuthCodeDto: {
             code: string;

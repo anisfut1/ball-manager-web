@@ -105,6 +105,7 @@ export function createApi(fetcher: ApiFetcher) {
     issues: {
       list: (clubId: string) => issues.listIssues(fetcher, clubId),
       resolve: (clubId: string, matchId: string) => issues.resolveIssue(fetcher, clubId, matchId),
+      dismiss: (clubId: string, key: string) => issues.dismissIssue(fetcher, clubId, key),
     },
     emarqueTracking: {
       list: (clubId: string) => emarqueTracking.listEmarqueTracking(fetcher, clubId),
