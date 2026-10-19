@@ -11,7 +11,6 @@ import { ButtonLink } from "@/components/ui/Button";
 import { cn } from "@/components/ui/cn";
 import { ResolveIssueButton } from "@/features/admin/ResolveIssueButton";
 import { DismissIssueButton } from "@/features/admin/DismissIssueButton";
-import { PrintIssuesButton } from "@/features/admin/PrintIssuesButton";
 
 function formatTime(value: string): string {
   return new Date(value).toLocaleTimeString("fr-FR", { timeZone: "Europe/Paris", hour: "2-digit", minute: "2-digit" });
@@ -34,13 +33,11 @@ const TYPE_LABELS: Record<IssueDto["type"], string> = {
   emarque_needs_review: "Feuille de match à vérifier",
 };
 
-/** `printable` : section exportable en PDF pour les coachs (conflits : équipes, horaires, coachs à contacter). */
-const SECTIONS: { title: string; description: string; matches: (issue: IssueDto) => boolean; printable?: boolean }[] = [
+const SECTIONS: { title: string; description: string; matches: (issue: IssueDto) => boolean }[] = [
   {
     title: "Conflits de planning",
     description: "Deux matchs qui se gênent : même salle sur des créneaux qui se chevauchent, ou une équipe qui joue deux fois le même jour.",
     matches: (issue) => issue.integration === "scheduling",
-    printable: true,
   },
   {
     title: "Écarts FFBB / FBI",
@@ -69,7 +66,6 @@ export default async function IssuesPage({ params }: { params: Promise<{ clubSlu
   const issues = (await api.issues.list(club.id)).filter((issue) => issue.status !== "auto_corrected");
   const errors = issues.filter((i) => i.severity === "error").length;
   const warnings = issues.filter((i) => i.severity === "warning").length;
-  const exportDate = new Date().toLocaleDateString("fr-FR", { timeZone: "Europe/Paris" });
 
   return (
     <PageContainer width="default">
@@ -99,21 +95,12 @@ export default async function IssuesPage({ params }: { params: Promise<{ clubSlu
             const sectionIssues = issues.filter(section.matches);
             if (sectionIssues.length === 0) return null;
             return (
-              <section key={section.title} id={section.printable ? "print-area" : undefined} className="flex flex-col gap-3">
-                {section.printable ? (
-                  <div className="hidden border-b border-border pb-3 print:block">
-                    <p className="text-[12px] font-semibold uppercase tracking-[0.12em] text-muted">{club.name}</p>
-                    <p className="mt-1 text-[11px] text-muted">Exporté le {exportDate} — Ball Manager</p>
-                  </div>
-                ) : null}
-                <div className="flex flex-wrap items-start justify-between gap-3">
-                  <div>
-                    <h2 className="type-section text-foreground">
-                      {section.title} <span className="text-subtle">({sectionIssues.length})</span>
-                    </h2>
-                    <p className="type-meta mt-1">{section.description}</p>
-                  </div>
-                  {section.printable ? <PrintIssuesButton fileName={`Conflits de planning - ${club.name} - ${exportDate.replaceAll("/", "-")}`} /> : null}
+              <section key={section.title} className="flex flex-col gap-3">
+                <div>
+                  <h2 className="type-section text-foreground">
+                    {section.title} <span className="text-subtle">({sectionIssues.length})</span>
+                  </h2>
+                  <p className="type-meta mt-1">{section.description}</p>
                 </div>
                 <ul className="flex flex-col gap-3">
                   {sectionIssues.map((issue) => (
@@ -170,7 +157,7 @@ function IssueCard({ issue, clubId, clubSlug }: { issue: IssueDto; clubId: strin
             </ul>
           ) : null}
 
-          <div className="flex flex-wrap items-center gap-2 border-t border-border pt-3 print:hidden">
+          <div className="flex flex-wrap items-center gap-2 border-t border-border pt-3">
             {issue.matchId && issue.relatedMatches.length === 0 ? (
               <ButtonLink href={`/c/${clubSlug}/matchs/${issue.matchId}${issue.integration === "emarque" ? "?tab=emarque" : ""}`} variant="secondary" size="sm">
                 Ouvrir le match
@@ -221,7 +208,7 @@ function RelatedMatches({ matches, clubSlug, tab }: { matches: IssueDto["related
           ) : (
             <p className="text-[13px] text-subtle">Aucun coach renseigné pour cette équipe.</p>
           )}
-          <Link href={`/c/${clubSlug}/matchs/${match.matchId}${tab ? `?tab=${tab}` : ""}`} className="mt-0.5 print:hidden text-[13px] font-medium text-accent-text underline-offset-2 hover:underline">
+          <Link href={`/c/${clubSlug}/matchs/${match.matchId}${tab ? `?tab=${tab}` : ""}`} className="mt-0.5 text-[13px] font-medium text-accent-text underline-offset-2 hover:underline">
             Ouvrir le match
           </Link>
         </li>
