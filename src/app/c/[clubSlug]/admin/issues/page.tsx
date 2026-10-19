@@ -144,7 +144,7 @@ function IssueCard({ issue, clubId, clubSlug }: { issue: IssueDto; clubId: strin
 
           <p className="text-sm leading-relaxed text-foreground">{issue.message}</p>
 
-          {issue.relatedMatches.length > 0 ? <RelatedMatches matches={issue.relatedMatches} clubSlug={clubSlug} /> : null}
+          {issue.relatedMatches.length > 0 ? <RelatedMatches matches={issue.relatedMatches} clubSlug={clubSlug} tab={issue.integration === "emarque" ? "emarque" : null} /> : null}
 
           {issue.qualityWarnings.length > 0 ? (
             <ul className="flex flex-col gap-1.5 rounded-[var(--radius-md)] bg-surface px-3 py-2.5">
@@ -173,7 +173,7 @@ function IssueCard({ issue, clubId, clubSlug }: { issue: IssueDto; clubId: strin
 }
 
 /** Les rencontres d'un conflit, chacune avec son équipe et ses coachs à contacter. */
-function RelatedMatches({ matches, clubSlug }: { matches: IssueDto["relatedMatches"]; clubSlug: string }) {
+function RelatedMatches({ matches, clubSlug, tab }: { matches: IssueDto["relatedMatches"]; clubSlug: string; tab: string | null }) {
   return (
     <ul className="grid gap-2 sm:grid-cols-2">
       {matches.map((match) => (
@@ -208,7 +208,7 @@ function RelatedMatches({ matches, clubSlug }: { matches: IssueDto["relatedMatch
           ) : (
             <p className="text-[13px] text-subtle">Aucun coach renseigné pour cette équipe.</p>
           )}
-          <Link href={`/c/${clubSlug}/matchs/${match.matchId}`} className="mt-0.5 text-[13px] font-medium text-accent-text underline-offset-2 hover:underline">
+          <Link href={`/c/${clubSlug}/matchs/${match.matchId}${tab ? `?tab=${tab}` : ""}`} className="mt-0.5 text-[13px] font-medium text-accent-text underline-offset-2 hover:underline">
             Ouvrir le match
           </Link>
         </li>
