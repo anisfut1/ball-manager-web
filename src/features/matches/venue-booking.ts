@@ -50,9 +50,12 @@ export function bookingTime(hour: number, minute: number): string {
   return `${hour}h${minute ? String(minute).padStart(2, "0") : ""}`;
 }
 
-/** Libellé court d'un gymnase : « COMPLEXE SPORTIF DU LIDO - SETE » → « Lido ». */
+/**
+ * Libellé court d'un gymnase : « COMPLEXE SPORTIF DU LIDO — 213 RUE DU
+ * DAUPHINE » (format FFBB : nom — adresse) ou « … - SETE » → « Lido ».
+ */
 export function shortVenue(label: string): string {
-  const name = label.split(" - ")[0]?.trim() ?? label;
+  const name = label.split(/\s[—–-]\s|,/)[0]?.trim() || label;
   const words = name.split(/\s+/).filter((w) => !/^(GYMNASE|COMPLEXE|SPORTIF|SALLE|PALAIS|DES|DU|DE|LA|LE|SPORTS?|OMNISPORTS?)$/i.test(w));
   const pick = words.length ? words.slice(-1)[0] : name;
   return pick.charAt(0).toUpperCase() + pick.slice(1).toLowerCase();
@@ -101,9 +104,18 @@ export function compareTeams(a: string, b: string): number {
   return rank(a) - rank(b) || a.localeCompare(b, "fr", { numeric: true });
 }
 
+/** 3x3 : hors planning des salles (retour du club, 2026-10-20). */
+export function isThreeOnThree(match: Pick<MatchListItemDto, "competitionName" | "categoryLabel">): boolean {
+  return /3\s?x\s?3/i.test(`${match.competitionName ?? ""} ${match.categoryLabel ?? ""}`);
+}
+
 export function buildBookingGrid(input: { matches: MatchListItemDto[]; teams: string[]; year: number; month: number; timeZone: string; homeOnly: boolean }): BookingGrid {
   const { year, month, timeZone, homeOnly } = input;
+  // Équipes qui ne jouent qu'en 3x3 (engagées au nom du club) : pas de colonne.
+  const fiveOnFive = new Set(input.matches.filter((m) => !isThreeOnThree(m)).map((m) => m.teamName));
+  const threeOnly = new Set(input.matches.filter((m) => isThreeOnThree(m) && !fiveOnFive.has(m.teamName)).map((m) => m.teamName));
   const inMonth = input.matches.filter((m) => {
+    if (isThreeOnThree(m)) return false;
     if (!m.matchDatetime || !m.teamName) return false;
     if (homeOnly && m.isHome === false) return false;
     const p = partsIn(new Date(m.matchDatetime), timeZone);
@@ -132,7 +144,7 @@ export function buildBookingGrid(input: { matches: MatchListItemDto[]; teams: st
     if (weekday === 0 || weekday === 6) dayFor(day);
   }
 
-  const teams = new Set(input.teams);
+  const teams = new Set(input.teams.filter((team) => !threeOnly.has(team)));
   for (const m of inMonth) {
     const date = new Date(m.matchDatetime as string);
     const p = partsIn(date, timeZone);
