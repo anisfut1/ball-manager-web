@@ -6,7 +6,7 @@ import { browserApi } from "@/lib/api/browserClient";
 import { ApiError } from "@/lib/api/client";
 import { CalendarPlus, Send } from "lucide-react";
 import { Button } from "@/components/ui/Button";
-import { Checkbox, Field, FormMessage, Input, Textarea } from "@/components/ui/Field";
+import { Checkbox, Field, FormMessage, Input, Select, Textarea } from "@/components/ui/Field";
 import { Notice } from "@/components/ui/Notice";
 import type { CreateDerogationDto, CreateDerogationResultDto } from "@/lib/api/matches";
 
@@ -17,6 +17,8 @@ export type FormState = {
   horaire: string; // <input type="time"> → "HH:MM", même format que FBI
   inverserRencontre: boolean;
   inverserEquipe: boolean;
+  modifierSalle: boolean;
+  clubVenueId: string;
   motif: string;
 };
 
@@ -27,6 +29,8 @@ const INITIAL_FORM: FormState = {
   horaire: "",
   inverserRencontre: false,
   inverserEquipe: false,
+  modifierSalle: false,
+  clubVenueId: "",
   motif: "",
 };
 
@@ -46,9 +50,9 @@ type Status = { kind: "success" | "error" | "warning"; text: string } | null;
  * ball-manager-back/docs/FBI.md) : modifier date/horaire (chacun affiche son
  * propre champ, comme sur FBI), inverser la rencontre / inverser seulement
  * les équipes (mutuellement exclusives, même règle que le JS réel de la
- * page), motif obligatoire. La modification de SALLE n'est volontairement
- * PAS proposée ici (mécanique de la modale FBI jamais observée sur du HTML
- * réel — voir la doc de `BrowserFbiClient.createDerogation`).
+ * page), motif obligatoire. Modifier la salle (2026-10-20) : un des
+ * gymnases du club, retrouvé sur FBI par son nom côté serveur — proposé
+ * quand la liste des gymnases est fournie (`venues`).
  */
 export function CreateDerogationAction({
   clubId,
@@ -57,6 +61,7 @@ export function CreateDerogationAction({
   initial,
   openLabel = "Créer une dérogation",
   onSuccess,
+  venues = [],
 }: {
   clubId: string;
   matchId: string;
@@ -66,6 +71,8 @@ export function CreateDerogationAction({
   initial?: Partial<FormState>;
   openLabel?: string;
   onSuccess?: () => void;
+  /** Gymnases du club (actifs) : active « Modifier la salle ». */
+  venues?: { id: string; name: string; active?: boolean }[];
 }) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -83,9 +90,11 @@ export function CreateDerogationAction({
   const motifValide = form.motif.trim().length > 0;
   const dateValide = !form.modifierDate || form.dateDerogation.length > 0;
   const horaireValide = !form.modifierHoraire || form.horaire.length > 0;
+  const salleValide = !form.modifierSalle || form.clubVenueId.length > 0;
   const inversionValide = !(form.inverserRencontre && form.inverserEquipe);
-  const auMoinsUneModification = form.modifierDate || form.modifierHoraire || form.inverserRencontre || form.inverserEquipe;
-  const formValide = motifValide && dateValide && horaireValide && inversionValide && auMoinsUneModification;
+  const auMoinsUneModification = form.modifierDate || form.modifierHoraire || form.modifierSalle || form.inverserRencontre || form.inverserEquipe;
+  const formValide = motifValide && dateValide && horaireValide && salleValide && inversionValide && auMoinsUneModification;
+  const salles = venues.filter((venue) => venue.active !== false || venue.id === form.clubVenueId);
 
   function submit() {
     startTransition(async () => {
@@ -104,6 +113,8 @@ export function CreateDerogationAction({
           horaire: form.modifierHoraire ? form.horaire : null,
           inverserRencontre: form.inverserRencontre,
           inverserEquipe: form.inverserEquipe,
+          modifierSalle: form.modifierSalle,
+          clubVenueId: form.modifierSalle ? form.clubVenueId : null,
         };
         const result = submitOverride ? await submitOverride(body) : await browserApi.matches.createDerogation(clubId, matchId, body);
 
@@ -169,6 +180,23 @@ export function CreateDerogationAction({
             </div>
           ) : null}
         </div>
+        {salles.length > 0 ? (
+          <div className="flex flex-col">
+            <Checkbox label="Modifier la salle" checked={form.modifierSalle} onChange={(e) => setForm((f) => ({ ...f, modifierSalle: e.target.checked }))} />
+            {form.modifierSalle ? (
+              <div className="pb-3 pl-[30px]">
+                <Select aria-label="Nouvelle salle" value={form.clubVenueId} onChange={(e) => setForm((f) => ({ ...f, clubVenueId: e.target.value }))} className="max-w-sm">
+                  <option value="">Choisir le gymnase…</option>
+                  {salles.map((venue) => (
+                    <option key={venue.id} value={venue.id}>
+                      {venue.name}
+                    </option>
+                  ))}
+                </Select>
+              </div>
+            ) : null}
+          </div>
+        ) : null}
         <Checkbox
           label="Inverser la rencontre"
           checked={form.inverserRencontre}
@@ -186,7 +214,7 @@ export function CreateDerogationAction({
       </Field>
 
       {!inversionValide ? <FormMessage tone="danger">« Inverser la rencontre » et « Inverser seulement les équipes » sont mutuellement exclusives.</FormMessage> : null}
-      {inversionValide && !auMoinsUneModification ? <p className="type-meta">Coche au moins une modification (date, horaire, ou inversion).</p> : null}
+      {inversionValide && !auMoinsUneModification ? <p className="type-meta">Coche au moins une modification (date, horaire, salle ou inversion).</p> : null}
 
       <Notice tone="warning">Cette demande sera transmise à la FFBB et ne pourra pas être annulée depuis cet outil.</Notice>
 
