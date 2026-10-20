@@ -13119,7 +13119,7 @@ export interface components {
         };
         FbiActiveJobDto: {
             /** @enum {string} */
-            type: "test_connection" | "discover_emarque" | "reconcile_schedule" | "check_derogation" | "check_all_derogations" | "import_licences";
+            type: "test_connection" | "discover_emarque" | "reconcile_schedule" | "check_derogation" | "check_all_derogations" | "import_licences" | "create_derogation" | "respond_derogation";
             startedAt: string;
         } | null;
         SaveFbiCredentialsResponseDto: {
@@ -13326,6 +13326,10 @@ export interface components {
             horaire?: string | null;
             inverserRencontre: boolean;
             inverserEquipe: boolean;
+            /** @default false */
+            modifierSalle: boolean;
+            /** Format: uuid */
+            clubVenueId?: string | null;
         };
         PublicMeDto: {
             licencie: components["schemas"]["TableLicencieRefDto"];
@@ -13697,7 +13701,7 @@ export interface components {
             /** Format: uuid */
             id: string;
             /** @enum {string} */
-            type: "test_connection" | "discover_emarque" | "reconcile_schedule" | "check_derogation" | "check_all_derogations" | "import_licences";
+            type: "test_connection" | "discover_emarque" | "reconcile_schedule" | "check_derogation" | "check_all_derogations" | "import_licences" | "create_derogation" | "respond_derogation";
             /** @enum {string} */
             status: "pending" | "claimed" | "running" | "succeeded" | "failed";
             attemptCount: number;
