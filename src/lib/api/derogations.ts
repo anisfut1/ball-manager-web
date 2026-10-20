@@ -1,4 +1,4 @@
-import type { ApiFetcher } from "./client";
+import { FBI_WRITE_TIMEOUT_MS, type ApiFetcher } from "./client";
 import type { components } from "./generated/schema";
 
 export type DerogationListItemDto = components["schemas"]["DerogationListItemDto"];
@@ -41,6 +41,6 @@ export async function respondToDerogation(fetcher: ApiFetcher, clubId: string, d
   return fetcher<RespondToDerogationResultDto>(`/v1/clubs/${clubId}/derogations/${derogationId}/respond`, {
     method: "POST",
     body,
-    timeoutMs: 120_000,
+    timeoutMs: FBI_WRITE_TIMEOUT_MS,
   });
 }

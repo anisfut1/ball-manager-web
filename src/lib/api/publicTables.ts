@@ -1,4 +1,4 @@
-import { apiFetch } from "./client";
+import { apiFetch, FBI_WRITE_TIMEOUT_MS } from "./client";
 import { publicFetch } from "./publicTokenTransport";
 import type { components } from "./generated/schema";
 import type { DerogationListItemDto, RespondToDerogationDto, RespondToDerogationResultDto } from "./derogations";
@@ -133,7 +133,7 @@ export async function respondPublicDerogation(clubSlug: string, token: string, d
   return publicFetch<RespondToDerogationResultDto>(`/v1/public/clubs/${encodeURIComponent(clubSlug)}/derogations/${encodeURIComponent(derogationId)}/respond`, token, {
     method: "POST",
     body,
-    timeoutMs: 120_000,
+    timeoutMs: FBI_WRITE_TIMEOUT_MS,
   });
 }
 
@@ -142,7 +142,7 @@ export async function createPublicDerogation(clubSlug: string, token: string, ma
   return publicFetch<CreateDerogationResultDto>(`/v1/public/clubs/${encodeURIComponent(clubSlug)}/matches/${matchId}/derogation/create`, token, {
     method: "POST",
     body,
-    timeoutMs: 120_000,
+    timeoutMs: FBI_WRITE_TIMEOUT_MS,
   });
 }
 

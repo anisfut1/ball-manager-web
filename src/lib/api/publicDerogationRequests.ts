@@ -1,3 +1,4 @@
+import { FBI_WRITE_TIMEOUT_MS } from "./client";
 import { publicFetch } from "./publicTokenTransport";
 import type {
   CreateDerogationRequestDto,
@@ -76,5 +77,5 @@ export function checkPublicDerogationSlot(clubSlug: string, token: string, match
 }
 
 export function submitPublicOfficialDerogation(clubSlug: string, token: string, requestId: string, body: OfficialDerogationDto): Promise<SubmitOfficialDerogationResultDto> {
-  return publicFetch<SubmitOfficialDerogationResultDto>(`${base(clubSlug)}/${requestId}/official`, token, { method: "POST", body });
+  return publicFetch<SubmitOfficialDerogationResultDto>(`${base(clubSlug)}/${requestId}/official`, token, { method: "POST", body, timeoutMs: FBI_WRITE_TIMEOUT_MS });
 }
