@@ -59,6 +59,19 @@ describe("planning « Réservation salle »", () => {
     expect(grid.days.find((d) => d.label === "Samedi 21")?.cells["U13"][0]).toMatchObject({ time: "13h", venue: "Extérieur", isHome: false });
   });
 
+  it("3x3 : ni match ni colonne pour l'équipe engagée au nom du club", () => {
+    const grid = buildBookingGrid({
+      matches: [match({ teamName: "SPORT CLUB DE SETE BASKET", competitionName: "Départementale 3x3 Féminine" }), match({ teamName: "U13" })],
+      teams: ["SPORT CLUB DE SETE BASKET", "U13"],
+      year: 2026,
+      month: 11,
+      timeZone: "Europe/Paris",
+      homeOnly: true,
+    });
+    expect(grid.teams).toEqual(["U13"]);
+    expect(grid.matchCount).toBe(1);
+  });
+
   it("un match en semaine ajoute sa ligne", () => {
     const grid = buildBookingGrid({ matches: [match({ matchDatetime: "2026-11-11T18:30:00.000Z" })], teams: [], year: 2026, month: 11, timeZone: "Europe/Paris", homeOnly: true });
     expect(grid.days.find((d) => d.label === "Mercredi 11")?.cells["U11-2"][0].time).toBe("19h30");
@@ -68,6 +81,8 @@ describe("planning « Réservation salle »", () => {
     expect(bookingTime(15, 30)).toBe("15h30");
     expect(shortVenue("COMPLEXE SPORTIF DU LIDO - SETE")).toBe("Lido");
     expect(shortVenue("GYMNASE MAURICE CLAVEL - SETE")).toBe("Clavel");
+    expect(shortVenue("COMPLEXE SPORTIF DU LIDO — 213 RUE DU DAUPHINE")).toBe("Lido");
+    expect(shortVenue("GYMNASE MAURICE CLAVEL — 22 rue Maurice Clavel")).toBe("Clavel");
     expect(compareTeams("U9", "U11")).toBeLessThan(0);
     expect(compareTeams("Séniors 2", "U18")).toBeGreaterThan(0);
     expect(parseBookingMonth("2026-13", "Europe/Paris", new Date("2026-10-20T10:00:00Z"))).toEqual({ year: 2026, month: 10 });

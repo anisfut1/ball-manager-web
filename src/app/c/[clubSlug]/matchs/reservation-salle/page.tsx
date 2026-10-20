@@ -151,7 +151,7 @@ export default async function VenueBookingPage({ params, searchParams }: { param
         <footer className="flex flex-wrap items-center justify-between gap-2 border-t border-border bg-surface px-5 py-3 text-[11px] text-subtle">
           <span className="inline-flex items-center gap-1.5">
             <MapPin aria-hidden className="size-3.5" />
-            {grid.mainVenue ? `Gymnase principal : ${grid.mainVenue}. Autre salle indiquée sous l'heure.` : "Salle indiquée sous l'heure quand elle diffère."}
+            {grid.mainVenue ? `Gymnase principal : ${grid.mainVenue.split(/\s[—–-]\s|,/)[0]}. Autre salle indiquée sous l'heure.` : "Salle indiquée sous l'heure quand elle diffère."}
           </span>
           <span>Généré le {generatedAt} · Ball Manager · horaires FFBB/FBI</span>
         </footer>
