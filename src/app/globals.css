@@ -578,3 +578,66 @@
     transform: none;
   }
 }
+
+/*
+ * Réservation salle (2026-10-20) : export PDF par l'impression du
+ * navigateur — seule la feuille du planning, A4 paysage, couleurs gardées.
+ */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 8mm;
+  }
+  html:has(.booking-sheet),
+  body:has(.booking-sheet) {
+    background: #fff !important;
+  }
+  body:has(.booking-sheet) * {
+    visibility: hidden;
+  }
+  body:has(.booking-sheet) .booking-sheet,
+  body:has(.booking-sheet) .booking-sheet * {
+    visibility: visible;
+  }
+  body:has(.booking-sheet) .booking-sheet {
+    position: absolute;
+    inset: 0 0 auto 0;
+    margin: 0;
+    box-shadow: none;
+    border-radius: 0;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  .booking-sheet .overflow-x-auto {
+    overflow: visible;
+  }
+  .booking-sheet th.sticky {
+    position: static;
+  }
+  /* Toutes les équipes sur la largeur de la feuille, quel que soit leur nombre. */
+  .booking-table {
+    table-layout: fixed;
+    width: 100%;
+    font-size: 10px;
+  }
+  .booking-table th,
+  .booking-table td {
+    min-width: 0 !important;
+    padding-left: 2px !important;
+    padding-right: 2px !important;
+    overflow-wrap: anywhere;
+  }
+  .booking-table thead th:first-child {
+    width: 13%;
+  }
+  .booking-table th:first-child {
+    padding-left: 8px !important;
+  }
+  .booking-table thead th:not(:first-child) {
+    font-size: 9.5px;
+  }
+  .booking-cell {
+    min-width: 0 !important;
+    padding: 2px 5px !important;
+  }
+}

@@ -1,4 +1,4 @@
-import { Globe } from "lucide-react";
+import { CalendarRange, Globe } from "lucide-react";
 import { requireClubContext } from "@/lib/tenancy/club-context";
 import { isClubAdmin } from "@/lib/permissions/roles";
 import { getShellIdentity } from "@/components/shell/session";
@@ -34,6 +34,7 @@ export default async function MatchsPage({
   const club = await requireClubContext(clubSlug);
   const filters = parseMatchFilters(await searchParams);
 
+  const isAdmin = isClubAdmin(club.roles) || (await getShellIdentity()).isPlatformAdmin;
   const { teams, matches } = await loadMatchesForView({
     serverFilters: matchesServerFiltersEnabled(),
     filters,
@@ -50,12 +51,19 @@ export default async function MatchsPage({
         title="Matchs"
         description="Calendrier, résultats et compositions, synchronisés depuis la FFBB et FBI."
         actions={
-          <ButtonLink href={`/public/${clubSlug}/matchs`} variant="secondary" icon={<Globe />}>
-            Vue publique
-          </ButtonLink>
+          <>
+            {isAdmin ? (
+              <ButtonLink href={`/c/${clubSlug}/matchs/reservation-salle`} variant="primary" icon={<CalendarRange />}>
+                Réservation salle
+              </ButtonLink>
+            ) : null}
+            <ButtonLink href={`/public/${clubSlug}/matchs`} variant="secondary" icon={<Globe />}>
+              Vue publique
+            </ButtonLink>
+          </>
         }
       />
-      <MatchesView all={matches} teams={teams} filters={filters} basePath={`/c/${clubSlug}/matchs`} club={{ name: club.shortName ?? club.name, logoUrl: club.logoUrl, showDerogation: isClubAdmin(club.roles) || (await getShellIdentity()).isPlatformAdmin }} />
+      <MatchesView all={matches} teams={teams} filters={filters} basePath={`/c/${clubSlug}/matchs`} club={{ name: club.shortName ?? club.name, logoUrl: club.logoUrl, showDerogation: isAdmin }} />
     </PageContainer>
   );
 }
