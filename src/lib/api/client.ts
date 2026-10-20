@@ -88,3 +88,10 @@ export async function apiFetch<T>(path: string, init: ApiRequestInit = {}): Prom
 export type ApiFetcher = <T>(path: string, init?: Omit<ApiRequestInit, "accessToken">) => Promise<T>;
 
 export { ApiError, ApiUnreachableError };
+
+/**
+ * Délai d'un envoi sur FBI : connexion + envoi, ou attente du poste du club
+ * (jusqu'à 2 min côté serveur). 20 s par défaut coupait des envois pourtant
+ * réussis (constaté le 2026-10-20, match n°9327).
+ */
+export const FBI_WRITE_TIMEOUT_MS = 150_000;

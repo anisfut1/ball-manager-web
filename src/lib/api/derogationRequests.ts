@@ -1,4 +1,4 @@
-import type { ApiFetcher } from "./client";
+import { FBI_WRITE_TIMEOUT_MS, type ApiFetcher } from "./client";
 import type { components } from "./generated/schema";
 
 /**
@@ -90,5 +90,5 @@ export type OfficialDerogationDto = components["schemas"]["CreateDerogationDto"]
 
 /** Coordinateur, demande « En cours » : envoie la dérogation OFFICIELLE sur FBI (même process que la fiche match). */
 export function submitOfficialDerogation(fetcher: ApiFetcher, clubId: string, requestId: string, body: OfficialDerogationDto): Promise<SubmitOfficialDerogationResultDto> {
-  return fetcher<SubmitOfficialDerogationResultDto>(`${base(clubId)}/${requestId}/official`, { method: "POST", body });
+  return fetcher<SubmitOfficialDerogationResultDto>(`${base(clubId)}/${requestId}/official`, { method: "POST", body, timeoutMs: FBI_WRITE_TIMEOUT_MS });
 }
