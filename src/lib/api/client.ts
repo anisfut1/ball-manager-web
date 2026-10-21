@@ -91,7 +91,7 @@ export { ApiError, ApiUnreachableError };
 
 /**
  * Délai d'un envoi sur FBI : connexion + envoi, ou attente du poste du club
- * (jusqu'à 2 min côté serveur). 20 s par défaut coupait des envois pourtant
+ * (jusqu’à 2 min côté serveur), relecture comprise. 20 s par défaut coupait des envois pourtant
  * réussis (constaté le 2026-10-20, match n°9327).
  */
-export const FBI_WRITE_TIMEOUT_MS = 150_000;
+export const FBI_WRITE_TIMEOUT_MS = 240_000;
