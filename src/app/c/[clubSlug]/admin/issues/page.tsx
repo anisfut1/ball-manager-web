@@ -26,6 +26,7 @@ function formatDateTime(value: string | null | undefined): string {
 const TYPE_LABELS: Record<IssueDto["type"], string> = {
   venue_time_conflict: "Même salle, même créneau",
   team_double_booking: "Équipe programmée deux fois le même jour",
+  venue_closure_conflict: "Match prévu dans un gymnase indisponible",
   fbi_schedule_mismatch: "Horaire ou salle différents entre FFBB et FBI",
   fbi_schedule_missing_in_ffbb: "Rencontre absente du calendrier FFBB",
   fbi_schedule_missing_in_fbi: "Rencontre absente de FBI",
@@ -36,7 +37,7 @@ const TYPE_LABELS: Record<IssueDto["type"], string> = {
 const SECTIONS: { title: string; description: string; matches: (issue: IssueDto) => boolean }[] = [
   {
     title: "Conflits de planning",
-    description: "Deux matchs qui se gênent : même salle sur des créneaux qui se chevauchent, ou une équipe qui joue deux fois le même jour.",
+    description: "Deux matchs qui se gênent (même salle sur des créneaux qui se chevauchent, équipe qui joue deux fois le même jour), ou un match prévu dans un gymnase indisponible.",
     matches: (issue) => issue.integration === "scheduling",
   },
   {
