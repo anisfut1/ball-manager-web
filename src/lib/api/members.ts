@@ -14,3 +14,22 @@ export async function updateClubVenue(fetcher: ApiFetcher, clubId: string, venue
   const { venue } = await fetcher<{ venue: ClubVenueAdminDto }>(`/v1/clubs/${clubId}/venues/${venueId}`, { method: "PATCH", body });
   return venue;
 }
+
+/** Indisponibilités des gymnases (journée, matin, après-midi) et leurs conflits avec matchs à domicile et entraînements. */
+export type VenueClosureDto = components["schemas"]["VenueClosureDto"];
+export type VenueClosurePeriod = components["schemas"]["VenueClosurePeriod"];
+export type CreateVenueClosureDto = components["schemas"]["CreateVenueClosureDto"];
+
+export async function listVenueClosures(fetcher: ApiFetcher, clubId: string): Promise<VenueClosureDto[]> {
+  const { closures } = await fetcher<{ closures: VenueClosureDto[] }>(`/v1/clubs/${clubId}/venues/closures`);
+  return closures;
+}
+
+export async function createVenueClosure(fetcher: ApiFetcher, clubId: string, body: CreateVenueClosureDto): Promise<VenueClosureDto> {
+  const { closure } = await fetcher<{ closure: VenueClosureDto }>(`/v1/clubs/${clubId}/venues/closures`, { method: "POST", body });
+  return closure;
+}
+
+export async function deleteVenueClosure(fetcher: ApiFetcher, clubId: string, closureId: string): Promise<void> {
+  await fetcher<{ deleted: boolean }>(`/v1/clubs/${clubId}/venues/closures/${closureId}`, { method: "DELETE" });
+}

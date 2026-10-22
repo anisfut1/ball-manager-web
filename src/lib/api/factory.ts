@@ -97,6 +97,9 @@ export function createApi(fetcher: ApiFetcher) {
     members: {
       venues: (clubId: string) => members.listClubVenues(fetcher, clubId),
       updateVenue: (clubId: string, venueId: string, body: members.UpdateClubVenueDto) => members.updateClubVenue(fetcher, clubId, venueId, body),
+      venueClosures: (clubId: string) => members.listVenueClosures(fetcher, clubId),
+      createVenueClosure: (clubId: string, body: members.CreateVenueClosureDto) => members.createVenueClosure(fetcher, clubId, body),
+      deleteVenueClosure: (clubId: string, closureId: string) => members.deleteVenueClosure(fetcher, clubId, closureId),
     },
     derogations: {
       list: (clubId: string) => derogations.listDerogations(fetcher, clubId),
