@@ -6,7 +6,7 @@ import { cn } from "@/components/ui/cn";
 import { Notice } from "@/components/ui/Notice";
 import type { CandidateSlotDto, DerogationAvailabilityDto } from "@/lib/api/derogationRequests";
 
-const ROW = 48; // hauteur d'une heure (px) — cibles tactiles ≥ 44 px
+const ROW = 48; // hauteur d'un créneau (px) — cibles tactiles ≥ 44 px
 
 function minutes(hhmm: string): number {
   const [h, m] = hhmm.split(":").map(Number);
@@ -59,9 +59,11 @@ export function VenuePlanning({
   const gridEnd = minutes(availability.rules.gridEnd) + availability.rules.durationMinutes;
   const hours: number[] = [];
   for (let m = Math.floor(gridStart / 60) * 60; m <= gridEnd; m += 60) hours.push(m);
-  const height = ((gridEnd - gridStart) / 60) * ROW;
-  const top = (hhmm: string) => ((minutes(hhmm) - gridStart) / 60) * ROW;
-  const blockHeight = (availability.rules.durationMinutes / 60) * ROW;
+  // Un créneau garde ROW de haut quel que soit le pas (demi-heures depuis le 2026-10-22) : l'heure s'agrandit d'autant.
+  const hourHeight = ROW * (60 / (availability.rules.slotStepMinutes || 60));
+  const height = ((gridEnd - gridStart) / 60) * hourHeight;
+  const top = (hhmm: string) => ((minutes(hhmm) - gridStart) / 60) * hourHeight;
+  const blockHeight = (availability.rules.durationMinutes / 60) * hourHeight;
   const columns = availability.venues.length >= 3 ? "xl:grid-cols-3" : "";
 
   return (
@@ -90,14 +92,14 @@ export function VenuePlanning({
                 {/* Graduation horaire */}
                 <div aria-hidden className="relative w-12 shrink-0" style={{ height }}>
                   {hours.map((m) => (
-                    <span key={m} className="type-numeric absolute -translate-y-1/2 text-[11px] text-subtle" style={{ top: ((m - gridStart) / 60) * ROW }}>
+                    <span key={m} className="type-numeric absolute -translate-y-1/2 text-[11px] text-subtle" style={{ top: ((m - gridStart) / 60) * hourHeight }}>
                       {String(Math.floor(m / 60)).padStart(2, "0")}:00
                     </span>
                   ))}
                 </div>
                 <div className="relative flex-1" style={{ height }}>
                   {hours.map((m) => (
-                    <div key={m} aria-hidden className="absolute inset-x-0 border-t border-dashed border-border/70" style={{ top: ((m - gridStart) / 60) * ROW }} />
+                    <div key={m} aria-hidden className="absolute inset-x-0 border-t border-dashed border-border/70" style={{ top: ((m - gridStart) / 60) * hourHeight }} />
                   ))}
 
                   {/* Créneaux candidats (1 h de pas) */}
