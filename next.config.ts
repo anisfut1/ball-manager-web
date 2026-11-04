@@ -2,6 +2,9 @@ import type { NextConfig } from "next";
 import { securityHeaders } from "./src/config/security-headers";
 
 const nextConfig: NextConfig = {
+  // Pas d'en-tête `X-Powered-By: Next.js` : inutile à divulguer (W2, docs/AUDIT_SECURITE_2026-11.md).
+  poweredByHeader: false,
+
   // @napi-rs/canvas expédie un binding natif (.node) que le bundler de Next.js
   // ne sait pas empaqueter ("non-ecmascript placeable asset") ; tesseract.js
   // charge son worker dynamiquement de façon similaire. On les exclut du
