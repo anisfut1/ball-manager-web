@@ -13,11 +13,18 @@ updates:
       # Next.js et son plugin ESLint se montent ensemble (versions épinglées en exact).
       next:
         patterns: ["next", "eslint-config-next", "@next/*"]
+      # `react` et `react-dom` DOIVENT monter ensemble (versions épinglées en exact) : seul, l'un des deux
+      # donne un conflit « peer » et une CI rouge (cf. #25).
+      react:
+        patterns: ["react", "react-dom"]
       # patch et minor groupés ; les majeures restent une PR chacune (hors groupe).
       npm-minor-patch:
         update-types: [minor, patch]
         exclude-patterns: ["next", "eslint-config-next", "@next/*", "react", "react-dom"]
     ignore:
+      # Node 22 tant que la version de Node du projet Vercel n'est pas confirmée (cf. docs/AUDIT_SECURITE_2026-11.md).
+      - dependency-name: "@types/node"
+        update-types: ["version-update:semver-major"]
       # TypeScript 7 : refusé sur le back (typescript-eslint 8 ne l'accepte pas) ; même chaîne de lint ici.
       - dependency-name: "typescript"
         update-types: ["version-update:semver-major"]
