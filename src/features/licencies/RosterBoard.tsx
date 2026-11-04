@@ -14,6 +14,7 @@ import { FormMessage, Input, Select } from "@/components/ui/Field";
 import { StatusBadge } from "@/components/ui/Badge";
 import { Notice } from "@/components/ui/Notice";
 import { PersonAvatar } from "@/components/ui/Avatar";
+import { hasHiddenLicence, licenceNumberLabel, licenceSearchPlaceholder, matchesLicencieQuery } from "./licence-number";
 
 type PublicRoleFlag = "publicAdmin" | "publicCoach" | "publicCoordinator";
 
@@ -100,7 +101,7 @@ function LicencieCard({
                   {f.flag === "publicCoach" && coachedNames.length ? ` (${coachedNames.join(", ")})` : ""} ·{" "}
                 </span>
               ))}
-              <span className="type-numeric">{licencie.licenseNumber ?? "Licence —"}</span>
+              <span className="type-numeric">{licenceNumberLabel(licencie, "inline")}</span>
               {licencie.categoryLabel || licencie.sexe ? ` · ${[licencie.categoryLabel, licencie.sexe].filter(Boolean).join(" · ")}` : ""}
             </span>
           </span>
@@ -314,8 +315,8 @@ export function RosterBoard({
   const sortedTeams = [...teams].sort((a, b) => a.name.localeCompare(b.name));
 
   const q = query.trim().toLowerCase();
-  const visible = (list: LicencieDto[]) =>
-    q ? list.filter((l) => `${l.lastName} ${l.firstName} ${l.licenseNumber ?? ""}`.toLowerCase().includes(q)) : list;
+  const visible = (list: LicencieDto[]) => (q ? list.filter((l) => matchesLicencieQuery(l, q)) : list);
+  const anyHiddenLicence = hasHiddenLicence(items);
 
   return (
     <div className="flex flex-col gap-6">
@@ -323,7 +324,7 @@ export function RosterBoard({
         <label className="relative block w-full sm:max-w-xs">
           <span className="sr-only">Rechercher un licencié</span>
           <Search aria-hidden className="pointer-events-none absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-subtle" />
-          <Input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Nom ou n° de licence" className="pl-10" />
+          <Input type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={licenceSearchPlaceholder(items)} className="pl-10" />
         </label>
         {isAdmin && unassignedCount > 0 ? (
           <Button variant="secondary" onClick={handleAutoAssign} loading={isPending} icon={<Wand2 />}>
@@ -331,6 +332,7 @@ export function RosterBoard({
           </Button>
         ) : null}
       </div>
+      {anyHiddenLicence ? <p className="type-meta -mt-2">Le n° de licence de certaines fiches est masqué pour votre rôle : on les trouve par leur nom.</p> : null}
       {autoAssignStatus ? <Notice tone="info" live>{autoAssignStatus}</Notice> : null}
       {error ? <FormMessage tone="danger">{error}</FormMessage> : null}
       {isAdmin ? (

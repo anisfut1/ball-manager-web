@@ -11701,6 +11701,180 @@ export interface paths {
         patch?: never;
         trace?: never;
     };
+    "/v1/public/clubs/{clubSlug}/auth/admin-session": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["CreateAdminSessionDto"];
+                };
+            };
+            responses: {
+                /** @description Session d'administration (compte club_admin du site), pour les routes /v1/clubs/{clubId}/… */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AdminSessionDto"];
+                    };
+                };
+                /** @description Requête invalide */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Conflit métier */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/clubs/{clubSlug}/auth/admin-session/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["RefreshAdminSessionDto"];
+                };
+            };
+            responses: {
+                /** @description Session d'administration rafraîchie (rôle revérifié) */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AdminSessionDto"];
+                    };
+                };
+                /** @description Requête invalide */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Conflit métier */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
     "/v1/public/clubs/{clubSlug}/auth/token": {
         parameters: {
             query?: never;
@@ -13747,6 +13921,7 @@ export interface components {
             publicCoach: boolean;
             publicCoordinator: boolean;
             coachedTeamIds: string[];
+            sensitiveHidden?: boolean;
         };
         LicencieProfileDto: {
             licencie: components["schemas"]["LicencieDto"];
@@ -14597,6 +14772,22 @@ export interface components {
             /** @enum {string} */
             codeChallengeMethod: "S256";
             redirectPath?: string;
+        };
+        AdminSessionDto: {
+            accessToken: string;
+            refreshToken: string;
+            expiresAt: string;
+            /** Format: uuid */
+            clubId: string;
+            email: string | null;
+        };
+        CreateAdminSessionDto: {
+            /** Format: email */
+            email: string;
+            password: string;
+        };
+        RefreshAdminSessionDto: {
+            refreshToken: string;
         };
         WebExchangeDto: {
             tokens: string[];
