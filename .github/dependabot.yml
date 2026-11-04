@@ -1,0 +1,36 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /
+    target-branch: main
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "chore(deps)"
+    groups:
+      # Next.js et son plugin ESLint se montent ensemble (versions épinglées en exact).
+      next:
+        patterns: ["next", "eslint-config-next", "@next/*"]
+      # patch et minor groupés ; les majeures restent une PR chacune (hors groupe).
+      npm-minor-patch:
+        update-types: [minor, patch]
+        exclude-patterns: ["next", "eslint-config-next", "@next/*", "react", "react-dom"]
+    ignore:
+      # TypeScript 7 : refusé sur le back (typescript-eslint 8 ne l'accepte pas) ; même chaîne de lint ici.
+      - dependency-name: "typescript"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: github-actions
+    directory: /
+    target-branch: main
+    schedule:
+      interval: weekly
+      day: monday
+    open-pull-requests-limit: 5
+    commit-message:
+      prefix: "ci"
+    groups:
+      actions-minor-patch:
+        update-types: [minor, patch]
