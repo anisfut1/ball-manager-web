@@ -1,5 +1,5 @@
 // @vitest-environment jsdom
-import { cleanup, render, screen, waitFor } from "@testing-library/react";
+import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { StrictMode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ApiError } from "@/lib/api/errors";
@@ -13,11 +13,14 @@ const T = "jeton-factice-0002";
 const PATH = "/public/sete/matchs";
 
 function Probe() {
-  const { identity, linkExpired } = usePublicIdentity();
+  const { identity, linkExpired, switchTo } = usePublicIdentity();
   return (
     <>
       <p data-testid="state">{identity === undefined ? "loading" : identity === null ? "none" : identity.licencie.firstName}</p>
       <p data-testid="expired">{linkExpired ? "expired" : "ok"}</p>
+      <button type="button" onClick={() => switchTo("autre-jeton-0003")}>
+        switch
+      </button>
     </>
   );
 }
@@ -53,7 +56,9 @@ describe("PublicIdentityProvider — double montage StrictMode (jsdom)", () => {
     expect(window.location.href).not.toContain(T);
     expect(window.location.hash).toBe("");
     expect(getPublicMe.mock.calls.every((c) => c[0] === "sete" && c[1] === T)).toBe(true);
-    expect(window.localStorage.getItem("scsb:public-token:sete")).toBe(T);
+    // Session serveur indisponible (fetch non simulé) : le jeton reste en mémoire de la page, jamais dans le localStorage (W3).
+    expect(window.localStorage.getItem("scsb:public-token:sete")).toBeNull();
+    expect(window.localStorage.getItem("scsb:public-tokens:sete")).toBeNull();
   });
 
   it("jeton invalide : URL nettoyée quand même, jeton non conservé, identité absente", async () => {
@@ -124,13 +129,35 @@ describe("PublicIdentityProvider — session persistante (cookie HttpOnly côté
     await waitFor(() => expect(calls.some((c) => c.method === "DELETE" && c.body?.includes(T))).toBe(true));
   });
 
-  it("session serveur indisponible (503) : repli sur le localStorage d'avant", async () => {
+  it("session serveur indisponible (503) : identité résolue, mais AUCUN jeton écrit dans le localStorage (W3)", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => new Response("{}", { status: 503 })));
     window.history.replaceState(null, "", `${PATH}?token=${T}`);
     getPublicMe.mockResolvedValue(ME);
     mount();
     await waitFor(() => expect(screen.getByTestId("state").textContent).toBe("Camille"));
+    expect(window.localStorage.getItem("scsb:public-token:sete")).toBeNull();
+    expect(window.localStorage.getItem("scsb:public-tokens:sete")).toBeNull();
+  });
+
+  it("session serveur indisponible : un jeton DÉJÀ dans le localStorage reste lisible et intact (personne n'est déconnecté)", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("{}", { status: 503 })));
+    window.localStorage.setItem("scsb:public-token:sete", T);
+    getPublicMe.mockResolvedValue(ME);
+    mount();
+    await waitFor(() => expect(screen.getByTestId("state").textContent).toBe("Camille"));
     expect(window.localStorage.getItem("scsb:public-token:sete")).toBe(T);
+  });
+
+  it("changer de personne sans session serveur : rien n'est écrit dans le localStorage", async () => {
+    vi.stubGlobal("fetch", vi.fn(async () => new Response("{}", { status: 503 })));
+    window.history.replaceState(null, "", `${PATH}?token=${T}`);
+    getPublicMe.mockResolvedValue(ME);
+    mount();
+    await waitFor(() => expect(screen.getByTestId("state").textContent).toBe("Camille"));
+    fireEvent.click(screen.getByRole("button", { name: "switch" }));
+    await waitFor(() => expect(getPublicMe.mock.calls.some((c) => c[1] === "autre-jeton-0003")).toBe(true));
+    expect(window.localStorage.getItem("scsb:public-token:sete")).toBeNull();
+    expect(window.localStorage.getItem("scsb:public-tokens:sete")).toBeNull();
   });
 });
 

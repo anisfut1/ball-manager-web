@@ -1,7 +1,6 @@
 // @vitest-environment jsdom
 import { cleanup, fireEvent, render, screen, waitFor } from "@testing-library/react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { addDeviceToken, setStoredPublicToken } from "@/lib/publicToken";
 import { ActionCenter, useActionCenter } from "./ActionCenter";
 
 function Home() {
@@ -57,9 +56,9 @@ beforeEach(() => {
   actionCenter.mockReset().mockResolvedValue(DTO);
   respond.mockReset();
   // Deux enfants sur ce téléphone : Lina (lien actif) et Tom.
-  addDeviceToken("sete", "lien-tom");
-  addDeviceToken("sete", "lien-lina");
-  setStoredPublicToken("sete", "lien-lina");
+  // (ancien stockage, seul lu désormais : plus aucune écriture de jeton dans le localStorage)
+  window.localStorage.setItem("scsb:public-tokens:sete", JSON.stringify(["lien-lina", "lien-tom"]));
+  window.localStorage.setItem("scsb:public-token:sete", "lien-lina");
 });
 afterEach(cleanup);
 

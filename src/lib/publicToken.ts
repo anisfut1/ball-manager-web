@@ -1,12 +1,16 @@
 /**
- * Persistance du jeton personnel sans compte (retour du club, 2026-09-29)
- * côté navigateur — jamais un cookie/session Supabase, ce lien n'authentifie
- * QUE "je suis ce licencié précis de ce club" (voir
- * ball-manager-back/docs/PUBLIC_TABLE_ACCESS.md). `localStorage` peut être
- * indisponible (navigation privée, storage bloqué) : chaque accès est
- * protégé par try/catch, le lien complet (`?token=`) reste alors la seule
- * façon de revenir, ce qui est acceptable (c'est déjà le cas pour tout le
- * monde à la toute première visite).
+ * Jeton personnel sans compte (retour du club, 2026-09-29) côté navigateur —
+ * jamais un cookie/session Supabase, ce lien n'authentifie QUE "je suis ce
+ * licencié précis de ce club" (voir ball-manager-back/docs/PUBLIC_TABLE_ACCESS.md).
+ *
+ * W3 (audit sécurité 2026-11) : la mémoire longue durée est le cookie
+ * `HttpOnly` de `/public/{slug}/session`. Plus AUCUN jeton n'est ÉCRIT dans
+ * `localStorage` (lisible par tout script de la page). Ce module ne fait que
+ * LIRE et EFFACER l'ancien stockage, pour migrer les appareils existants vers
+ * le cookie sans déconnecter personne. Sans session serveur, le jeton reste en
+ * mémoire de la page : le lien complet (`?token=`) redevient alors nécessaire
+ * à la visite suivante. Chaque accès est protégé par try/catch (navigation
+ * privée, storage bloqué).
  */
 
 function storageKey(clubSlug: string): string {
@@ -19,15 +23,6 @@ export function getStoredPublicToken(clubSlug: string): string | null {
     return window.localStorage.getItem(storageKey(clubSlug));
   } catch {
     return null;
-  }
-}
-
-export function setStoredPublicToken(clubSlug: string, token: string): void {
-  if (typeof window === "undefined") return;
-  try {
-    window.localStorage.setItem(storageKey(clubSlug), token);
-  } catch {
-    // Rien à faire : le lien complet reste utilisable à chaque visite.
   }
 }
 
@@ -124,6 +119,8 @@ function readDeviceList(clubSlug: string): string[] {
   }
 }
 
+// Réécrit l'ancienne liste SANS les jetons retirés (ou la supprime) : elle ne peut que rétrécir, aucun nouveau jeton
+// n'y est jamais ajouté (W3).
 function writeDeviceList(clubSlug: string, tokens: string[]): void {
   if (typeof window === "undefined") return;
   try {
@@ -152,11 +149,6 @@ export function getDeviceTokens(clubSlug: string): string[] {
   const stored = [...(memoryTokens.get(clubSlug) ?? []), ...readDeviceList(clubSlug)];
   const all = active ? [active, ...stored] : stored;
   return [...new Set(all)].slice(0, MAX_DEVICE_TOKENS);
-}
-
-/** Ajoute un lien validé (le plus récent d'abord). */
-export function addDeviceToken(clubSlug: string, token: string): void {
-  writeDeviceList(clubSlug, [token, ...readDeviceList(clubSlug).filter((t) => t !== token)].slice(0, MAX_DEVICE_TOKENS));
 }
 
 /** Oublie certains liens (révoqués, ou retirés par la personne). */

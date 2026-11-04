@@ -1,6 +1,7 @@
 // @vitest-environment jsdom
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { clearStoredPublicToken, consumePublicTokenFromUrl, getStoredPublicToken, hrefWithoutToken, resetConsumedPublicToken, setStoredPublicToken, tokenFromHref } from "./publicToken";
+import * as publicToken from "./publicToken";
+import { clearStoredPublicToken, consumePublicTokenFromUrl, getStoredPublicToken, hrefWithoutToken, resetConsumedPublicToken, tokenFromHref } from "./publicToken";
 
 const BASE = "https://front.test.example/public/sete/matchs";
 const T = "jeton-factice-0001";
@@ -110,15 +111,21 @@ describe("consumePublicTokenFromUrl — vrai window jsdom", () => {
   });
 });
 
-describe("persistance localStorage (vrai storage jsdom)", () => {
+describe("localStorage : lecture seule (migration), plus aucune écriture de jeton (W3)", () => {
+  it("n'expose plus de fonction qui écrit un jeton dans le localStorage", () => {
+    expect(publicToken).not.toHaveProperty("setStoredPublicToken");
+    expect(publicToken).not.toHaveProperty("addDeviceToken");
+  });
+});
+
+describe("lecture de l'ancien localStorage (vrai storage jsdom)", () => {
   afterEach(() => {
     window.localStorage.clear();
     vi.restoreAllMocks();
   });
 
-  it("écrit, relit et efface par club", () => {
-    setStoredPublicToken("sete", T);
-    expect(window.localStorage.getItem("scsb:public-token:sete")).toBe(T);
+  it("relit et efface par club", () => {
+    window.localStorage.setItem("scsb:public-token:sete", T);
     expect(getStoredPublicToken("sete")).toBe(T);
     expect(getStoredPublicToken("autre")).toBeNull();
     clearStoredPublicToken("sete");
@@ -132,7 +139,6 @@ describe("persistance localStorage (vrai storage jsdom)", () => {
       });
     }
     expect(getStoredPublicToken("sete")).toBeNull();
-    expect(() => setStoredPublicToken("sete", T)).not.toThrow();
     expect(() => clearStoredPublicToken("sete")).not.toThrow();
   });
 });
@@ -142,23 +148,17 @@ describe("plusieurs liens sur le même appareil (un par enfant)", () => {
     window.localStorage.clear();
   });
 
-  it("mémorise chaque lien validé, l'actif en premier, sans doublon", async () => {
-    const { addDeviceToken, getDeviceTokens } = await import("./publicToken");
-    addDeviceToken("sete", "lien-lina");
-    setStoredPublicToken("sete", "lien-lina");
-    addDeviceToken("sete", "lien-tom");
-    setStoredPublicToken("sete", "lien-tom");
-    expect(getDeviceTokens("sete")).toEqual(["lien-tom", "lien-lina"]);
-    addDeviceToken("sete", "lien-lina");
-    setStoredPublicToken("sete", "lien-lina");
+  it("relit les liens de l'ancien stockage, l'actif en premier, sans doublon", async () => {
+    const { getDeviceTokens } = await import("./publicToken");
+    window.localStorage.setItem("scsb:public-tokens:sete", JSON.stringify(["lien-tom", "lien-lina"]));
+    window.localStorage.setItem("scsb:public-token:sete", "lien-lina");
     expect(getDeviceTokens("sete")).toEqual(["lien-lina", "lien-tom"]);
     expect(getDeviceTokens("autre-club")).toEqual([]);
   });
 
   it("oublie un lien révoqué, ou tous", async () => {
-    const { addDeviceToken, clearDeviceTokens, getDeviceTokens, removeDeviceTokens } = await import("./publicToken");
-    addDeviceToken("sete", "a");
-    addDeviceToken("sete", "b");
+    const { clearDeviceTokens, getDeviceTokens, removeDeviceTokens } = await import("./publicToken");
+    window.localStorage.setItem("scsb:public-tokens:sete", JSON.stringify(["a", "b"]));
     removeDeviceTokens("sete", ["a"]);
     expect(getDeviceTokens("sete")).toEqual(["b"]);
     clearDeviceTokens("sete");

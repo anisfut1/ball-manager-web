@@ -3,7 +3,7 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { ApiError } from "@/lib/api/errors";
 import { getPublicMe } from "@/lib/api/publicTables";
-import { addDeviceToken, clearDeviceTokens, clearStoredPublicToken, consumePublicTokenFromUrl, getDeviceTokens, removeDeviceTokens, resetConsumedPublicToken, setSessionDeviceTokens, setStoredPublicToken } from "@/lib/publicToken";
+import { clearDeviceTokens, clearStoredPublicToken, consumePublicTokenFromUrl, getDeviceTokens, removeDeviceTokens, resetConsumedPublicToken, setSessionDeviceTokens } from "@/lib/publicToken";
 import { dropSessionTokens, fetchSessionTokens, saveSessionTokens } from "@/lib/public-session/client";
 import { KNOWN_COOKIE } from "./known-cookie";
 
@@ -105,9 +105,10 @@ export function PublicIdentityProvider({ clubSlug, club, children }: { clubSlug:
             clearDeviceTokens(clubSlug);
             setSessionDeviceTokens(clubSlug, [candidate, ...local.filter((t) => t !== candidate), ...(sessionTokens ?? []).filter((t) => t !== candidate)]);
           } else {
+            // Session serveur indisponible : le jeton reste EN MÉMOIRE de la page, jamais écrit dans le localStorage (W3).
+            // L'ancien stockage, s'il existe, est laissé intact : il est migré dès que la session serveur répond.
             serverSession.current = false;
-            setStoredPublicToken(clubSlug, candidate);
-            addDeviceToken(clubSlug, candidate);
+            setSessionDeviceTokens(clubSlug, [candidate, ...local.filter((t) => t !== candidate)]);
           }
           setKnownCookie(clubSlug, true);
           setLinkExpired(false);
@@ -153,7 +154,10 @@ export function PublicIdentityProvider({ clubSlug, club, children }: { clubSlug:
         });
         return;
       }
-      setStoredPublicToken(clubSlug, token);
+      // Sans session serveur : ordre en mémoire seulement (W3), l'ancienne clé « actif » est effacée pour qu'il prime.
+      const rest = getDeviceTokens(clubSlug).filter((t) => t !== token);
+      clearStoredPublicToken(clubSlug);
+      setSessionDeviceTokens(clubSlug, [token, ...rest]);
       setIdentity(undefined);
       setResolveCount((n) => n + 1);
     },
