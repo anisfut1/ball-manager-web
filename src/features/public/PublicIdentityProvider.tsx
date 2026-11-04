@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { ApiError } from "@/lib/api/errors";
 import { getPublicMe } from "@/lib/api/publicTables";
 import { addDeviceToken, clearDeviceTokens, clearStoredPublicToken, consumePublicTokenFromUrl, getDeviceTokens, removeDeviceTokens, resetConsumedPublicToken, setSessionDeviceTokens, setStoredPublicToken } from "@/lib/publicToken";
 import { dropSessionTokens, fetchSessionTokens, saveSessionTokens } from "@/lib/public-session/client";
@@ -42,6 +43,8 @@ interface PublicIdentityContextValue {
   clubSlug: string;
   club: PublicClubInfo;
   identity: PublicIdentityState;
+  /** `true` quand aucun lien n'est reconnu et que l'un d'eux a expiré (7 jours) : proposer d'en redemander un. */
+  linkExpired: boolean;
   /** Oublie TOUS les liens mémorisés dans CE navigateur (le lien de l'email reste valable ailleurs). */
   forget: () => void;
   /**
@@ -64,6 +67,7 @@ const PublicIdentityContext = createContext<PublicIdentityContextValue | null>(n
  */
 export function PublicIdentityProvider({ clubSlug, club, children }: { clubSlug: string; club: PublicClubInfo; children: ReactNode }) {
   const [identity, setIdentity] = useState<PublicIdentityState>(undefined);
+  const [linkExpired, setLinkExpired] = useState(false);
   const [resolveCount, setResolveCount] = useState(0);
   // `true` quand la session serveur (cookie HttpOnly, /public/{slug}/session) est disponible :
   // elle remplace alors le localStorage comme mémoire longue durée.
@@ -72,6 +76,7 @@ export function PublicIdentityProvider({ clubSlug, club, children }: { clubSlug:
   useEffect(() => {
     let cancelled = false;
     const fromUrl = consumePublicTokenFromUrl();
+    let sawExpired = false;
 
     void (async () => {
       // Session serveur d'abord (survit à la fermeture du navigateur et, sur iOS ≥ 17.2, est copiée dans la PWA) ;
@@ -105,10 +110,12 @@ export function PublicIdentityProvider({ clubSlug, club, children }: { clubSlug:
             addDeviceToken(clubSlug, candidate);
           }
           setKnownCookie(clubSlug, true);
+          setLinkExpired(false);
           setIdentity({ token: candidate, licencie: result.licencie, isClubAdmin: result.isClubAdmin, derogationRequests: result.derogationRequests, tables: result.tables });
           return;
-        } catch {
+        } catch (error) {
           if (cancelled) return;
+          if (error instanceof ApiError && error.code === "PERSONAL_LINK_EXPIRED") sawExpired = true;
           if (candidate === fromUrl) resetConsumedPublicToken();
           removeDeviceTokens(clubSlug, [candidate]);
           clearStoredPublicToken(clubSlug);
@@ -117,6 +124,7 @@ export function PublicIdentityProvider({ clubSlug, club, children }: { clubSlug:
       }
       if (cancelled) return;
       setKnownCookie(clubSlug, false);
+      setLinkExpired(sawExpired);
       setIdentity(null);
     })();
 
@@ -131,6 +139,7 @@ export function PublicIdentityProvider({ clubSlug, club, children }: { clubSlug:
     resetConsumedPublicToken();
     setKnownCookie(clubSlug, false);
     void dropSessionTokens(clubSlug);
+    setLinkExpired(false);
     setIdentity(null);
   }, [clubSlug]);
 
@@ -167,8 +176,8 @@ export function PublicIdentityProvider({ clubSlug, club, children }: { clubSlug:
 
   const { name: clubName, logoUrl: clubLogoUrl } = club;
   const value = useMemo(
-    () => ({ clubSlug, club: { name: clubName, logoUrl: clubLogoUrl }, identity, forget, switchTo, forgetToken }),
-    [clubSlug, clubName, clubLogoUrl, identity, forget, switchTo, forgetToken],
+    () => ({ clubSlug, club: { name: clubName, logoUrl: clubLogoUrl }, identity, linkExpired, forget, switchTo, forgetToken }),
+    [clubSlug, clubName, clubLogoUrl, identity, linkExpired, forget, switchTo, forgetToken],
   );
   return <PublicIdentityContext.Provider value={value}>{children}</PublicIdentityContext.Provider>;
 }
