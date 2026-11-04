@@ -16,6 +16,7 @@ import { LicenciePublicAccessCard } from "@/features/licencies/LicenciePublicAcc
 import { MATCH_STATUS_LABELS, formatSecondsPlayed } from "@/features/matches/detail/labels";
 import type { LicencieMatchDto } from "@/lib/api/licencies";
 import type { TeamDto } from "@/lib/api/clubs";
+import { licenceNumberLabel } from "@/features/licencies/licence-number";
 
 function formatMatchDate(value: string | null): string {
   if (!value) return "Date à confirmer";
@@ -58,7 +59,7 @@ export default async function LicencieProfilePage({ params }: { params: Promise<
           <h1 className="type-title text-foreground">{name}</h1>
           <div className="flex flex-wrap items-center gap-2">
             <StatusBadge tone="neutral">
-              <span className="type-numeric">{licencie.licenseNumber ?? "Numéro de licence non renseigné"}</span>
+              <span className="type-numeric">{licenceNumberLabel(licencie, "badge")}</span>
             </StatusBadge>
             {!licencie.active ? <StatusBadge tone="warning">Inactif·ve</StatusBadge> : <StatusBadge tone="success">Actif·ve</StatusBadge>}
             {isSelf ? <StatusBadge tone="accent">Votre fiche</StatusBadge> : null}
