@@ -23,7 +23,8 @@ Problèmes :
 - Révocation : le jeton est revalidé par l'API à chaque ouverture (jeton révoqué côté club → retiré de la session) ; **globale** via `SESSION_EPOCH`.
 - **Magic links déjà distribués : inchangés** (`?token=` et `#token=`), consommés puis retirés de l'URL comme avant.
 - **Migration automatique** : un jeton présent dans l'ancien `localStorage` est transféré dans la session puis supprimé du `localStorage`.
-- **Sans `SESSION_SECRET`** (≥ 32 car.) la route répond 503 et le front retombe sur l'ancien comportement : rien ne casse si la variable n'est pas encore posée.
+- **Sans `SESSION_SECRET`** (≥ 32 car.) la route répond 503. Depuis W3 (audit sécurité 2026-11), le front **n'écrit plus aucun jeton dans le `localStorage`** : il le garde en mémoire de la page, et le lien complet (`?token=`) redevient nécessaire à la visite suivante. **`SESSION_SECRET` est donc requis en production pour que la reconnaissance persiste.** Les jetons déjà présents dans l'ancien `localStorage` restent lus (jamais effacés tant que la session serveur ne répond pas) et migrent vers le cookie dès qu'elle répond.
+- Le jeton reste visible du JavaScript de la page (en mémoire) : le front l'envoie lui-même en en-tête `X-Personal-Link-Token` à ball-manager-back. Le cookie `HttpOnly` protège la mémoire longue durée, pas la page en cours.
 
 ### À configurer (Vercel)
 `SESSION_SECRET` (secret, `openssl rand -base64 48`), `SESSION_EPOCH` (optionnel, défaut `1`).
