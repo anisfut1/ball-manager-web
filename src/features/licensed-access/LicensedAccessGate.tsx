@@ -3,6 +3,7 @@
 import { useId, type ReactNode } from "react";
 import { Check, Lock } from "lucide-react";
 import { ClubLogo } from "@/components/ui/Logo";
+import { Notice } from "@/components/ui/Notice";
 import { usePublicIdentity } from "@/features/public/PublicIdentityProvider";
 import { LicensedAccessSteps } from "./LicensedAccessSteps";
 import { LicensedSearchCard } from "./LicensedSearchCard";
@@ -19,7 +20,7 @@ import { licensedAccessModules, type LicensedAccessModuleId } from "./modules";
  * étapes passent sous la carte. Desktop : hero à gauche, carte à droite.
  */
 export function LicensedAccessGate({ module, description, notice }: { module: LicensedAccessModuleId; description?: string; notice?: ReactNode }) {
-  const { clubSlug, club } = usePublicIdentity();
+  const { clubSlug, club, linkExpired } = usePublicIdentity();
   const config = licensedAccessModules[module];
   const Icon = config.icon;
   const titleId = useId();
@@ -74,6 +75,13 @@ export function LicensedAccessGate({ module, description, notice }: { module: Li
         </div>
 
         <div className="licensed-rise flex flex-col gap-3 [grid-area:card] lg:self-center" style={{ animationDelay: "90ms" }}>
+          {linkExpired ? (
+            <div role="alert">
+              <Notice tone="warning" title="Lien expiré, demandez-en un nouveau">
+                Retrouve ton nom ci-dessous pour recevoir un lien tout neuf par e-mail.
+              </Notice>
+            </div>
+          ) : null}
           {notice}
           <LicensedSearchCard clubSlug={clubSlug} clubName={club.name} returnTo={config.returnTo} />
           <p className="px-2 text-center text-[12.5px] leading-relaxed text-muted">

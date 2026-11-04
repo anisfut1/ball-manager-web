@@ -12,8 +12,9 @@ vi.mock("@/lib/api/publicTables", () => ({
   requestPersonalLink: (...args: unknown[]) => requestLink(...args),
   sendAccessRequest: vi.fn(),
 }));
+let linkExpired = false;
 vi.mock("@/features/public/PublicIdentityProvider", () => ({
-  usePublicIdentity: () => ({ clubSlug: "club-demo", club: { name: "Club Démo", logoUrl: null } }),
+  usePublicIdentity: () => ({ clubSlug: "club-demo", club: { name: "Club Démo", logoUrl: null }, linkExpired }),
 }));
 
 const lea = { id: "11111111-1111-4111-8111-111111111111", firstName: "Léa", lastInitial: "M" };
@@ -24,6 +25,7 @@ function typeAndSearch(value: string) {
 }
 
 beforeEach(() => {
+  linkExpired = false;
   search.mockReset();
   requestLink.mockReset();
 });
@@ -79,5 +81,20 @@ describe("LicensedAccessGate", () => {
     expect(screen.getByRole("heading", { level: 1, name: title })).toBeTruthy();
     expect(screen.getAllByText("Club Démo").length).toBeGreaterThan(0);
     expect(screen.getByLabelText("Ton prénom et ton nom")).toBeTruthy();
+  });
+});
+
+describe("LicensedAccessGate — lien expiré", () => {
+  it("affiche « Lien expiré, demandez-en un nouveau » (alerte) quand le lien a expiré", () => {
+    linkExpired = true;
+    render(<LicensedAccessGate module="home" />);
+    const alert = screen.getByRole("alert");
+    expect(alert.textContent).toContain("Lien expiré, demandez-en un nouveau");
+    expect(screen.getByLabelText("Ton prénom et ton nom")).toBeTruthy();
+  });
+
+  it("aucune alerte pour un visiteur sans lien", () => {
+    render(<LicensedAccessGate module="home" />);
+    expect(screen.queryByRole("alert")).toBeNull();
   });
 });

@@ -55,22 +55,8 @@ const cases: Case[] = [
   ["checkPublicDerogationSlot", () => checkPublicDerogationSlot(S, T, "m1", "2026-03-01T10:00:00Z", null), `${P}/derogation-requests/slot-check`, "matchId=m1&startAt=2026-03-01T10%3A00%3A00Z"],
 ];
 
-describe("caractérisation — transport actuel du jeton : query string, aucun en-tête (défaut)", () => {
-  beforeEach(() => vi.stubEnv("NEXT_PUBLIC_PUBLIC_TOKEN_HEADER", ""));
-
+describe("transport par défaut : en-tête, jamais dans l'URL", () => {
   it.each(cases)("%s", async (_name, call, path, rest) => {
-    await call();
-    const { url, init } = calls[0];
-    expect(url.pathname).toBe(path);
-    expect(url.search).toBe(`?token=${ENC}${rest ? `&${rest}` : ""}`);
-    expect(new Headers(init.headers).has("X-Personal-Link-Token")).toBe(false);
-  });
-});
-
-describe("transport par en-tête (drapeau NEXT_PUBLIC_PUBLIC_TOKEN_HEADER=1)", () => {
-  beforeEach(() => vi.stubEnv("NEXT_PUBLIC_PUBLIC_TOKEN_HEADER", "1"));
-
-  it.each(cases)("%s : jeton en en-tête, jamais dans l'URL", async (_name, call, path, rest) => {
     await call();
     const { url, init } = calls[0];
     expect(url.pathname).toBe(path);
@@ -78,17 +64,31 @@ describe("transport par en-tête (drapeau NEXT_PUBLIC_PUBLIC_TOKEN_HEADER=1)", (
     expect(url.href).not.toContain(ENC);
     expect(new Headers(init.headers).get("X-Personal-Link-Token")).toBe(T);
   });
+});
+
+describe("repli d'urgence NEXT_PUBLIC_PUBLIC_TOKEN_HEADER=0 (query string)", () => {
+  beforeEach(() => vi.stubEnv("NEXT_PUBLIC_PUBLIC_TOKEN_HEADER", "0"));
+
+  it.each(cases)("%s : jeton en query, aucun en-tête", async (_name, call, path, rest) => {
+    await call();
+    const { url, init } = calls[0];
+    expect(url.pathname).toBe(path);
+    expect(url.search).toBe(`?token=${ENC}${rest ? `&${rest}` : ""}`);
+    expect(new Headers(init.headers).has("X-Personal-Link-Token")).toBe(false);
+  });
 
   it("n'attache pas Authorization (réservé au JWT Supabase)", async () => {
+    vi.stubEnv("NEXT_PUBLIC_PUBLIC_TOKEN_HEADER", "");
     await getPublicMe(S, T);
     expect(new Headers(calls[0].init.headers).has("Authorization")).toBe(false);
   });
 });
 
-describe("drapeau : seule la valeur \"1\" active l'en-tête", () => {
-  it.each(["", "0", "true", "off"])("valeur %j : reste en query", async (value) => {
+describe("drapeau : seule la valeur \"0\" revient à la query", () => {
+  it.each(["", "1", "true", "off"])("valeur %j : reste en en-tête", async (value) => {
     vi.stubEnv("NEXT_PUBLIC_PUBLIC_TOKEN_HEADER", value);
     await getPublicMe(S, T);
-    expect(calls[0].url.search).toBe(`?token=${ENC}`);
+    expect(calls[0].url.search).toBe("");
+    expect(new Headers(calls[0].init.headers).get("X-Personal-Link-Token")).toBe(T);
   });
 });

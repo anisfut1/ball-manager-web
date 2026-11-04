@@ -2,6 +2,7 @@
 import { cleanup, render, screen, waitFor } from "@testing-library/react";
 import { StrictMode } from "react";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
+import { ApiError } from "@/lib/api/errors";
 import { resetConsumedPublicToken } from "@/lib/publicToken";
 import { PublicIdentityProvider, usePublicIdentity } from "./PublicIdentityProvider";
 
@@ -12,8 +13,13 @@ const T = "jeton-factice-0002";
 const PATH = "/public/sete/matchs";
 
 function Probe() {
-  const { identity } = usePublicIdentity();
-  return <p data-testid="state">{identity === undefined ? "loading" : identity === null ? "none" : identity.licencie.firstName}</p>;
+  const { identity, linkExpired } = usePublicIdentity();
+  return (
+    <>
+      <p data-testid="state">{identity === undefined ? "loading" : identity === null ? "none" : identity.licencie.firstName}</p>
+      <p data-testid="expired">{linkExpired ? "expired" : "ok"}</p>
+    </>
+  );
 }
 
 function mount() {
@@ -125,5 +131,42 @@ describe("PublicIdentityProvider — session persistante (cookie HttpOnly côté
     mount();
     await waitFor(() => expect(screen.getByTestId("state").textContent).toBe("Camille"));
     expect(window.localStorage.getItem("scsb:public-token:sete")).toBe(T);
+  });
+});
+
+describe("PublicIdentityProvider — lien personnel expiré (7 jours)", () => {
+  it("PERSONAL_LINK_EXPIRED : pas d'identité, linkExpired levé, jeton oublié, URL nettoyée", async () => {
+    window.history.replaceState(null, "", `${PATH}#token=${T}`);
+    getPublicMe.mockRejectedValue(new ApiError(401, "PERSONAL_LINK_EXPIRED", "Lien personnel expiré"));
+
+    mount();
+
+    await waitFor(() => expect(screen.getByTestId("state").textContent).toBe("none"));
+    expect(screen.getByTestId("expired").textContent).toBe("expired");
+    expect(window.location.href).not.toContain(T);
+    expect(window.localStorage.getItem("scsb:public-token:sete")).toBeNull();
+  });
+
+  it("jeton simplement invalide : linkExpired reste faux", async () => {
+    window.history.replaceState(null, "", `${PATH}#token=${T}`);
+    getPublicMe.mockRejectedValue(new ApiError(401, "UNAUTHORIZED", "invalide"));
+
+    mount();
+
+    await waitFor(() => expect(screen.getByTestId("state").textContent).toBe("none"));
+    expect(screen.getByTestId("expired").textContent).toBe("ok");
+  });
+
+  it("un autre lien valable passe avant : pas d'avertissement d'expiration", async () => {
+    window.localStorage.setItem("scsb:public-tokens:sete", JSON.stringify(["vieux-jeton-0001", T]));
+    getPublicMe.mockImplementation(async (_slug: string, token: string) => {
+      if (token === T) return { licencie: { id: "l1", firstName: "Camille", lastName: "Test" }, isClubAdmin: false, derogationRequests: { canCreate: false, canManage: false }, tables: { canManage: false } };
+      throw new ApiError(401, "PERSONAL_LINK_EXPIRED", "expiré");
+    });
+
+    mount();
+
+    await waitFor(() => expect(screen.getByTestId("state").textContent).toBe("Camille"));
+    expect(screen.getByTestId("expired").textContent).toBe("ok");
   });
 });

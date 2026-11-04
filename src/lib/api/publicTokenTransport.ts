@@ -2,19 +2,19 @@ import { apiFetch, type ApiRequestInit } from "./client";
 
 /**
  * Transport du jeton personnel public vers `ball-manager-back` (R-014, ADR-006
- * addendum 2026-10-07) : UN seul endroit décide si le jeton voyage en query
- * string (`?token=`, comportement d'origine) ou en en-tête.
+ * addendum 2026-10-07) : UN seul endroit décide si le jeton voyage en en-tête
+ * ou en query string (`?token=`).
  *
- * Le mode en-tête est derrière `NEXT_PUBLIC_PUBLIC_TOKEN_HEADER=1`
- * (DÉFAUT = query). Ne l'activer qu'APRÈS que `ball-manager-back` accepte
- * `X-Personal-Link-Token` ET l'autorise en CORS (`Access-Control-Allow-Headers`) :
- * un en-tête personnalisé déclenche un préflight, et sans cela chaque appel
- * public échouerait. `Authorization` n'est pas utilisé (réservé au JWT Supabase).
+ * DÉFAUT = en-tête `X-Personal-Link-Token` (lot 5c, 2026-11) : le jeton
+ * n'apparaît plus dans les URL ni dans les journaux. `ball-manager-back`
+ * l'accepte et l'autorise en CORS. Repli d'urgence : `NEXT_PUBLIC_PUBLIC_TOKEN_HEADER=0`
+ * remet `?token=` (tant que le back l'accepte encore). `Authorization` n'est
+ * pas utilisé (réservé au JWT Supabase).
  */
 export const PUBLIC_TOKEN_HEADER = "X-Personal-Link-Token";
 
 export function publicTokenHeaderEnabled(): boolean {
-  return process.env.NEXT_PUBLIC_PUBLIC_TOKEN_HEADER === "1";
+  return process.env.NEXT_PUBLIC_PUBLIC_TOKEN_HEADER !== "0";
 }
 
 export interface PublicFetchInit extends ApiRequestInit {
