@@ -12,7 +12,7 @@ import type { Database } from "@/types/database";
  * Note : dans un Server Component pur (rendu), les cookies ne peuvent pas être
  * réécrits — Next.js l'interdit et lève une erreur si on essaie. On l'ignore
  * volontairement ici : le rafraîchissement de session est de toute façon geré
- * par `src/middleware.ts` sur chaque requête.
+ * par `src/proxy.ts` sur chaque requête.
  */
 export async function createServerSupabaseClient() {
   const cookieStore = await cookies();

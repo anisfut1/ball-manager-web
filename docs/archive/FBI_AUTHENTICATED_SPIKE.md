@@ -8,7 +8,7 @@
 > depuis cet environnement** (voir §2). À exécuter localement par toi, avec
 > ton propre compte club — voir la procédure exacte en §4.
 
-Ce document complète `docs/FFBB_ECOSYSTEM_RESEARCH.md` (spike public FFBB).
+Ce document complète `docs/archive/FFBB_ECOSYSTEM_RESEARCH.md` (spike public FFBB).
 Ici, l'objectif est de déterminer ce que ton compte club FBI permet
 réellement de récupérer, en te laissant naviguer toi-même pendant qu'un
 outil local observe les métadonnées réseau.
@@ -25,7 +25,7 @@ soumise pendant ce spike.
 
 L'environnement où ce document et l'outil ont été écrits **bloque au niveau
 réseau** tous les domaines `*.ffbb.com` (politique d'egress du sandbox,
-identique au premier spike — voir `docs/FFBB_ECOSYSTEM_RESEARCH.md`, section
+identique au premier spike — voir `docs/archive/FFBB_ECOSYSTEM_RESEARCH.md`, section
 méthodologie). Je n'ai donc **aucune information de première main** sur :
 
 - la forme actuelle du formulaire de connexion FBI,
@@ -160,7 +160,7 @@ partir d'une description verbale (§58 du brief FBI). La voie choisie est
 `BrowserFbiClient` (`../worker/src/fbi/browser-client.ts`) : il reproduit
 les actions autorisées d'un compte club dans un vrai navigateur plutôt que
 de fabriquer un endpoint HTTP non observé. Voir aussi
-`../docs/FBI_WORKER.md` pour la classification lecture/écriture des actions
+`docs/archive/FBI_WORKER.md` pour la classification lecture/écriture des actions
 FBI (§6 du brief FBI, y compris l'exemple `afficherLicenceStatistiqueAjax.fbi`
 ci-dessus, classé READ_ONLY par `src/lib/fbi/action-classification.ts`), et
 la note sur les dérogations en §11 ci-dessous (extension point préparée,
@@ -271,7 +271,7 @@ Supprime tout `spikes/fbi-auth/.local/` (session, rapports, téléchargements).
 ## 11. Ce qui n'est PAS fait dans ce spike (rappel)
 
 Ce spike lui-même (`spikes/fbi-auth/`) reste un outil de diagnostic
-ponctuel, distinct du code de production — voir `docs/FBI_WORKER.md` pour
+ponctuel, distinct du code de production — voir `docs/archive/FBI_WORKER.md` pour
 ce qui EST fait en production (`HttpFbiClient` + `BrowserFbiClient`, le
 worker, `match_documents`) :
 

@@ -492,7 +492,7 @@ Ce module réutilise entièrement §10 et §11 — aucune logique dupliquée, se
 
 > **Mise à jour majeure — toutes les tâches cron/jobs décrites ci-dessous
 > vivent désormais exclusivement dans ball-manager-back**, jamais dans ball-manager-web
-> (voir `docs/MIGRATION_TO_API.md`). `docs/FBI_WORKER.md` (ce repository)
+> (voir `docs/MIGRATION_TO_API.md`). `docs/archive/FBI_WORKER.md` (ce repository)
 > est obsolète — l'architecture réelle (3 phases cron Vercel Functions,
 > sans worker Railway/Docker séparé) est documentée dans
 > `docs/JOBS.md`/`docs/FBI.md` côté ball-manager-back.
