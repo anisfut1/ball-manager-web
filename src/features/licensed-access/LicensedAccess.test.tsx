@@ -6,15 +6,30 @@ import { LicensedSearchCard } from "./LicensedSearchCard";
 import { LicensedAccessGate } from "./LicensedAccessGate";
 
 const search = vi.fn();
-const requestLink = vi.fn();
 vi.mock("@/lib/api/publicTables", () => ({
   searchPublicLicencies: (...args: unknown[]) => search(...args),
-  requestPersonalLink: (...args: unknown[]) => requestLink(...args),
   sendAccessRequest: vi.fn(),
 }));
 let linkExpired = false;
+let account: { id: string; email: string; people: unknown[] } | null = null;
+const refresh = vi.fn();
 vi.mock("@/features/public/PublicIdentityProvider", () => ({
-  usePublicIdentity: () => ({ clubSlug: "club-demo", club: { name: "Club Démo", logoUrl: null }, linkExpired }),
+  usePublicIdentity: () => ({ clubSlug: "club-demo", club: { name: "Club Démo", logoUrl: null }, linkExpired, account, refresh }),
+}));
+const signUp = vi.fn();
+const verify = vi.fn();
+const linkLicencie = vi.fn();
+vi.mock("@/lib/api/accounts", () => ({
+  signUp: (...args: unknown[]) => signUp(...args),
+  verifySignUp: (...args: unknown[]) => verify(...args),
+  signIn: vi.fn(),
+  resendSignUpCode: vi.fn(),
+  requestPasswordReset: vi.fn(),
+  linkLicencie: (...args: unknown[]) => linkLicencie(...args),
+}));
+vi.mock("@/lib/account/client", () => ({
+  storeAccountSession: vi.fn(async () => undefined),
+  getAccountAccessToken: vi.fn(async () => "jwt-test"),
 }));
 
 const lea = { id: "11111111-1111-4111-8111-111111111111", firstName: "Léa", lastInitial: "M" };
@@ -26,8 +41,12 @@ function typeAndSearch(value: string) {
 
 beforeEach(() => {
   linkExpired = false;
+  account = null;
+  refresh.mockReset();
+  signUp.mockReset();
+  verify.mockReset();
+  linkLicencie.mockReset();
   search.mockReset();
-  requestLink.mockReset();
 });
 afterEach(cleanup);
 
@@ -39,17 +58,35 @@ describe("LicensedSearchCard", () => {
     expect(screen.getByText(/Tape ton prénom et ton nom/)).toBeTruthy();
   });
 
-  it("trouve le licencié puis envoie le lien vers le module d'origine (adresse masquée)", async () => {
+  it("trouve le licencié, crée le compte (code par email) puis le rattache", async () => {
     search.mockResolvedValue([lea]);
-    requestLink.mockResolvedValue({ maskedEmail: "l•••@gmail.com", pendingApproval: false });
+    signUp.mockResolvedValue({ sent: true });
+    verify.mockResolvedValue({ accessToken: "jwt", refreshToken: "r", expiresAt: "2030-01-01T00:00:00Z", user: { id: "u1", email: "parent@example.test" } });
+    linkLicencie.mockResolvedValue({ status: "active", account: { id: "u1", email: "parent@example.test", people: [] } });
     render(<LicensedSearchCard clubSlug="club-demo" clubName="Club Démo" returnTo="tables" />);
     typeAndSearch("martin léa");
     expect(search).toHaveBeenCalledWith("club-demo", "martin léa");
     fireEvent.click(await screen.findByRole("button", { name: /Léa M\..*C'est moi/ }));
-    fireEvent.click(screen.getByRole("button", { name: /Recevoir mon lien sécurisé/ }));
-    expect(await screen.findByText("C'est envoyé, Léa !")).toBeTruthy();
-    expect(requestLink).toHaveBeenCalledWith("club-demo", lea.id, { email: null, returnTo: "tables" });
-    expect(screen.getByText("l•••@gmail.com")).toBeTruthy();
+    fireEvent.change(screen.getByLabelText(/Adresse email/), { target: { value: "parent@example.test" } });
+    fireEvent.change(screen.getByLabelText(/Mot de passe/), { target: { value: "motdepasse1" } });
+    fireEvent.click(screen.getByRole("button", { name: /Créer mon compte/ }));
+    fireEvent.change(await screen.findByLabelText(/Code reçu par email/), { target: { value: "123456" } });
+    fireEvent.click(screen.getByRole("button", { name: /Valider le code/ }));
+    await vi.waitFor(() => expect(linkLicencie).toHaveBeenCalledWith("club-demo", "jwt-test", { licencieId: lea.id }));
+    expect(signUp).toHaveBeenCalledWith("parent@example.test", "motdepasse1");
+    expect(verify).toHaveBeenCalledWith("parent@example.test", "123456", "motdepasse1");
+    await vi.waitFor(() => expect(refresh).toHaveBeenCalled());
+  });
+
+  it("compte déjà connecté, adresse inconnue du club : demande en attente de validation", async () => {
+    account = { id: "u1", email: "pere@example.test", people: [] };
+    search.mockResolvedValue([lea]);
+    linkLicencie.mockResolvedValue({ status: "pending", account: { ...account, people: [] } });
+    render(<LicensedSearchCard clubSlug="club-demo" clubName="Club Démo" returnTo="accueil" />);
+    typeAndSearch("Léa Martin");
+    fireEvent.click(await screen.findByRole("button", { name: /Léa M\./ }));
+    fireEvent.click(screen.getByRole("button", { name: /Ajouter Léa à mon compte/ }));
+    expect(await screen.findByText("Demande transmise au club")).toBeTruthy();
   });
 
   it("aucun résultat : état dédié, sans message technique", async () => {
@@ -85,11 +122,11 @@ describe("LicensedAccessGate", () => {
 });
 
 describe("LicensedAccessGate — lien expiré", () => {
-  it("affiche « Lien expiré, demandez-en un nouveau » (alerte) quand le lien a expiré", () => {
+  it("affiche « Ton lien a expiré » (alerte) quand le lien a expiré", () => {
     linkExpired = true;
     render(<LicensedAccessGate module="home" />);
     const alert = screen.getByRole("alert");
-    expect(alert.textContent).toContain("Lien expiré, demandez-en un nouveau");
+    expect(alert.textContent).toContain("Ton lien a expiré");
     expect(screen.getByLabelText("Ton prénom et ton nom")).toBeTruthy();
   });
 

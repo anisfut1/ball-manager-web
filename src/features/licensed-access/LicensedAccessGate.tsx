@@ -1,12 +1,13 @@
 "use client";
 
-import { useId, type ReactNode } from "react";
+import { useId, useState, type ReactNode } from "react";
 import { Check, Lock } from "lucide-react";
 import { ClubLogo } from "@/components/ui/Logo";
 import { Notice } from "@/components/ui/Notice";
 import { usePublicIdentity } from "@/features/public/PublicIdentityProvider";
 import { LicensedAccessSteps } from "./LicensedAccessSteps";
 import { LicensedSearchCard } from "./LicensedSearchCard";
+import { AccountAuthForm } from "@/features/accounts/AccountAuthForm";
 import { licensedAccessModules, type LicensedAccessModuleId } from "./modules";
 
 /**
@@ -20,7 +21,9 @@ import { licensedAccessModules, type LicensedAccessModuleId } from "./modules";
  * étapes passent sous la carte. Desktop : hero à gauche, carte à droite.
  */
 export function LicensedAccessGate({ module, description, notice }: { module: LicensedAccessModuleId; description?: string; notice?: ReactNode }) {
-  const { clubSlug, club, linkExpired } = usePublicIdentity();
+  const { clubSlug, club, linkExpired, account, refresh } = usePublicIdentity();
+  const [signingIn, setSigningIn] = useState(false);
+  const pendingOnly = account ? account.people.length > 0 && account.people.every((p) => p.status === "pending") : false;
   const config = licensedAccessModules[module];
   const Icon = config.icon;
   const titleId = useId();
@@ -77,18 +80,34 @@ export function LicensedAccessGate({ module, description, notice }: { module: Li
         <div className="licensed-rise flex flex-col gap-3 [grid-area:card] lg:self-center" style={{ animationDelay: "90ms" }}>
           {linkExpired ? (
             <div role="alert">
-              <Notice tone="warning" title="Lien expiré, demandez-en un nouveau">
-                Retrouve ton nom ci-dessous pour recevoir un lien tout neuf par e-mail.
+              <Notice tone="warning" title="Ton lien a expiré">
+                Retrouve ton nom ci-dessous et connecte-toi avec ton compte (ou crée-le en une minute).
               </Notice>
             </div>
           ) : null}
           {notice}
-          <LicensedSearchCard clubSlug={clubSlug} clubName={club.name} returnTo={config.returnTo} />
+          {account && pendingOnly ? (
+            <Notice tone="info" title="Demande en cours de validation">
+              Ton compte ({account.email}) attend la validation du club. Tu y auras accès dès qu&apos;un administrateur accepte.
+            </Notice>
+          ) : null}
+          {signingIn && !account ? (
+            <div className="licensed-card relative w-full rounded-[24px] border border-border bg-surface-raised/92 p-5 shadow-[var(--shadow-inset-highlight),var(--shadow-3)] backdrop-blur-xl sm:p-7">
+              <AccountAuthForm clubSlug={clubSlug} initialMode="sign-in" onAuthenticated={refresh} />
+            </div>
+          ) : (
+            <LicensedSearchCard clubSlug={clubSlug} clubName={club.name} returnTo={config.returnTo} />
+          )}
+          {!account ? (
+            <button type="button" onClick={() => setSigningIn((v) => !v)} className="self-center text-[13.5px] font-medium text-foreground underline-offset-4 hover:underline">
+              {signingIn ? "Retrouver mon nom" : "Déjà un compte ? Se connecter"}
+            </button>
+          ) : null}
           <p className="px-2 text-center text-[12.5px] leading-relaxed text-muted">
             <span className="mr-1.5 inline-flex size-4 translate-y-[3px] items-center justify-center rounded-full bg-success-soft align-top text-success">
               <Check aria-hidden className="size-3" strokeWidth={3} />
             </span>
-            Connexion mémorisée ensuite sur cet appareil, sans mot de passe.
+            Un compte par personne : chaque parent peut avoir le sien. Connexion mémorisée sur cet appareil.
           </p>
         </div>
 

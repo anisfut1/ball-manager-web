@@ -23,6 +23,7 @@ import { PlanningEventCard } from "@/features/team-life/PlanningView";
 import { ApiError } from "@/lib/api/client";
 import { getPublicHome, type HomeRelation, type PublicHomeDto } from "@/lib/api/publicHome";
 import { getTableLeaderboard } from "@/lib/api/publicTables";
+import { isAccountToken } from "@/lib/account/client";
 import { groupByDay } from "./group-by-day";
 
 interface HomeClub {
@@ -142,16 +143,28 @@ function PersonalHome({ clubSlug, club, identity, onForget }: { clubSlug: string
               </ButtonLink>
               </>
             ) : null}
+            <ButtonLink href={`${base}/compte`} variant="ghost" icon={<UserRound />}>
+              {isAccountToken(identity.token) ? "Mon compte" : "Créer mon compte"}
+            </ButtonLink>
           </>
         }
       />
+
+      {!isAccountToken(identity.token) ? (
+        <Notice tone="info" title="Crée ton compte">
+          Les liens personnels vont être remplacés par des comptes (email et mot de passe), un par personne : chaque parent peut avoir le sien.{" "}
+          <Link href={`${base}/compte`} className="font-semibold underline underline-offset-4">
+            Créer mon compte
+          </Link>
+        </Notice>
+      ) : null}
 
       <ActionCenter clubSlug={clubSlug} timezone={club.timezone} {...center} onAddPerson={() => setAddingPerson(true)} />
       <Sheet
         open={addingPerson}
         onClose={() => setAddingPerson(false)}
         title="Ajouter un enfant"
-        description="Un parent avec plusieurs enfants au club : retrouve le nom de l'autre enfant et ouvre son lien sur ce téléphone. Les entraînements de chacun s'afficheront ensemble ici."
+        description="Un parent avec plusieurs enfants au club : retrouve le nom de l'autre enfant et ajoute-le à ton compte. Les entraînements de chacun s'afficheront ensemble ici."
         side="bottom"
       >
         <LicensedSearchCard clubSlug={clubSlug} clubName={club.name} returnTo="accueil" variant="bare" />

@@ -2943,9 +2943,7 @@ export interface paths {
         };
         get: {
             parameters: {
-                query?: {
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -3014,9 +3012,7 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query?: {
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -3095,9 +3091,7 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query?: {
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -3174,9 +3168,7 @@ export interface paths {
         };
         get: {
             parameters: {
-                query?: {
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -3233,7 +3225,6 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
-                    token?: string;
                     from?: string;
                     to?: string;
                 };
@@ -3293,9 +3284,7 @@ export interface paths {
         get?: never;
         put: {
             parameters: {
-                query?: {
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -3370,9 +3359,7 @@ export interface paths {
         post?: never;
         delete: {
             parameters: {
-                query?: {
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -3449,7 +3436,6 @@ export interface paths {
         get: {
             parameters: {
                 query: {
-                    token?: string;
                     role: components["schemas"]["TableAssignmentRole"];
                 };
                 header?: never;
@@ -3527,9 +3513,7 @@ export interface paths {
         get?: never;
         put: {
             parameters: {
-                query?: {
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -7179,10 +7163,7 @@ export interface paths {
         };
         get: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -7263,8 +7244,6 @@ export interface paths {
                     createdByMe?: "true" | "false";
                     limit?: number;
                     offset?: number | null;
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
                 };
                 header?: never;
                 path: {
@@ -7325,10 +7304,7 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -7415,8 +7391,6 @@ export interface paths {
             parameters: {
                 query: {
                     date: string;
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
                     matchId: string;
                 };
                 header?: never;
@@ -7495,8 +7469,6 @@ export interface paths {
                 query: {
                     startAt: string;
                     venueId?: string;
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
                     matchId: string;
                 };
                 header?: never;
@@ -7572,10 +7544,7 @@ export interface paths {
         };
         get: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -7637,10 +7606,7 @@ export interface paths {
         post?: never;
         delete: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -7714,10 +7680,7 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -7796,10 +7759,7 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -7887,10 +7847,7 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -7967,10 +7924,7 @@ export interface paths {
         };
         get: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -8125,10 +8079,7 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -9435,10 +9386,7 @@ export interface paths {
         };
         get: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -9490,10 +9438,7 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -9583,8 +9528,6 @@ export interface paths {
         delete: {
             parameters: {
                 query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
                     from?: string;
                 };
                 header?: never;
@@ -9639,10 +9582,7 @@ export interface paths {
         head?: never;
         patch: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -9724,10 +9664,7 @@ export interface paths {
         };
         get: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -9783,10 +9720,7 @@ export interface paths {
         head?: never;
         patch: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -9870,10 +9804,7 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -9943,10 +9874,7 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -10011,10 +9939,7 @@ export interface paths {
         get?: never;
         put: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -10560,10 +10485,7 @@ export interface paths {
         };
         get: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -10631,10 +10553,7 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -10718,10 +10637,7 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -10786,10 +10702,7 @@ export interface paths {
         get?: never;
         put: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -10878,10 +10791,7 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -10947,10 +10857,7 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -12028,10 +11935,7 @@ export interface paths {
         };
         get: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -12301,10 +12205,7 @@ export interface paths {
         };
         get: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -12371,10 +12272,7 @@ export interface paths {
         get?: never;
         put: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -12448,10 +12346,7 @@ export interface paths {
         post?: never;
         delete: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -12516,10 +12411,7 @@ export interface paths {
         put?: never;
         post: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -12587,10 +12479,7 @@ export interface paths {
         get?: never;
         put: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -12678,10 +12567,7 @@ export interface paths {
         get?: never;
         put: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -12944,8 +12830,6 @@ export interface paths {
         get: {
             parameters: {
                 query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
                     from?: string;
                     to?: string;
                 };
@@ -13033,10 +12917,7 @@ export interface paths {
         get?: never;
         put: {
             parameters: {
-                query?: {
-                    /** @description Lien personnel (web). Facultatif avec l'en-tête X-Personal-Link-Token ou une session d'appareil (Authorization: Bearer bmd_… + X-BM-As). */
-                    token?: string;
-                };
+                query?: never;
                 header?: never;
                 path: {
                     /** @description Slug du club (flux public sans compte) */
@@ -13223,6 +13104,1437 @@ export interface paths {
             };
         };
         delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/account/sign-up": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["SignUpDto"];
+                };
+            };
+            responses: {
+                /** @description Demande prise en compte (même réponse que l'adresse ait un compte ou non) */
+                202: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @enum {boolean} */
+                            sent: true;
+                        };
+                    };
+                };
+                /** @description Requête invalide */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Conflit métier */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Trop de demandes */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/account/sign-up/resend": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["ResendCodeDto"];
+                };
+            };
+            responses: {
+                /** @description Demande prise en compte (même réponse que l'adresse ait un compte ou non) */
+                202: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": {
+                            /** @enum {boolean} */
+                            sent: true;
+                        };
+                    };
+                };
+                /** @description Requête invalide */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Conflit métier */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Trop de demandes */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/account/sign-up/verify": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["VerifySignUpDto"];
+                };
+            };
+            responses: {
+                /** @description Adresse vérifiée, session ouverte */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AccountSessionDto"];
+                    };
+                };
+                /** @description Requête invalide */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Mot de passe incorrect */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Conflit métier */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Trop de demandes */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/account/sign-in": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["SignInDto"];
+                };
+            };
+            responses: {
+                /** @description Session ouverte */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AccountSessionDto"];
+                    };
+                };
+                /** @description Requête invalide */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Email ou mot de passe incorrect */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Adresse pas encore vérifiée (EMAIL_NOT_CONFIRMED) */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Conflit métier */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Trop de demandes */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/account/refresh": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path?: never;
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["RefreshAccountDto"];
+                };
+            };
+            responses: {
+                /** @description Session renouvelée */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AccountSessionDto"];
+                    };
+                };
+                /** @description Requête invalide */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Session expirée */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Conflit métier */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Trop de demandes */
+                429: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/clubs/{clubSlug}/account": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Compte et licenciés suivis dans ce club */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AccountDto"];
+                    };
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Compte supprimé */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/clubs/{clubSlug}/account/links": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["CreateAccountLinkDto"];
+                };
+            };
+            responses: {
+                /** @description Rattachement actif ou en attente d'un admin */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AccountLinkResultDto"];
+                    };
+                };
+                /** @description Requête invalide */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Conflit métier */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/clubs/{clubSlug}/account/links/device-session": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["ImportDeviceSessionDto"];
+                };
+            };
+            responses: {
+                /** @description Personnes de la session d'appareil reprises sur le compte */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AccountDto"];
+                    };
+                };
+                /** @description Requête invalide */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Conflit métier */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/clubs/{clubSlug}/account/links/{licencieId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                    licencieId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Licencié retiré du compte */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/clubs/{clubSlug}/account/invites": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["CreateAccountInviteDto"];
+                };
+            };
+            responses: {
+                /** @description Lien d'invitation à partager (7 jours, usage unique) */
+                201: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AccountInviteDto"];
+                    };
+                };
+                /** @description Requête invalide */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Conflit métier */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/clubs/{clubSlug}/account/invites/accept": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["AcceptAccountInviteDto"];
+                };
+            };
+            responses: {
+                /** @description Invitation acceptée */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AccountDto"];
+                    };
+                };
+                /** @description Requête invalide */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Conflit métier */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/clubs/{clubSlug}/account/push-token": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["AccountPushTokenDto"];
+                };
+            };
+            responses: {
+                /** @description Jeton enregistré */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Requête invalide */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Conflit métier */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/clubs/{clubSlug}/account/push-token/remove": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["AccountPushTokenRefDto"];
+                };
+            };
+            responses: {
+                /** @description Jeton retiré */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Requête invalide */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Conflit métier */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/public/clubs/{clubSlug}/account/push-test": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description Slug du club (flux public sans compte) */
+                    clubSlug: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: {
+                content: {
+                    "application/json": components["schemas"]["AccountPushTokenRefDto"];
+                };
+            };
+            responses: {
+                /** @description Résultat du test */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["PushTestResultDto"];
+                    };
+                };
+                /** @description Requête invalide */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Conflit métier */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/clubs/{clubId}/account-links": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get: {
+            parameters: {
+                query?: {
+                    status?: "active" | "pending" | "refused";
+                    licencieId?: string;
+                };
+                header?: never;
+                path: {
+                    /** @description UUID ou slug du club */
+                    clubId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Comptes liés aux licenciés (file « Demandes de rattachement » avec status=pending) */
+                200: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["AdminAccountLinkListDto"];
+                    };
+                };
+                /** @description Requête invalide */
+                400: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Conflit métier */
+                409: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        put?: never;
+        post?: never;
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/clubs/{clubId}/account-links/{linkId}/accept": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description UUID ou slug du club */
+                    clubId: string;
+                    linkId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Rattachement accepté */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/clubs/{clubId}/account-links/{linkId}/refuse": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description UUID ou slug du club */
+                    clubId: string;
+                    linkId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Rattachement refusé */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
+        delete?: never;
+        options?: never;
+        head?: never;
+        patch?: never;
+        trace?: never;
+    };
+    "/v1/clubs/{clubId}/account-links/{linkId}": {
+        parameters: {
+            query?: never;
+            header?: never;
+            path?: never;
+            cookie?: never;
+        };
+        get?: never;
+        put?: never;
+        post?: never;
+        delete: {
+            parameters: {
+                query?: never;
+                header?: never;
+                path: {
+                    /** @description UUID ou slug du club */
+                    clubId: string;
+                    linkId: string;
+                };
+                cookie?: never;
+            };
+            requestBody?: never;
+            responses: {
+                /** @description Lien retiré */
+                204: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content?: never;
+                };
+                /** @description Non authentifié */
+                401: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Accès refusé */
+                403: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+                /** @description Introuvable */
+                404: {
+                    headers: {
+                        [name: string]: unknown;
+                    };
+                    content: {
+                        "application/json": components["schemas"]["ErrorEnvelope"];
+                    };
+                };
+            };
+        };
         options?: never;
         head?: never;
         patch?: never;
@@ -15000,6 +16312,100 @@ export interface components {
         };
         ActionCenterRequestDto: {
             tokens: string[];
+        };
+        SignUpDto: {
+            /** Format: email */
+            email: string;
+            password: string;
+        };
+        ResendCodeDto: {
+            /** Format: email */
+            email: string;
+        };
+        AccountSessionDto: {
+            accessToken: string;
+            refreshToken: string;
+            expiresAt: string;
+            user: {
+                id: string;
+                email: string | null;
+            };
+        };
+        VerifySignUpDto: {
+            /** Format: email */
+            email: string;
+            code: string;
+            password: string;
+        };
+        SignInDto: {
+            /** Format: email */
+            email: string;
+            password: string;
+        };
+        RefreshAccountDto: {
+            refreshToken: string;
+        };
+        AccountDto: {
+            id: string;
+            email: string | null;
+            people: components["schemas"]["AccountPersonDto"][];
+        };
+        AccountPersonDto: {
+            licencieId: string;
+            firstName: string;
+            lastName: string;
+            teamId: string | null;
+            /** @enum {string} */
+            status: "active" | "pending" | "refused";
+        };
+        AccountLinkResultDto: {
+            /** @enum {string} */
+            status: "active" | "pending" | "refused";
+            account: components["schemas"]["AccountDto"];
+        };
+        CreateAccountLinkDto: {
+            /** Format: uuid */
+            licencieId: string;
+            personalLinkToken?: string;
+        };
+        ImportDeviceSessionDto: {
+            sessionSecret: string;
+        };
+        AccountInviteDto: {
+            code: string;
+            url: string;
+            expiresAt: string;
+        };
+        CreateAccountInviteDto: {
+            /** Format: uuid */
+            licencieId: string;
+        };
+        AcceptAccountInviteDto: {
+            code: string;
+        };
+        AccountPushTokenDto: {
+            token: string;
+            /** @enum {string} */
+            environment: "development" | "production";
+            appVersion?: string;
+        };
+        AccountPushTokenRefDto: {
+            token: string;
+        };
+        AdminAccountLinkListDto: {
+            links: components["schemas"]["AdminAccountLinkDto"][];
+        };
+        AdminAccountLinkDto: {
+            id: string;
+            licencieId: string;
+            firstName: string;
+            lastName: string;
+            email: string | null;
+            /** @enum {string} */
+            status: "active" | "pending" | "refused";
+            /** @enum {string} */
+            source: "email_match" | "personal_link" | "device_session" | "invite" | "admin" | "request";
+            createdAt: string;
         };
     };
     responses: never;

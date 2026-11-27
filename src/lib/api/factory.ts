@@ -13,6 +13,7 @@ import * as tables from "./tables";
 import * as standings from "./standings";
 import * as derogationRequests from "./derogationRequests";
 import * as members from "./members";
+import * as accounts from "./accounts";
 import { clubTeamLife } from "./teamLife";
 import type * as teamLife from "./teamLife";
 
@@ -27,6 +28,11 @@ import type * as teamLife from "./teamLife";
 export function createApi(fetcher: ApiFetcher) {
   return {
     me: () => me.getMe(fetcher),
+    /** Comptes de l'espace licencié rattachés aux fiches (file « Demandes de rattachement »). */
+    accountLinks: {
+      list: (clubId: string, status?: "active" | "pending" | "refused") => accounts.listAccountLinks(fetcher, clubId, status),
+      decide: (clubId: string, linkId: string, decision: "accept" | "refuse") => accounts.decideAccountLink(fetcher, clubId, linkId, decision),
+    },
     clubs: {
       list: () => clubs.listClubs(fetcher),
       get: (clubId: string) => clubs.getClub(fetcher, clubId),
