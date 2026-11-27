@@ -1,22 +1,25 @@
 "use client";
 
 import { useEffect, useId, useRef, useState, type FormEvent } from "react";
-import { ArrowLeft, ArrowRight, Mail, RotateCcw, Search, Send } from "lucide-react";
+import { ArrowLeft, ArrowRight, Link2, RotateCcw, Search, Send } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { Field, Input, Textarea } from "@/components/ui/Field";
 import { Notice } from "@/components/ui/Notice";
 import { PersonAvatar } from "@/components/ui/Avatar";
 import { cn } from "@/components/ui/cn";
 import { ApiError } from "@/lib/api/client";
-import { requestPersonalLink, searchPublicLicencies, sendAccessRequest, type PublicLicencieMatch, type PublicLinkTarget } from "@/lib/api/publicTables";
-import { LicensedLinkPending, LicensedLinkSent, LicensedRequestSent } from "./LicensedAccessSuccess";
+import { searchPublicLicencies, sendAccessRequest, type PublicLicencieMatch, type PublicLinkTarget } from "@/lib/api/publicTables";
+import { LicensedAccountPending, LicensedRequestSent } from "./LicensedAccessSuccess";
+import { AccountAuthForm } from "@/features/accounts/AccountAuthForm";
+import { usePublicIdentity } from "@/features/public/PublicIdentityProvider";
+import { getAccountAccessToken } from "@/lib/account/client";
+import { linkLicencie } from "@/lib/api/accounts";
 import { LicensedNoResult, LicensedResultsSkeleton, LicensedSearchResults, licencieDisplayName } from "./LicensedSearchResults";
 
 type Step =
   | { kind: "search" }
-  | { kind: "confirm"; licencie: PublicLicencieMatch; needsEmail: boolean }
-  | { kind: "sent"; licencie: PublicLicencieMatch; maskedEmail: string }
-  | { kind: "pending"; licencie: PublicLicencieMatch; email: string }
+  | { kind: "confirm"; licencie: PublicLicencieMatch }
+  | { kind: "pending"; licencie: PublicLicencieMatch }
   | { kind: "request" }
   | { kind: "request-sent" };
 
@@ -36,21 +39,24 @@ function searchErrorMessage(err: unknown): string {
 /**
  * Cœur de l'accès licencié (même parcours pour tous les modules) : prénom +
  * nom, dans n'importe quel ordre et fautes tolérées (côté API, au plus 5
- * fiches prénom + initiale) → « C'est moi » → lien personnel envoyé par
- * email à l'adresse connue du club. Le lien n'est JAMAIS affiché ici.
+ * fiches prénom + initiale) → « C'est moi / mon enfant » → connexion ou
+ * création de compte (email + mot de passe) → rattachement : actif si
+ * l'adresse vérifiée est connue du club, sinon validé par un administrateur.
+ * Chaque parent peut avoir son propre compte sur le même licencié.
  * Introuvable : « Prévenir le club » écrit aux administrateurs.
  *
  * `variant="bare"` : sans carte, pour une feuille (« Ajouter un enfant »).
  */
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- `returnTo` : gardé pour les appelants (modules), la connexion par compte ramène sur la page courante.
 export function LicensedSearchCard({ clubSlug, clubName, returnTo, variant = "card", autoFocus = true }: { clubSlug: string; clubName: string; returnTo: PublicLinkTarget; variant?: "card" | "bare"; autoFocus?: boolean }) {
   const inputId = useId();
+  const { account, refresh } = usePublicIdentity();
   const [search, setSearch] = useState("");
   const [results, setResults] = useState<PublicLicencieMatch[] | null>(null);
   const [searching, setSearching] = useState(false);
   const [hint, setHint] = useState<string | null>(null);
   const [searchError, setSearchError] = useState<string | null>(null);
   const [step, setStep] = useState<Step>({ kind: "search" });
-  const [email, setEmail] = useState("");
   const [sending, setSending] = useState(false);
   const [feedback, setFeedback] = useState<Feedback>(null);
   const [requestEmail, setRequestEmail] = useState("");
@@ -88,28 +94,22 @@ export function LicensedSearchCard({ clubSlug, clubName, returnTo, variant = "ca
     setStep({ kind: "search" });
   }
 
-  async function send(event?: FormEvent) {
-    event?.preventDefault();
-    if (step.kind !== "confirm") return;
+  /** Rattache le licencié choisi au compte connecté. */
+  async function link(licencie: PublicLicencieMatch) {
     setSending(true);
     setFeedback(null);
     try {
-      const result = await requestPersonalLink(clubSlug, step.licencie.id, { email: step.needsEmail ? email.trim() : null, returnTo });
-      // Fiche sans adresse connue : l'administrateur du club valide avant tout envoi (R-018, retour du club 2026-10-08).
-      if (result.pendingApproval || !result.maskedEmail) setStep({ kind: "pending", licencie: step.licencie, email: email.trim() });
-      else setStep({ kind: "sent", licencie: step.licencie, maskedEmail: result.maskedEmail });
-    } catch (err) {
-      if (err instanceof ApiError && err.code === "EMAIL_REQUIRED") {
-        // Aucune adresse connue pour ce nom : on la demande, sans considérer cela comme une erreur.
-        if (step.needsEmail) setFeedback({ tone: "danger", message: err.message });
-        setStep({ ...step, needsEmail: true });
-      } else if (err instanceof ApiError && err.code === "LINK_RECENTLY_SENT") {
-        setFeedback({ tone: "info", message: err.message });
-      } else if (err instanceof ApiError && err.code === "EMAIL_NOT_CONFIGURED") {
-        setFeedback({ tone: "warning", message: err.message });
-      } else {
-        setFeedback({ tone: "danger", message: err instanceof ApiError && err.status < 500 ? err.message : "Impossible d'envoyer le lien pour le moment. Réessaie dans quelques minutes." });
+      const accessToken = await getAccountAccessToken(clubSlug);
+      if (!accessToken) {
+        setFeedback({ tone: "warning", message: "Session expirée : reconnecte-toi." });
+        refresh();
+        return;
       }
+      const result = await linkLicencie(clubSlug, accessToken, { licencieId: licencie.id });
+      if (result.status === "active") refresh();
+      else setStep({ kind: "pending", licencie });
+    } catch (err) {
+      setFeedback({ tone: "danger", message: err instanceof ApiError && err.status < 500 ? err.message : "Impossible pour le moment. Réessaie dans quelques minutes." });
     } finally {
       setSending(false);
     }
@@ -130,16 +130,14 @@ export function LicensedSearchCard({ clubSlug, clubName, returnTo, variant = "ca
   }
 
   let body;
-  if (step.kind === "sent") {
-    body = <LicensedLinkSent firstName={step.licencie.firstName} maskedEmail={step.maskedEmail} onBack={backToSearch} />;
-  } else if (step.kind === "pending") {
-    body = <LicensedLinkPending firstName={step.licencie.firstName} email={step.email} clubName={clubName} onBack={backToSearch} />;
+  if (step.kind === "pending") {
+    body = <LicensedAccountPending firstName={step.licencie.firstName} clubName={clubName} onBack={backToSearch} />;
   } else if (step.kind === "request-sent") {
     body = <LicensedRequestSent email={requestEmail.trim()} clubName={clubName} onBack={backToSearch} />;
   } else if (step.kind === "confirm") {
-    const { licencie, needsEmail } = step;
+    const { licencie } = step;
     body = (
-      <form onSubmit={send} className="licensed-rise flex flex-col gap-5">
+      <div className="licensed-rise flex flex-col gap-5">
         <button type="button" onClick={backToSearch} className="inline-flex items-center gap-1.5 self-start text-[13px] font-medium text-muted hover:text-foreground">
           <ArrowLeft aria-hidden className="size-3.5" />
           Changer de nom
@@ -151,24 +149,35 @@ export function LicensedSearchCard({ clubSlug, clubName, returnTo, variant = "ca
             <p className="text-[13px] text-muted">{clubName}</p>
           </div>
         </div>
-        {needsEmail ? (
-          <Field label="Ton adresse email" required hint="Ton lien y sera envoyé après vérification par le club." error={feedback?.tone === "danger" ? feedback.message : undefined}>
-            {(props) => <Input {...props} type="email" inputMode="email" autoComplete="email" autoFocus value={email} onChange={(e) => setEmail(e.target.value)} placeholder="prenom.nom@exemple.fr" className="h-12" />}
-          </Field>
+        {account ? (
+          <>
+            <p className="text-[15px] leading-relaxed text-muted">
+              Connecté avec <span className="font-medium text-foreground">{account.email}</span>. Ajoute {licencie.firstName} à ton compte (toi-même ou ton enfant).
+            </p>
+            {feedback ? (
+              <Notice tone={feedback.tone} live>
+                {feedback.message}
+              </Notice>
+            ) : null}
+            <Button variant="primary" size="lg" loading={sending} icon={<Link2 />} className="w-full" onClick={() => void link(licencie)}>
+              Ajouter {licencie.firstName} à mon compte
+            </Button>
+          </>
         ) : (
-          <p className="text-[15px] leading-relaxed text-muted">
-            On t&apos;envoie un lien sécurisé à l&apos;adresse enregistrée auprès du club. Un clic suffit, sans mot de passe.
-          </p>
+          <>
+            <AccountAuthForm
+              clubSlug={clubSlug}
+              intro={`Connecte-toi ou crée ton compte pour suivre ${licencie.firstName}. Parents : chacun peut avoir son propre compte.`}
+              onAuthenticated={() => link(licencie)}
+            />
+            {feedback ? (
+              <Notice tone={feedback.tone} live>
+                {feedback.message}
+              </Notice>
+            ) : null}
+          </>
         )}
-        {feedback && !(needsEmail && feedback.tone === "danger") ? (
-          <Notice tone={feedback.tone} live>
-            {feedback.message}
-          </Notice>
-        ) : null}
-        <Button type="submit" variant="primary" size="lg" loading={sending} disabled={needsEmail && !email.trim()} icon={<Mail />} className="w-full">
-          {needsEmail ? "Envoyer mon lien" : "Recevoir mon lien sécurisé"}
-        </Button>
-      </form>
+      </div>
     );
   } else if (step.kind === "request") {
     body = (
@@ -256,8 +265,7 @@ export function LicensedSearchCard({ clubSlug, clubName, returnTo, variant = "ca
               results={results}
               onChoose={(licencie) => {
                 setFeedback(null);
-                setEmail("");
-                setStep({ kind: "confirm", licencie, needsEmail: false });
+                setStep({ kind: "confirm", licencie });
               }}
               onNotFound={() => setStep({ kind: "request" })}
             />

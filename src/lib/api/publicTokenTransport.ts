@@ -1,4 +1,6 @@
 import { apiFetch, type ApiRequestInit } from "./client";
+import { ApiError } from "./errors";
+import { getAccountAccessToken, isAccountToken, licencieIdOfAccountToken } from "@/lib/account/client";
 
 /**
  * Transport du jeton personnel public vers `ball-manager-back` (R-014, ADR-006
@@ -22,8 +24,25 @@ export interface PublicFetchInit extends ApiRequestInit {
   query?: Record<string, string | undefined>;
 }
 
-export function publicFetch<T>(path: string, token: string, init: PublicFetchInit = {}): Promise<T> {
+/** Jeton d'accès du compte connecté, exigé dès qu'une personne de la liste vient du compte (`as:<licencieId>`). */
+export async function accountAccessFor(tokens: readonly string[]): Promise<string | null> {
+  if (!tokens.some(isAccountToken)) return null;
+  const accessToken = await getAccountAccessToken();
+  if (!accessToken) throw new ApiError(401, "SESSION_EXPIRED", "Session expirée : reconnecte-toi.");
+  return accessToken;
+}
+
+export async function publicFetch<T>(path: string, token: string, init: PublicFetchInit = {}): Promise<T> {
   const { query = {}, headers, ...rest } = init;
+  // Compte (docs/ACCOUNTS.md du back) : JWT + personne active, jamais de lien personnel.
+  if (isAccountToken(token)) {
+    const search = new URLSearchParams();
+    for (const [key, value] of Object.entries(query)) if (value !== undefined) search.set(key, value);
+    const qs = search.toString();
+    const requestHeaders = new Headers(headers);
+    requestHeaders.set("X-BM-As", licencieIdOfAccountToken(token));
+    return apiFetch<T>(qs ? `${path}?${qs}` : path, { ...rest, headers: requestHeaders, accessToken: await accountAccessFor([token]) });
+  }
   const useHeader = publicTokenHeaderEnabled();
 
   const search = new URLSearchParams(useHeader ? {} : { token });

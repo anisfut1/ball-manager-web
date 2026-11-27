@@ -97,3 +97,23 @@ export function LicensedRequestSent({ email, clubName, onBack }: { email: string
     </Panel>
   );
 }
+
+/** Compte : rattachement en attente de l'administrateur du club (adresse inconnue de la fiche). */
+export function LicensedAccountPending({ firstName, clubName, onBack }: { firstName: string; clubName: string; onBack: () => void }) {
+  return (
+    <Panel
+      mark={
+        <StatusMark tone="info">
+          <Hourglass aria-hidden className="size-6" />
+        </StatusMark>
+      }
+      title="Demande transmise au club"
+      onBack={onBack}
+      backLabel="Revenir à la recherche"
+    >
+      <p className="text-[15px] leading-relaxed text-muted">
+        Ton compte est créé. Pour protéger le profil de {firstName}, un administrateur de {clubName} valide le rattachement. Tu y auras accès dès qu&apos;il accepte, en te reconnectant avec ton email et ton mot de passe.
+      </p>
+    </Panel>
+  );
+}

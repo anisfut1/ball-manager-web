@@ -6,6 +6,25 @@ import { getPublicMe } from "@/lib/api/publicTables";
 import { clearDeviceTokens, clearStoredPublicToken, consumePublicTokenFromUrl, getDeviceTokens, removeDeviceTokens, resetConsumedPublicToken, setSessionDeviceTokens } from "@/lib/publicToken";
 import { dropSessionTokens, fetchSessionTokens, saveSessionTokens } from "@/lib/public-session/client";
 import { KNOWN_COOKIE } from "./known-cookie";
+import { accountToken, getAccountAccessToken, isAccountToken, licencieIdOfAccountToken, onAccountChange, setAccountClubSlug, signOutAccount } from "@/lib/account/client";
+import { getAccount, type AccountDto } from "@/lib/api/accounts";
+
+/** Personne active d'un compte (pas un secret) : retenue par club sur ce navigateur. */
+const activeKey = (clubSlug: string) => `bm_account_active:${clubSlug}`;
+function readActive(clubSlug: string): string | null {
+  try {
+    return window.localStorage.getItem(activeKey(clubSlug));
+  } catch {
+    return null;
+  }
+}
+function writeActive(clubSlug: string, licencieId: string): void {
+  try {
+    window.localStorage.setItem(activeKey(clubSlug), licencieId);
+  } catch {
+    // Stockage bloqué : la première personne du compte reste active.
+  }
+}
 
 export interface PublicIdentity {
   token: string;
@@ -54,6 +73,10 @@ interface PublicIdentityContextValue {
    */
   switchTo: (token: string) => void;
   forgetToken: (token: string) => void;
+  /** Compte connecté sur ce navigateur (`undefined` = en cours, `null` = aucun). */
+  account: AccountDto | null | undefined;
+  /** Recharge le compte et l'identité (après un rattachement, une invitation…). */
+  refresh: () => void;
 }
 
 const PublicIdentityContext = createContext<PublicIdentityContextValue | null>(null);
@@ -69,6 +92,15 @@ export function PublicIdentityProvider({ clubSlug, club, children }: { clubSlug:
   const [identity, setIdentity] = useState<PublicIdentityState>(undefined);
   const [linkExpired, setLinkExpired] = useState(false);
   const [resolveCount, setResolveCount] = useState(0);
+  const [account, setAccount] = useState<AccountDto | null | undefined>(undefined);
+
+  useEffect(() => {
+    setAccountClubSlug(clubSlug);
+    return onAccountChange(() => {
+      setIdentity(undefined);
+      setResolveCount((n) => n + 1);
+    });
+  }, [clubSlug]);
   // `true` quand la session serveur (cookie HttpOnly, /public/{slug}/session) est disponible :
   // elle remplace alors le localStorage comme mémoire longue durée.
   const serverSession = useRef(false);
@@ -79,6 +111,31 @@ export function PublicIdentityProvider({ clubSlug, club, children }: { clubSlug:
     let sawExpired = false;
 
     void (async () => {
+      // Compte d'abord (docs/ACCOUNTS.md du back) : ses licenciés ACTIFS remplacent les liens personnels.
+      const accessToken = await getAccountAccessToken(clubSlug);
+      if (cancelled) return;
+      const currentAccount = accessToken ? await getAccount(clubSlug, accessToken).catch(() => null) : null;
+      if (cancelled) return;
+      setAccount(currentAccount);
+      const activePeople = currentAccount?.people.filter((p) => p.status === "active") ?? [];
+      if (activePeople.length > 0) {
+        const preferred = readActive(clubSlug);
+        const ordered = [...activePeople].sort((a, b) => Number(b.licencieId === preferred) - Number(a.licencieId === preferred));
+        const tokens = ordered.map((p) => accountToken(p.licencieId));
+        try {
+          const result = await getPublicMe(clubSlug, tokens[0]!);
+          if (cancelled) return;
+          setSessionDeviceTokens(clubSlug, tokens);
+          setKnownCookie(clubSlug, true);
+          setLinkExpired(false);
+          setIdentity({ token: tokens[0]!, licencie: result.licencie, isClubAdmin: result.isClubAdmin, derogationRequests: result.derogationRequests, tables: result.tables });
+          return;
+        } catch {
+          if (cancelled) return;
+          // Compte momentanément injoignable : on retombe sur les liens personnels de l'appareil.
+        }
+      }
+
       // Session serveur d'abord (survit à la fermeture du navigateur et, sur iOS ≥ 17.2, est copiée dans la PWA) ;
       // `null` = indisponible → comportement localStorage d'avant.
       const sessionTokens = await fetchSessionTokens(clubSlug);
@@ -135,6 +192,8 @@ export function PublicIdentityProvider({ clubSlug, club, children }: { clubSlug:
   }, [clubSlug, resolveCount]);
 
   const forget = useCallback(() => {
+    void signOutAccount(clubSlug);
+    setAccount(null);
     clearStoredPublicToken(clubSlug);
     clearDeviceTokens(clubSlug);
     resetConsumedPublicToken();
@@ -147,6 +206,12 @@ export function PublicIdentityProvider({ clubSlug, club, children }: { clubSlug:
   const switchTo = useCallback(
     (token: string) => {
       resetConsumedPublicToken();
+      if (isAccountToken(token)) {
+        writeActive(clubSlug, licencieIdOfAccountToken(token));
+        setIdentity(undefined);
+        setResolveCount((n) => n + 1);
+        return;
+      }
       if (serverSession.current) {
         void saveSessionTokens(clubSlug, [token], token).then(() => {
           setIdentity(undefined);
@@ -164,8 +229,15 @@ export function PublicIdentityProvider({ clubSlug, club, children }: { clubSlug:
     [clubSlug],
   );
 
+  const refresh = useCallback(() => {
+    setIdentity(undefined);
+    setResolveCount((n) => n + 1);
+  }, []);
+
   const forgetToken = useCallback(
     (token: string) => {
+      // Une personne du compte se retire depuis « Mon compte » (côté serveur), jamais d'ici.
+      if (isAccountToken(token)) return;
       removeDeviceTokens(clubSlug, [token]);
       void dropSessionTokens(clubSlug, [token]);
       if (identity && identity.token === token) {
@@ -180,8 +252,8 @@ export function PublicIdentityProvider({ clubSlug, club, children }: { clubSlug:
 
   const { name: clubName, logoUrl: clubLogoUrl } = club;
   const value = useMemo(
-    () => ({ clubSlug, club: { name: clubName, logoUrl: clubLogoUrl }, identity, linkExpired, forget, switchTo, forgetToken }),
-    [clubSlug, clubName, clubLogoUrl, identity, linkExpired, forget, switchTo, forgetToken],
+    () => ({ clubSlug, club: { name: clubName, logoUrl: clubLogoUrl }, identity, linkExpired, forget, switchTo, forgetToken, account, refresh }),
+    [clubSlug, clubName, clubLogoUrl, identity, linkExpired, forget, switchTo, forgetToken, account, refresh],
   );
   return <PublicIdentityContext.Provider value={value}>{children}</PublicIdentityContext.Provider>;
 }
