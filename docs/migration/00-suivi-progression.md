@@ -31,7 +31,7 @@
 | LOT-14 | En-têtes de sécurité : CSP **Report-Only** ✅ ; anti-framing appliqué ✅ ; **jeton en fragment + transport isolé (front) ✅** ; R-008 (localStorage) ⬜ ; mode bloquant ⬜ (plan `12` §6) | next.config.ts, security-headers.ts, publicToken.ts, api/publicTokenTransport.ts | — | P2 | 🟡 partiel | ✅ 14 tests CSP + 51 tests jeton | `78ed617`, `4570207`, `f2841a7` |
 | R-015 | Pagination de la vue publique des matchs | publicMatches.ts | — (existant) | P2 | ✅ | ✅ 8 tests | `1595e53` |
 | LOT-12 | TRT-012 à 015 petites listes | divers | divers | P3 | ⛔ | ⬜ | |
-| LOT-13 | Nettoyage worker/ + config morte | worker/, next.config.ts | — | P3 | ⬜ Phase 5 | ⬜ | |
+| LOT-13 | Nettoyage worker/ + config morte | worker/, next.config.ts | — | P3 | ✅ 2026-11-25 (`spikes/` aussi retiré, docs historiques dans `docs/archive/`) | ✅ lint, typecheck, tests, build | branche `chore/menage-socle` |
 
 ## Mesures conservatoires
 | Mesure | Statut | Commit |

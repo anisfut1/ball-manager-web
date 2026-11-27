@@ -172,13 +172,8 @@ docs/
   MIGRATION_TO_API.md       Audit complet de la migration (A/B/C/D, BACKEND_API_GAP)
   API_CLIENT.md               Client API : architecture, régénération des types, auth, erreurs
   MULTI_TENANCY.md             Modèle multi-tenant (désormais implémenté par ball-manager-back)
-  FBI_WORKER.md                OBSOLÈTE — architecture pré-migration, conservée pour l'historique
-  FFBB_ECOSYSTEM_RESEARCH.md    Spike de recherche historique (API publique FFBB)
-  FBI_AUTHENTICATED_SPIKE.md    Spike de recherche historique (FBI authentifié)
-
-spikes/                    Outils de diagnostic développeur historiques (jamais requis en exploitation normale, jamais importés dans l'app)
-  ffbb-ecosystem/            Scripts d'exploration de l'API publique FFBB
-  fbi-auth/                  Outil Playwright à lancer LOCALEMENT (identifiants réels), voir docs/FBI_AUTHENTICATED_SPIKE.md
+  migration/                  Seconde passe de migration front → back (suivi : 00-suivi-progression.md)
+  archive/                    Documents historiques qui ne décrivent plus l'état actuel (ancien worker FBI, spikes, renommage des dépôts)
 ```
 
 Principe : les routes sous `app/` restent fines et appellent `lib/api/`

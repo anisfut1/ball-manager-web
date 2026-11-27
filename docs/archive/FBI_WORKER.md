@@ -17,9 +17,9 @@ Ce document décrit comment l'intégration FBI/e-Marque fonctionne
 RÉELLEMENT, de bout en bout, sans intervention humaine après la
 configuration initiale d'un club. Il complète (sans les remplacer) :
 
-- `docs/FFBB_ECOSYSTEM_RESEARCH.md` — l'API publique FFBB (calendrier,
+- `docs/archive/FFBB_ECOSYSTEM_RESEARCH.md` — l'API publique FFBB (calendrier,
   résultats), qui reste la source PRIMAIRE et ne dépend jamais de FBI.
-- `docs/FBI_AUTHENTICATED_SPIKE.md` — l'historique du spike FBI authentifié
+- `docs/archive/FBI_AUTHENTICATED_SPIKE.md` — l'historique du spike FBI authentifié
   et ce qui a été relayé (jamais observé directement dans cette session).
 - `docs/MULTI_TENANCY.md` — le modèle multi-club, dont tout ce qui suit
   hérite (chaque club a ses propres identifiants, jobs, documents, storage).
@@ -206,7 +206,7 @@ l'inverse, jamais de second calendrier parallèle. Concrètement :
 
 ## 11. Dérogations et licenciés FBI — point d'extension, pas un module (§40/§41 du brief FBI)
 
-Le spike relayé (voir `docs/FBI_AUTHENTICATED_SPIKE.md` §6) indique qu'un
+Le spike relayé (voir `docs/archive/FBI_AUTHENTICATED_SPIKE.md` §6) indique qu'un
 export XLSX des dérogations est accessible, et que des routes AJAX de
 consultation existent (ex. `afficherLicenceStatistiqueAjax.fbi`, classée
 READ_ONLY par `src/lib/fbi/action-classification.ts`). Aucune route exacte
@@ -241,7 +241,7 @@ un nom complet de joueur.
 
 - Tout appel réseau réel contre `*.ffbb.com` (bloqué depuis tous les
   environnements où ce code a été écrit, voir
-  `docs/FBI_AUTHENTICATED_SPIKE.md` §2).
+  `docs/archive/FBI_AUTHENTICATED_SPIKE.md` §2).
 - La navigation post-login réelle de `BrowserFbiClient.findEmarqueDocuments`
   (recherche de rencontre, page de résultat) : conçue de façon générique et
   défensive faute d'avoir pu observer le markup réel — testée uniquement

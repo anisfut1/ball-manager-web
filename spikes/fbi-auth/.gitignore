@@ -1,7 +1,0 @@
-# Filet de sécurité local (en plus des règles du .gitignore racine).
-# Rien dans .local/ ne doit jamais être committé : session, cookies,
-# exports FBI, rapports non sanitisés.
-.local/
-node_modules/
-*.log
-.env.fbi.local

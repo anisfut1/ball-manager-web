@@ -42,8 +42,9 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# Spike FBI authentifié (docs/FBI_AUTHENTICATED_SPIKE.md) — session, cookies,
-# exports et rapports bruts potentiellement sensibles : TOUJOURS locaux.
+# Ancien spike FBI authentifié (supprimé, voir docs/archive/FBI_AUTHENTICATED_SPIKE.md).
+# Gardé ignoré : une copie locale peut encore contenir session, cookies et
+# rapports bruts sensibles, qui ne doivent jamais être commités.
 spikes/fbi-auth/.local/
 spikes/fbi-auth/node_modules/
 spikes/fbi-auth/*.log

@@ -229,12 +229,12 @@ de rendre silencieusement le secret d'un autre tenant. La clé maître
 `FBI_CREDENTIALS_ENCRYPTION_KEY` reste globale au déploiement (un seul
 secret d'infrastructure, comme documenté dès la Phase B).
 
-> **Mise à jour** : l'automatisation FBI réelle (login, découverte et
-> téléchargement e-Marque) tourne désormais dans un worker séparé
-> (`worker/`, Playwright) plutôt qu'en ligne dans une route Vercel — voir
-> **`docs/FBI_WORKER.md`** pour l'architecture complète. Le paragraphe
-> ci-dessous résume uniquement les garanties d'isolation multi-tenant, qui
-> restent inchangées dans le nouveau design.
+> **Mise à jour** : toute l'automatisation FBI (connexion, e-Marque,
+> dérogations) vit dans **ball-manager-back** (voir son `docs/FBI.md` et
+> `docs/JOBS.md`). L'ancien worker séparé (`worker/`) a été supprimé de ce
+> dépôt ; sa conception est archivée dans `docs/archive/FBI_WORKER.md`. Le
+> paragraphe ci-dessous résume les garanties d'isolation multi-tenant, qui
+> restent valables.
 
 `fbi_jobs` (la file de travail, `FOR UPDATE SKIP LOCKED` via
 `claim_next_fbi_job`) et `match_documents` (le manifeste des fichiers
@@ -243,12 +243,11 @@ téléchargés) suivent exactement les mêmes règles que le reste du schéma :
 d'écriture pour un rôle `authenticated` (le worker écrit en service role).
 `claim_next_fbi_job` exclut déjà les clubs ayant un job `claimed`/`running`
 — au plus une session FBI active par club, quel que soit le nombre de
-workers. `BrowserFbiClient` (`worker/src/fbi/browser-client.ts`) crée un
+workers. Le client navigateur FBI (dans ball-manager-back) crée un
 `BrowserContext` Playwright ISOLÉ à chaque connexion : jamais de cookie
 partagé entre deux clubs, même traités par le même processus worker à la
 suite. Le déchiffrement des identifiants utilise toujours `club_id` comme
-AAD (§ ci-dessus), y compris côté worker (`worker/src/crypto.ts`, copie
-volontairement indépendante — voir `worker/README.md`).
+AAD (§ ci-dessus).
 
 ## 8. Verrouillage (`sync_locks`)
 

@@ -54,9 +54,8 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: [
     /*
-     * Toutes les routes sauf les assets statiques Next.js, les fichiers
-     * publics et les endpoints internes (aucun `/api/internal` en Phase 0,
-     * réservé pour la synchronisation FFBB en Phase 1).
+     * Toutes les routes sauf les assets statiques Next.js et les fichiers
+     * publics (les endpoints internes vivent dans ball-manager-back).
      */
     "/((?!_next/static|_next/image|favicon.ico|sw\\.js$|offline\\.html$|manifest\\.webmanifest$|.*\\.(?:svg|png|jpg|jpeg|gif|webp)$).*)",
   ],
