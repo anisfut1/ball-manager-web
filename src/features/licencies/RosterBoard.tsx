@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useMemo, useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { browserApi } from "@/lib/api/browserClient";
@@ -58,6 +58,7 @@ function LicencieCard({
   licencie,
   teams,
   isAdmin,
+  hasAccount,
   onAssignTeam,
   onToggleFlag,
   isConfirmingDelete,
@@ -69,6 +70,8 @@ function LicencieCard({
   licencie: LicencieDto;
   teams: TeamDto[];
   isAdmin: boolean;
+  /** Admin seulement : `true` = au moins un compte suit ce licencié ; `undefined` = pas d'info (pas de pastille). */
+  hasAccount?: boolean;
   onAssignTeam: (teamId: string | null) => void;
   onToggleFlag: (flag: PublicRoleFlag) => void;
   isConfirmingDelete: boolean;
@@ -83,7 +86,17 @@ function LicencieCard({
       <div className="flex min-w-0 flex-1 items-center gap-3">
         {isAdmin ? <GripVertical aria-hidden className="hidden size-4 shrink-0 text-subtle opacity-60 group-hover:opacity-100 sm:block" /> : null}
         <Link href={`/c/${clubSlug}/joueurs/${licencie.id}`} className="flex min-h-11 min-w-0 flex-1 items-center gap-3 rounded-md">
-          <PersonAvatar name={name} src={licencie.photoUrl} />
+          <span className="relative shrink-0">
+            <PersonAvatar name={name} src={licencie.photoUrl} />
+            {hasAccount !== undefined ? (
+              <span
+                role="img"
+                aria-label={hasAccount ? "A un compte Ball Manager" : "Pas encore de compte Ball Manager"}
+                title={hasAccount ? "A un compte Ball Manager" : "Pas encore de compte Ball Manager"}
+                className={`absolute -bottom-0.5 -right-0.5 size-3 rounded-full border-2 border-surface-raised ${hasAccount ? "bg-[#16a34a]" : "bg-[#f59e0b]"}`}
+              />
+            ) : null}
+          </span>
           <span className="flex min-w-0 flex-col">
             <span className="flex min-w-0 items-center gap-2">
               <span className="truncate text-sm font-medium text-foreground">{name}</span>
@@ -183,13 +196,17 @@ export function RosterBoard({
   licencies,
   teams,
   isAdmin,
+  accountLicencieIds,
 }: {
   clubId: string;
   clubSlug: string;
   licencies: LicencieDto[];
   teams: TeamDto[];
   isAdmin: boolean;
+  /** Admin : licenciés suivis par au moins un compte actif (pastille verte), les autres en orange. */
+  accountLicencieIds?: string[];
 }) {
+  const withAccount = useMemo(() => (accountLicencieIds ? new Set(accountLicencieIds) : null), [accountLicencieIds]);
   const router = useRouter();
   const [items, setItems] = useState(licencies);
   // Resynchronise l'état local sur les props fraîches après un
@@ -393,6 +410,7 @@ export function RosterBoard({
                         licencie={licencie}
                         teams={sortedTeams}
                         isAdmin={isAdmin}
+                        hasAccount={withAccount ? withAccount.has(licencie.id) : undefined}
                         onAssignTeam={(teamId) => assignTeam(licencie.id, teamId)}
                         onToggleFlag={(flag) => toggleFlag(licencie.id, flag)}
                         isConfirmingDelete={confirmingDeleteId === licencie.id}
