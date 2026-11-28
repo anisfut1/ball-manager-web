@@ -73,7 +73,7 @@ describe("LicensedSearchCard", () => {
     fireEvent.change(await screen.findByLabelText(/Code reçu par email/), { target: { value: "123456" } });
     fireEvent.click(screen.getByRole("button", { name: /Valider le code/ }));
     await vi.waitFor(() => expect(linkLicencie).toHaveBeenCalledWith("club-demo", "jwt-test", { licencieId: lea.id }));
-    expect(signUp).toHaveBeenCalledWith("parent@example.test", "motdepasse1");
+    expect(signUp).toHaveBeenCalledWith("parent@example.test", "motdepasse1", "club-demo");
     expect(verify).toHaveBeenCalledWith("parent@example.test", "123456", "motdepasse1");
     await vi.waitFor(() => expect(refresh).toHaveBeenCalled());
   });
