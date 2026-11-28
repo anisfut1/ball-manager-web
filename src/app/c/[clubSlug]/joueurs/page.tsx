@@ -70,7 +70,7 @@ export default async function JoueursPage({ params }: { params: Promise<{ clubSl
           description="Les licencié·e·s du club sont créé·e·s automatiquement à partir des documents e-Marque importés (numéro de licence lu sur une feuille de match), ou peuvent être ajouté·e·s manuellement par un·e administrateur·rice."
         />
       ) : (
-        <RosterBoard clubId={club.id} clubSlug={clubSlug} licencies={licencies} teams={teams} isAdmin={isAdmin} />
+        <RosterBoard clubId={club.id} clubSlug={clubSlug} licencies={licencies} teams={teams} isAdmin={isAdmin} accountLicencieIds={isAdmin ? accountLinkRequests.map((l) => l.licencieId) : undefined} />
       )}
     </PageContainer>
   );
