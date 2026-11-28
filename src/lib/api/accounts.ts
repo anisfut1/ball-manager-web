@@ -73,3 +73,13 @@ export async function listAccountLinks(fetcher: ApiFetcher, clubId: string, stat
 export async function decideAccountLink(fetcher: ApiFetcher, clubId: string, linkId: string, decision: "accept" | "refuse"): Promise<void> {
   await fetcher(`/v1/clubs/${encodeURIComponent(clubId)}/account-links/${encodeURIComponent(linkId)}/${decision}`, { method: "POST" });
 }
+
+/** Retire un rattachement : accès coupé, nouvelle demande bloquée (rétablissable par « accept »). */
+export async function removeAccountLink(fetcher: ApiFetcher, clubId: string, linkId: string): Promise<void> {
+  await fetcher(`/v1/clubs/${encodeURIComponent(clubId)}/account-links/${encodeURIComponent(linkId)}`, { method: "DELETE" });
+}
+
+/** Retire le compte du club (tous ses rattachements) ; supprimé s'il ne suit personne ailleurs. */
+export async function removeAccountFromClub(fetcher: ApiFetcher, clubId: string, linkId: string): Promise<{ accountDeleted: boolean }> {
+  return fetcher<{ accountDeleted: boolean }>(`/v1/clubs/${encodeURIComponent(clubId)}/account-links/${encodeURIComponent(linkId)}/remove-account`, { method: "POST" });
+}

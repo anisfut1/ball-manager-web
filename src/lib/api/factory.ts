@@ -32,6 +32,8 @@ export function createApi(fetcher: ApiFetcher) {
     accountLinks: {
       list: (clubId: string, status?: "active" | "pending" | "refused") => accounts.listAccountLinks(fetcher, clubId, status),
       decide: (clubId: string, linkId: string, decision: "accept" | "refuse") => accounts.decideAccountLink(fetcher, clubId, linkId, decision),
+      remove: (clubId: string, linkId: string) => accounts.removeAccountLink(fetcher, clubId, linkId),
+      removeAccount: (clubId: string, linkId: string) => accounts.removeAccountFromClub(fetcher, clubId, linkId),
     },
     clubs: {
       list: () => clubs.listClubs(fetcher),
