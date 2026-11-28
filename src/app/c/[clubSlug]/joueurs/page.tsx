@@ -7,7 +7,7 @@ import { EmptyState } from "@/components/ui/States";
 import { StatusBadge } from "@/components/ui/Badge";
 import { LicenceImportPanel } from "@/features/licencies/LicenceImportPanel";
 import { ClaimRequestsPanel } from "@/features/tables/ClaimRequestsPanel";
-import { AccountLinkRequestsPanel } from "@/features/accounts/AccountLinkRequestsPanel";
+import { AccountLinksPanel } from "@/features/accounts/AccountLinksPanel";
 import { RosterBoard } from "@/features/licencies/RosterBoard";
 import { AddPersonButton } from "@/features/licencies/AddPersonButton";
 
@@ -36,8 +36,8 @@ export default async function JoueursPage({ params }: { params: Promise<{ clubSl
     isAdmin ? api.licencies.importStatus(club.id).catch(() => null) : Promise.resolve(null),
     // Demandes de lien vers une nouvelle adresse : visibles ici (liste des joueurs) et dans Tables de marque → Accès publics.
     isAdmin ? api.tables.claimRequests(club.id).catch(() => []) : Promise.resolve([]),
-    // Comptes qui demandent à suivre un licencié (adresse inconnue de la fiche).
-    isAdmin ? api.accountLinks.list(club.id, "pending").catch(() => []) : Promise.resolve([]),
+    // Comptes qui suivent un licencié (actifs tout de suite ; le club peut les retirer).
+    isAdmin ? api.accountLinks.list(club.id, "active").catch(() => []) : Promise.resolve([]),
   ]);
 
   return (
@@ -60,7 +60,7 @@ export default async function JoueursPage({ params }: { params: Promise<{ clubSl
           ) : null
         }
       />
-      {isAdmin ? <AccountLinkRequestsPanel clubId={club.id} requests={accountLinkRequests} /> : null}
+      {isAdmin ? <AccountLinksPanel clubId={club.id} links={accountLinkRequests} /> : null}
       {isAdmin ? <ClaimRequestsPanel clubId={club.id} requests={claimRequests} /> : null}
       {isAdmin ? <LicenceImportPanel clubId={club.id} clubSlug={clubSlug} initialStatus={importStatus} /> : null}
       {licencies.length === 0 ? (
