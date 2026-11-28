@@ -15173,6 +15173,7 @@ export interface components {
         PasswordResetDto: {
             /** Format: email */
             email: string;
+            clubSlug?: string;
         };
         TableLeaderboardDto: {
             seasonStart: string;
@@ -16383,10 +16384,12 @@ export interface components {
             /** Format: email */
             email: string;
             password: string;
+            clubSlug?: string;
         };
         ResendCodeDto: {
             /** Format: email */
             email: string;
+            clubSlug?: string;
         };
         AccountSessionDto: {
             accessToken: string;

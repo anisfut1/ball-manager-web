@@ -53,7 +53,7 @@ export function AccountAuthForm({ clubSlug, initialMode = "sign-up", onAuthentic
           await finish(await signIn(email.trim(), password));
         } catch (err) {
           if (err instanceof ApiError && err.code === "EMAIL_NOT_CONFIRMED") {
-            await resendSignUpCode(email.trim()).catch(() => undefined);
+            await resendSignUpCode(email.trim(), clubSlug).catch(() => undefined);
             setStep("code");
             setInfo("Ton adresse n'est pas encore vérifiée : on vient de t'envoyer un code.");
             return;
@@ -61,12 +61,12 @@ export function AccountAuthForm({ clubSlug, initialMode = "sign-up", onAuthentic
           throw err;
         }
       } else if (step === "sign-up") {
-        await signUp(email.trim(), password);
+        await signUp(email.trim(), password, clubSlug);
         setStep("code");
       } else if (step === "code") {
         await finish(await verifySignUp(email.trim(), code.trim(), password));
       } else if (step === "forgot") {
-        await requestPasswordReset(email.trim());
+        await requestPasswordReset(email.trim(), clubSlug);
         setStep("forgot-sent");
       }
     } catch (err) {
@@ -78,7 +78,7 @@ export function AccountAuthForm({ clubSlug, initialMode = "sign-up", onAuthentic
 
   async function resend() {
     setError(null);
-    await resendSignUpCode(email.trim()).catch(() => undefined);
+    await resendSignUpCode(email.trim(), clubSlug).catch(() => undefined);
     setInfo("Nouveau code envoyé. Pense à regarder dans les indésirables.");
   }
 

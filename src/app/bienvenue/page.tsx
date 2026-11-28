@@ -26,7 +26,7 @@ export default async function WelcomePage({ searchParams }: { searchParams: Prom
   if (!tokenHash || !type) {
     return (
       <AccountLayout eyebrow={PLATFORM_NAME} title="Lien incomplet" lead="Ce lien ne contient pas toutes les informations nécessaires. Ouvre-le directement depuis l'email, ou demande-en un nouveau.">
-        <ButtonLink href="/mot-de-passe-oublie" variant="primary" size="lg" iconRight={<ArrowRight />} className="w-full">
+        <ButtonLink href={next.startsWith("/public/") ? next : "/mot-de-passe-oublie"} variant="primary" size="lg" iconRight={<ArrowRight />} className="w-full">
           Recevoir un nouveau lien
         </ButtonLink>
       </AccountLayout>

@@ -15,12 +15,13 @@ export type AdminAccountLinkDto = components["schemas"]["AdminAccountLinkDto"];
 
 const club = (slug: string) => `/v1/public/clubs/${encodeURIComponent(slug)}/account`;
 
-export function signUp(email: string, password: string): Promise<{ sent: true }> {
-  return apiFetch("/v1/account/sign-up", { method: "POST", body: { email, password } });
+/** `clubSlug` : les liens des emails ramènent à l'espace de ce club, pas au login général. */
+export function signUp(email: string, password: string, clubSlug?: string): Promise<{ sent: true }> {
+  return apiFetch("/v1/account/sign-up", { method: "POST", body: { email, password, clubSlug } });
 }
 
-export function resendSignUpCode(email: string): Promise<{ sent: true }> {
-  return apiFetch("/v1/account/sign-up/resend", { method: "POST", body: { email } });
+export function resendSignUpCode(email: string, clubSlug?: string): Promise<{ sent: true }> {
+  return apiFetch("/v1/account/sign-up/resend", { method: "POST", body: { email, clubSlug } });
 }
 
 export function verifySignUp(email: string, code: string, password: string): Promise<AccountSessionDto> {
@@ -35,8 +36,8 @@ export function refreshAccount(refreshToken: string): Promise<AccountSessionDto>
   return apiFetch("/v1/account/refresh", { method: "POST", body: { refreshToken } });
 }
 
-export function requestPasswordReset(email: string): Promise<{ sent: true }> {
-  return apiFetch("/v1/account/password-reset", { method: "POST", body: { email } });
+export function requestPasswordReset(email: string, clubSlug?: string): Promise<{ sent: true }> {
+  return apiFetch("/v1/account/password-reset", { method: "POST", body: { email, clubSlug } });
 }
 
 export function getAccount(slug: string, accessToken: string): Promise<AccountDto> {
