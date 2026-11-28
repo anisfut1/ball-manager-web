@@ -1,7 +1,8 @@
 "use client";
 
 import { useId, useState, type ReactNode } from "react";
-import { Check, Lock } from "lucide-react";
+import { Check, LogIn, Lock, Search } from "lucide-react";
+import { Button } from "@/components/ui/Button";
 import { ClubLogo } from "@/components/ui/Logo";
 import { Notice } from "@/components/ui/Notice";
 import { usePublicIdentity } from "@/features/public/PublicIdentityProvider";
@@ -99,9 +100,12 @@ export function LicensedAccessGate({ module, description, notice }: { module: Li
             <LicensedSearchCard clubSlug={clubSlug} clubName={club.name} returnTo={config.returnTo} />
           )}
           {!account ? (
-            <button type="button" onClick={() => setSigningIn((v) => !v)} className="self-center text-[13.5px] font-medium text-foreground underline-offset-4 hover:underline">
-              {signingIn ? "Retrouver mon nom" : "Déjà un compte ? Se connecter"}
-            </button>
+            <div className="licensed-card flex w-full flex-col items-stretch gap-3 rounded-[24px] border border-border bg-surface-raised/92 p-4 shadow-[var(--shadow-inset-highlight),var(--shadow-2)] backdrop-blur-xl sm:flex-row sm:items-center sm:justify-between sm:p-5">
+              <span className="text-center text-[15px] font-semibold text-foreground sm:text-left">{signingIn ? "Pas encore de compte ?" : "Déjà un compte ?"}</span>
+              <Button size="lg" variant="secondary" icon={signingIn ? <Search /> : <LogIn />} onClick={() => setSigningIn((v) => !v)}>
+                {signingIn ? "Retrouver mon nom" : "Se connecter"}
+              </Button>
+            </div>
           ) : null}
           <p className="px-2 text-center text-[12.5px] leading-relaxed text-muted">
             <span className="mr-1.5 inline-flex size-4 translate-y-[3px] items-center justify-center rounded-full bg-success-soft align-top text-success">

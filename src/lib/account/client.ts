@@ -1,4 +1,5 @@
 import { refreshAccount, type AccountSessionDto } from "@/lib/api/accounts";
+import { ApiError } from "@/lib/api/errors";
 
 /**
  * Session du COMPTE dans le navigateur. Les jetons sont gardés par le
@@ -49,9 +50,16 @@ async function load(slug: string): Promise<string | null> {
       return data.accessToken;
     }
     if (data.refreshToken) {
-      const session = await refreshAccount(data.refreshToken).catch(() => null);
-      if (!session) {
-        await fetch(url(slug), { method: "DELETE", headers, credentials: "same-origin" }).catch(() => undefined);
+      let session: AccountSessionDto;
+      try {
+        session = await refreshAccount(data.refreshToken);
+      } catch (err) {
+        // On ne déconnecte que si le serveur refuse VRAIMENT la session (jeton révoqué,
+        // compte supprimé). Réseau coupé, 429 ou 5xx : on garde le cookie et on
+        // réessaiera au prochain chargement, pour rester connecté le plus longtemps possible.
+        if (err instanceof ApiError && (err.status === 400 || err.status === 401)) {
+          await fetch(url(slug), { method: "DELETE", headers, credentials: "same-origin" }).catch(() => undefined);
+        }
         return null;
       }
       await storeAccountSession(slug, session, { notify: false });
